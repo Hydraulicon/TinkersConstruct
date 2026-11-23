@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.predicate.tool;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -49,7 +50,7 @@ public record StatInSetPredicate<T>(IToolStat<T> stat, Set<T> values) implements
     }
 
     @Override
-    public void serialize(StatInSetPredicate<?> object, JsonObject json) {
+    public void serializeInto(StatInSetPredicate<?> object, JsonObject json, TypedMap context) {
       json.add("stat", ToolStats.LOADER.serialize(object.stat));
       serializeSet(object, json);
     }
@@ -64,7 +65,7 @@ public record StatInSetPredicate<T>(IToolStat<T> stat, Set<T> values) implements
     }
 
     @Override
-    public StatInSetPredicate<?> decode(FriendlyByteBuf buffer, TypedMap context) {
+    public StatInSetPredicate<?> decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
       return fromNetwork(buffer, ToolStats.LOADER.decode(buffer, context));
     }
 
@@ -79,7 +80,7 @@ public record StatInSetPredicate<T>(IToolStat<T> stat, Set<T> values) implements
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer, StatInSetPredicate<?> object) {
+    public void encode(RegistryFriendlyByteBuf buffer, StatInSetPredicate<?> object, TypedMap context) {
       ToolStats.LOADER.encode(buffer, object.stat);
       setToNetwork(object, buffer);
     }

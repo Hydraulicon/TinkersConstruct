@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.stat;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -211,13 +212,13 @@ public class ToolStats {
 
   /** @deprecated use {@link #LOADER} with {@link slimeknights.mantle.data.loadable.Loadable#decode(FriendlyByteBuf)} */
   @Deprecated(forRemoval = true)
-  public static IToolStat<?> fromNetwork(FriendlyByteBuf buffer) {
+  public static IToolStat<?> fromNetwork(RegistryFriendlyByteBuf buffer) {
     return LOADER.decode(buffer);
   }
 
   /** @deprecated use {@link #NUMERIC_LOADER} with {@link slimeknights.mantle.data.loadable.Loadable#decode(FriendlyByteBuf)} */
   @Deprecated(forRemoval = true)
-  public static INumericToolStat<?> numericFromNetwork(FriendlyByteBuf buffer) {
+  public static INumericToolStat<?> numericFromNetwork(RegistryFriendlyByteBuf buffer) {
     return NUMERIC_LOADER.decode(buffer);
   }
 }

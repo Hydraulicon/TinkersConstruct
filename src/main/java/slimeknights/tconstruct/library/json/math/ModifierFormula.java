@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.math;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.FriendlyByteBuf;
@@ -58,7 +59,7 @@ public sealed interface ModifierFormula permits PostFixFormula, SimpleLevelingFo
    * @param fallback       Fallback for when not using post fix
    * @return  Formula object
    */
-  static ModifierFormula fromNetwork(FriendlyByteBuf buffer, int numArguments, FallbackFormula fallback) {
+  static ModifierFormula fromNetwork(RegistryFriendlyByteBuf buffer, int numArguments, FallbackFormula fallback) {
     short size = buffer.readShort();
     if (size == -1) {
       LevelingValue leveling = LevelingValue.LOADABLE.decode(buffer);

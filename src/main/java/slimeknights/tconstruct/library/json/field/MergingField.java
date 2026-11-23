@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.field;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
@@ -35,7 +36,7 @@ public record MergingField<T,P>(LoadableField<T,P> field, String key, MissingMod
   }
 
   @Override
-  public void serialize(P parent, JsonObject json) {
+  public void serializeInto(P parent, JsonObject json, TypedMap context) {
     // if we have the object, write to it
     if (json.has(key)) {
       field.serialize(parent, GsonHelper.getAsJsonObject(json, key));
@@ -48,12 +49,12 @@ public record MergingField<T,P>(LoadableField<T,P> field, String key, MissingMod
   }
 
   @Override
-  public T decode(FriendlyByteBuf buffer, TypedMap context) {
+  public T decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     return field.decode(buffer, context);
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, P parent) {
+  public void encode(RegistryFriendlyByteBuf buffer, P parent, TypedMap context) {
     field.encode(buffer, parent);
   }
 }

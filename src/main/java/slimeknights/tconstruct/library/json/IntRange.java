@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -135,7 +136,7 @@ public record IntRange(int min, int max) implements IntPredicate, Loadable<IntRa
 
   /** Reads a range from the buffer */
   @Override
-  public IntRange decode(FriendlyByteBuf buffer, TypedMap context) {
+  public IntRange decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     return fromNetwork(buffer);
   }
 
@@ -153,7 +154,7 @@ public record IntRange(int min, int max) implements IntPredicate, Loadable<IntRa
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, IntRange object) {
+  public void encode(RegistryFriendlyByteBuf buffer, IntRange object, TypedMap context) {
     object.toNetwork(buffer);
   }
 

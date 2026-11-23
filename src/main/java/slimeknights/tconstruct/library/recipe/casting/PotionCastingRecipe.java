@@ -15,7 +15,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-// TODO 1.21 import: net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.data.loadable.Loadables;
 // TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
@@ -117,7 +116,7 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
   @Override
   public List<IDisplayableCastingRecipe> getRecipes(RegistryAccess access) {
     if (displayRecipes == null) {
-      Collection<Potion> potions = ForgeRegistries.POTIONS.getValues();
+      Collection<Potion> potions = BuiltInRegistries.POTION.stream().toList();
       List<ItemStack> results = new ArrayList<>(potions.size());
       // first, make all the potion items
       for (Potion potion : potions) {

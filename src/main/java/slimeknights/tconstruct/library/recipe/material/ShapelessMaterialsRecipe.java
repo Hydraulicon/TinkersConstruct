@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
@@ -82,13 +83,13 @@ public class ShapelessMaterialsRecipe extends ShapelessRecipe implements Materia
 
     @Override
     @Nullable
-    public ShapelessMaterialsRecipe fromNetworkSafe(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public ShapelessMaterialsRecipe fromNetworkSafe(ResourceLocation recipeId, RegistryFriendlyByteBuf buffer) {
       ShapelessRecipe recipe = SHAPELESS_RECIPE.fromNetwork(recipeId, buffer);
       return recipe == null ? null : new ShapelessMaterialsRecipe(recipe, buffer.readByte(), MATERIAL_FIELD.decode(buffer));
     }
 
     @Override
-    public void toNetworkSafe(FriendlyByteBuf buffer, ShapelessMaterialsRecipe recipe) {
+    public void toNetworkSafe(RegistryFriendlyByteBuf buffer, ShapelessMaterialsRecipe recipe) {
       SHAPELESS_RECIPE.toNetwork(buffer, recipe);
       buffer.writeByte(recipe.partCount);
       MATERIAL_FIELD.encode(buffer, recipe);

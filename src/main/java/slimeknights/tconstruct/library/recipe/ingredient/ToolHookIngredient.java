@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.Holder;
@@ -117,7 +118,7 @@ public class ToolHookIngredient extends AbstractIngredient {
     }
 
     @Override
-    public ToolHookIngredient parse(FriendlyByteBuf buffer) {
+    public ToolHookIngredient parse(RegistryFriendlyByteBuf buffer) {
       return new ToolHookIngredient(
         Loadables.ITEM_TAG.decode(buffer),
         ToolHooks.LOADER.decode(buffer)
@@ -125,7 +126,7 @@ public class ToolHookIngredient extends AbstractIngredient {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer, ToolHookIngredient ingredient) {
+    public void write(RegistryFriendlyByteBuf buffer, ToolHookIngredient ingredient) {
       Loadables.ITEM_TAG.encode(buffer, ingredient.tag);
       ToolHooks.LOADER.encode(buffer, ingredient.hook);
     }

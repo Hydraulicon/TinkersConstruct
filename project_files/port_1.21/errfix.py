@@ -170,3 +170,74 @@ def drop_get(errs, types):
 
 if __name__ == '__main__' and sys.argv[2] == 'drop-get':
     drop_get(parse(sys.argv[1]), sys.argv[3])
+
+
+LOADABLE_OVERRIDES = [
+    # Loadable#serialize(T) -> serialize(T, TypedMap)
+    (re.compile(r'\bJsonElement serialize\(((?:final )?[\w.<>?, \[\]]+?) (\w+)\)'), r'JsonElement serialize(\1 \2, TypedMap context)'),
+    # RecordLoadable/RecordField#serialize(T, JsonObject) -> serializeInto(T, JsonObject, TypedMap)
+    (re.compile(r'\bvoid serialize\(((?:final )?[\w.<>?, \[\]]+?) (\w+), JsonObject (\w+)\)'), r'void serializeInto(\1 \2, JsonObject \3, TypedMap context)'),
+    # Streamable#decode
+    (re.compile(r'\bdecode\(FriendlyByteBuf (\w+), TypedMap (\w+)\)'), r'decode(RegistryFriendlyByteBuf \1, TypedMap \2)'),
+    # Streamable#encode(buffer, value) -> encode(buffer, value, context)
+    (re.compile(r'\bvoid encode\(FriendlyByteBuf (\w+), ((?:final )?[\w.<>?, \[\]]+?) (\w+)\)'), r'void encode(RegistryFriendlyByteBuf \1, \2 \3, TypedMap context)'),
+    # StringLoadable#getString(T) -> getString(T, TypedMap)
+    (re.compile(r'\bString getString\(((?:final )?[\w.<>?, \[\]]+?) (\w+)\)'), r'String getString(\1 \2, TypedMap context)'),
+]
+
+
+def loadable_overrides(errs):
+    """Updates overrides of Mantle loadable methods to their 1.21 signatures, only where javac reports a broken override"""
+    edits = collections.defaultdict(set)
+    for e in errs:
+        if e['msg'] == 'method does not override or implement a method from a supertype': edits[e['file']].add(e['line'])
+    n = 0
+    for f, lines in edits.items():
+        src = open(f, encoding='utf-8').read().split('\n')
+        changed = False
+        for line in lines:
+            for k in range(line - 1, min(line + 4, len(src))):
+                s = src[k]
+                if '(' not in s or s.strip().startswith('@'): continue
+                for rx, rep in LOADABLE_OVERRIDES:
+                    t = rx.sub(rep, s, count=1)
+                    if t != s:
+                        src[k] = t; n += 1; changed = True; break
+                break
+        if changed:
+            text = '\n'.join(src)
+            if 'TypedMap' in text: add_import(src, 'slimeknights.mantle.util.typed.TypedMap')
+            if 'RegistryFriendlyByteBuf' in '\n'.join(src): add_import(src, 'net.minecraft.network.RegistryFriendlyByteBuf')
+        open(f, 'w', encoding='utf-8').write('\n'.join(src))
+    print(f'{n} loadable overrides updated')
+
+
+if __name__ == '__main__' and sys.argv[2] == 'loadable-overrides':
+    loadable_overrides(parse(sys.argv[1]))
+
+
+def upgrade_buffers(errs):
+    """FriendlyByteBuf -> RegistryFriendlyByteBuf for the declaration of a variable passed where a registry buffer is needed.
+    Run repeatedly, each pass moves the change one caller further out."""
+    edits = collections.defaultdict(set)
+    for e in errs:
+        if 'FriendlyByteBuf cannot be converted to RegistryFriendlyByteBuf' in e['msg'] and e['col'] is not None:
+            edits[e['file']].add((e['line'], e['col']))
+    n = 0
+    for f, pos in edits.items():
+        src = open(f, encoding='utf-8').read().split('\n')
+        for line, col in pos:
+            m = re.compile(r'\w+').match(src[line - 1], col)
+            if not m: continue
+            name = m.group(0)
+            decl = re.compile(r'(?<![\w.])FriendlyByteBuf(\s+' + re.escape(name) + r'\b)')
+            for k in range(line - 1, -1, -1):
+                if decl.search(src[k]):
+                    src[k] = decl.sub(r'RegistryFriendlyByteBuf\1', src[k], count=1); n += 1; break
+        if any('RegistryFriendlyByteBuf' in l for l in src): add_import(src, 'net.minecraft.network.RegistryFriendlyByteBuf')
+        open(f, 'w', encoding='utf-8').write('\n'.join(src))
+    print(f'{n} buffer declarations upgraded')
+
+
+if __name__ == '__main__' and sys.argv[2] == 'upgrade-buffers':
+    upgrade_buffers(parse(sys.argv[1]))

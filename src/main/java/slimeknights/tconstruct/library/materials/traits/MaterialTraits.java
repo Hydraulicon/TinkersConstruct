@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.materials.traits;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.AccessLevel;
@@ -50,7 +51,7 @@ public class MaterialTraits {
    * Writes this object to the packet buffer
    * @param buffer  Buffer instance
    */
-  public void write(FriendlyByteBuf buffer) {
+  public void write(RegistryFriendlyByteBuf buffer) {
     writeTraitList(buffer, defaultTraits);
     // write map of traits
     buffer.writeVarInt(traitsPerStats.size());
@@ -65,7 +66,7 @@ public class MaterialTraits {
    * @param buffer  Buffer
    * @return Read MaterialTraits
    */
-  public static MaterialTraits read(FriendlyByteBuf buffer) {
+  public static MaterialTraits read(RegistryFriendlyByteBuf buffer) {
     List<ModifierEntry> defaultTraits = readTraitList(buffer);
     int statTypeCount = buffer.readVarInt();
     Map<MaterialStatsId,List<ModifierEntry>> statsTraits = new HashMap<>(statTypeCount);
@@ -82,7 +83,7 @@ public class MaterialTraits {
    * @param buffer  Buffer
    * @return  List of traits
    */
-  private static List<ModifierEntry> readTraitList(FriendlyByteBuf buffer) {
+  private static List<ModifierEntry> readTraitList(RegistryFriendlyByteBuf buffer) {
     ImmutableList.Builder<ModifierEntry> builder = ImmutableList.builder();
     int count = buffer.readVarInt();
     for (int i = 0; i < count; i++) {
@@ -96,7 +97,7 @@ public class MaterialTraits {
    * @param buffer  Buffer
    * @param traits  List of traits
    */
-  private static void writeTraitList(FriendlyByteBuf buffer, List<ModifierEntry> traits) {
+  private static void writeTraitList(RegistryFriendlyByteBuf buffer, List<ModifierEntry> traits) {
     buffer.writeVarInt(traits.size());
     for (ModifierEntry entry : traits) {
       ModifierEntry.LOADABLE.encode(buffer, entry);

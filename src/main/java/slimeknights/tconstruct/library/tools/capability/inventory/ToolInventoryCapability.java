@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemUtils;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-// TODO 1.21 import: net.minecraftforge.network.NetworkHooks;
 // TODO 1.21 import: slimeknights.mantle.inventory.EmptyItemHandler;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
@@ -544,7 +543,7 @@ public class ToolInventoryCapability extends InventoryModifierHookIterator<Modif
     // open if we have any slots or we have a crafting table
     if (handler.getSlots() > 0 || ModifierUtil.checkVolatileFlag(stack, CRAFTING_TABLE) || ModifierUtil.checkVolatileFlag(stack, INVENTORY_CRAFTING)) {
       if (player instanceof ServerPlayer serverPlayer) {
-        NetworkHooks.openScreen(serverPlayer, new SimpleMenuProvider(
+        serverPlayer.openMenu(new SimpleMenuProvider(
           (id, inventory, p) -> new ToolContainerMenu(id, inventory, stack, handler, slotIndex),
           ToolNameHook.getName(definition, stack, tool)
         ), buf -> {
@@ -552,7 +551,7 @@ public class ToolInventoryCapability extends InventoryModifierHookIterator<Modif
           ToolSyncType syncType = Config.COMMON.toolInventorySync.get();
           buf.writeEnum(syncType);
           if (syncType == ToolSyncType.FULL_STACK) {
-            buf.writeItem(stack);
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, stack);
           } else if (syncType == ToolSyncType.MINIMAL) {
             buf.writeVarInt(ModifierUtil.getVolatileInt(stack, TOTAL_SLOTS));
             buf.writeEnum(CraftingType.fromStack(stack));

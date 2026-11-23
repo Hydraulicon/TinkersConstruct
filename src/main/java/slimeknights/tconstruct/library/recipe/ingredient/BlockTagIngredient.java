@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -124,9 +125,9 @@ public class BlockTagIngredient extends AbstractIngredient {
     }
 
     @Override
-    public Ingredient parse(FriendlyByteBuf buffer) {
+    public Ingredient parse(RegistryFriendlyByteBuf buffer) {
       int size = buffer.readVarInt();
-      return Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(buffer.readItem())).limit(size));
+      return Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer))).limit(size));
     }
   }
 }

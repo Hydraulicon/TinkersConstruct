@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -190,12 +191,12 @@ public final class SlotType {
       }
 
       @Override
-      public SlotCount decode(FriendlyByteBuf buffer, TypedMap context) {
+      public SlotCount decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
         return new SlotCount(SlotType.read(buffer), buffer.readVarInt());
       }
 
       @Override
-      public void encode(FriendlyByteBuf buffer, SlotCount slots) {
+      public void encode(RegistryFriendlyByteBuf buffer, SlotCount slots, TypedMap context) {
         slots.type().write(buffer);
         buffer.writeVarInt(slots.count());
       }
@@ -215,7 +216,7 @@ public final class SlotType {
       }
 
       @Override
-      public void serialize(P parent, JsonObject json) {
+      public void serializeInto(P parent, JsonObject json, TypedMap context) {
         SlotCount count = getter.apply(parent);
         if (count != null) {
           json.add(key, LOADABLE.serialize(count));
@@ -224,7 +225,7 @@ public final class SlotType {
 
       @Nullable
       @Override
-      public SlotCount decode(FriendlyByteBuf buffer, TypedMap context) {
+      public SlotCount decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
         int count = buffer.readVarInt();
         if (count == 0) {
           return null;
@@ -233,7 +234,7 @@ public final class SlotType {
       }
 
       @Override
-      public void encode(FriendlyByteBuf buffer, P parent) {
+      public void encode(RegistryFriendlyByteBuf buffer, P parent, TypedMap context) {
         SlotCount slotCount = getter.apply(parent);
         if (slotCount == null) {
           buffer.writeVarInt(0);

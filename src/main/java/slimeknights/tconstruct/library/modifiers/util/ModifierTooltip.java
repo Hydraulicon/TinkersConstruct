@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.util;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import lombok.Getter;
@@ -132,12 +133,12 @@ public enum ModifierTooltip {
     }
 
     @Override
-    public ShowInTooltips decode(FriendlyByteBuf buffer, TypedMap context) {
+    public ShowInTooltips decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
       return deduplicate(ShowInTooltips.LOADABLE.decode(buffer, context));
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer, ShowInTooltips value) {
+    public void encode(RegistryFriendlyByteBuf buffer, ShowInTooltips value, TypedMap context) {
       ShowInTooltips.LOADABLE.encode(buffer, value);
     }
   }

@@ -1,12 +1,19 @@
 package slimeknights.tconstruct.tools.network;
 
+import net.minecraft.server.level.ServerPlayer;
+import slimeknights.tconstruct.TConstruct;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import slimeknights.mantle.network.ISimplePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
-// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 
-public class EntityMovementChangePacket implements IThreadsafePacket {
+public class EntityMovementChangePacket implements ISimplePacket {
+  public static final Type<EntityMovementChangePacket> TYPE = new Type<>(TConstruct.getResource("entity_movement_change"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, EntityMovementChangePacket> CODEC = StreamCodec.ofMember(EntityMovementChangePacket::encode, EntityMovementChangePacket::new);
+
   private final int entityID;
   private final double x;
   private final double y;
@@ -23,7 +30,7 @@ public class EntityMovementChangePacket implements IThreadsafePacket {
     this.xRot = entity.getXRot();
   }
 
-  public EntityMovementChangePacket(FriendlyByteBuf buffer) {
+  public EntityMovementChangePacket(RegistryFriendlyByteBuf buffer) {
     this.entityID = buffer.readInt();
     this.x = buffer.readDouble();
     this.y = buffer.readDouble();
@@ -32,8 +39,7 @@ public class EntityMovementChangePacket implements IThreadsafePacket {
     this.xRot = buffer.readFloat();
   }
 
-  @Override
-  public void encode(FriendlyByteBuf packetBuffer) {
+  public void encode(RegistryFriendlyByteBuf packetBuffer) {
     packetBuffer.writeInt(this.entityID);
     packetBuffer.writeDouble(this.x);
     packetBuffer.writeDouble(this.y);
@@ -43,8 +49,8 @@ public class EntityMovementChangePacket implements IThreadsafePacket {
   }
 
   @Override
-  public void handleThreadsafe(Context context) {
-    if (context.getSender() != null) {
+  public void handle(IPayloadContext context) {
+    if (((ServerPlayer) context.player()) != null) {
       HandleClient.handle(this);
     }
   }
@@ -60,5 +66,10 @@ public class EntityMovementChangePacket implements IThreadsafePacket {
         entity.setXRot(packet.xRot);
       }
     }
+  }
+
+  @Override
+  public Type<EntityMovementChangePacket> type() {
+    return TYPE;
   }
 }

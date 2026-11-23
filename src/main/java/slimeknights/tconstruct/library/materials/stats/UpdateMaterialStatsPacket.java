@@ -1,13 +1,15 @@
 package slimeknights.tconstruct.library.materials.stats;
 
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import slimeknights.mantle.network.ISimplePacket;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import org.apache.logging.log4j.Logger;
 import slimeknights.mantle.data.loadable.Loadable;
-// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.util.typed.TypedMapBuilder;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.materials.MaterialRegistry;
@@ -22,16 +24,19 @@ import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public class UpdateMaterialStatsPacket implements IThreadsafePacket {
+public class UpdateMaterialStatsPacket implements ISimplePacket {
+  public static final Type<UpdateMaterialStatsPacket> TYPE = new Type<>(TConstruct.getResource("update_material_stats"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, UpdateMaterialStatsPacket> CODEC = StreamCodec.ofMember(UpdateMaterialStatsPacket::encode, UpdateMaterialStatsPacket::new);
+
   private static final Logger log = Util.getLogger("NetworkSync");
 
   protected final Map<MaterialId, Collection<IMaterialStats>> materialToStats;
 
-  public UpdateMaterialStatsPacket(FriendlyByteBuf buffer) {
+  public UpdateMaterialStatsPacket(RegistryFriendlyByteBuf buffer) {
     this(buffer, MaterialRegistry.getInstance().getStatTypeLoader());
   }
 
-  public UpdateMaterialStatsPacket(FriendlyByteBuf buffer, Loadable<MaterialStatType<?>> statTypeLoader) {
+  public UpdateMaterialStatsPacket(RegistryFriendlyByteBuf buffer, Loadable<MaterialStatType<?>> statTypeLoader) {
     int materialCount = buffer.readInt();
     materialToStats = new HashMap<>(materialCount);
     for (int i = 0; i < materialCount; i++) {
@@ -53,8 +58,7 @@ public class UpdateMaterialStatsPacket implements IThreadsafePacket {
     }
   }
 
-  @Override
-  public void encode(FriendlyByteBuf buffer) {
+  public void encode(RegistryFriendlyByteBuf buffer) {
     buffer.writeInt(materialToStats.size());
     materialToStats.forEach((materialId, stats) -> {
       buffer.writeResourceLocation(materialId);
@@ -73,7 +77,7 @@ public class UpdateMaterialStatsPacket implements IThreadsafePacket {
    * @param material   Material being encoded
    */
   @SuppressWarnings("unchecked")
-  private <T extends IMaterialStats> void encodeStat(FriendlyByteBuf buffer, IMaterialStats stat, MaterialStatType<T> type, MaterialId material) {
+  private <T extends IMaterialStats> void encodeStat(RegistryFriendlyByteBuf buffer, IMaterialStats stat, MaterialStatType<T> type, MaterialId material) {
     try {
       MaterialStatsId.PARSER.encode(buffer, type.getId());
       type.getLoadable().encode(buffer, (T) stat);
@@ -84,7 +88,12 @@ public class UpdateMaterialStatsPacket implements IThreadsafePacket {
   }
 
   @Override
-  public void handleThreadsafe(Context context) {
+  public void handle(IPayloadContext context) {
     MaterialRegistry.updateMaterialStatsFromServer(this);
+  }
+
+  @Override
+  public Type<UpdateMaterialStatsPacket> type() {
+    return TYPE;
   }
 }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.nbt;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -167,7 +168,7 @@ public class StatsNBT {
   }
 
   /** Reads a tool definition stat object from a packet buffer */
-  public static StatsNBT fromNetwork(FriendlyByteBuf buffer) {
+  public static StatsNBT fromNetwork(RegistryFriendlyByteBuf buffer) {
     ImmutableMap.Builder<IToolStat<?>, Object> builder = ImmutableMap.builder();
     int max = buffer.readVarInt();
     for (int i = 0; i < max; i++) {
@@ -221,7 +222,7 @@ public class StatsNBT {
     }
 
     @Override
-    public void serialize(StatsNBT stats, JsonObject json) {
+    public void serializeInto(StatsNBT stats, JsonObject json, TypedMap context) {
       for (Entry<IToolStat<?>,Object> entry : stats.stats.entrySet()) {
         IToolStat<?> stat = entry.getKey();
         json.add(stat.getName().toString(), serialize(stat, entry.getValue()));
@@ -229,12 +230,12 @@ public class StatsNBT {
     }
 
     @Override
-    public StatsNBT decode(FriendlyByteBuf buffer, TypedMap context) {
+    public StatsNBT decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
       return StatsNBT.fromNetwork(buffer);
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer, StatsNBT stats) {
+    public void encode(RegistryFriendlyByteBuf buffer, StatsNBT stats, TypedMap context) {
       stats.toNetwork(buffer);
     }
   };

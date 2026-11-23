@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
@@ -15,13 +16,13 @@ public record NoFieldRecordLoadable<T>(Supplier<T> constructor) implements Recor
   }
 
   @Override
-  public void serialize(T object, JsonObject json) {}
+  public void serializeInto(T object, JsonObject json, TypedMap context) {}
 
   @Override
-  public T decode(FriendlyByteBuf buffer, TypedMap context) {
+  public T decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     return constructor.get();
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, T value) {}
+  public void encode(RegistryFriendlyByteBuf buffer, T value, TypedMap context) {}
 }

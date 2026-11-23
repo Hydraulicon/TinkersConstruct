@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.predicate.material;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
@@ -31,7 +32,7 @@ public record MaterialPredicateField<P>(String key, Function<P, IJsonPredicate<M
   }
 
   @Override
-  public void serialize(P parent, JsonObject json) {
+  public void serializeInto(P parent, JsonObject json, TypedMap context) {
     IJsonPredicate<MaterialVariantId> predicate = getter.apply(parent);
     if (predicate != MaterialPredicate.ANY) {
       // if compact serializing, serialize the legacy style predicate
@@ -61,12 +62,12 @@ public record MaterialPredicateField<P>(String key, Function<P, IJsonPredicate<M
   }
 
   @Override
-  public IJsonPredicate<MaterialVariantId> decode(FriendlyByteBuf buffer, TypedMap context) {
+  public IJsonPredicate<MaterialVariantId> decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     return MaterialPredicate.LOADER.decode(buffer, context);
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, P parent) {
+  public void encode(RegistryFriendlyByteBuf buffer, P parent, TypedMap context) {
     MaterialPredicate.LOADER.encode(buffer, getter.apply(parent));
   }
 }

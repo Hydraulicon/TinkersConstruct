@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.core.BlockPos;
@@ -357,7 +358,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
     }
 
     @Override
-    public void serialize(SmeltingModule module, JsonObject json) {
+    public void serializeInto(SmeltingModule module, JsonObject json, TypedMap context) {
       ResourceLocation key = module.output.key();
       if (key != null) {
         json.addProperty(key(), key.toString());
@@ -365,12 +366,12 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
     }
 
     @Override
-    public ResourceLocation decode(FriendlyByteBuf buffer, TypedMap context) {
+    public ResourceLocation decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
       return buffer.readResourceLocation();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer, SmeltingModule module) {
+    public void encode(RegistryFriendlyByteBuf buffer, SmeltingModule module, TypedMap context) {
       buffer.writeResourceLocation(Objects.requireNonNull(module.output.key()));
     }
   }

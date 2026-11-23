@@ -1,5 +1,10 @@
 package slimeknights.tconstruct.common.network;
 
+import slimeknights.tconstruct.TConstruct;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import slimeknights.mantle.network.ISimplePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -8,10 +13,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 // TODO 1.21 import: net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
-// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 
-public class InventorySlotSyncPacket implements IThreadsafePacket {
+public class InventorySlotSyncPacket implements ISimplePacket {
+  public static final Type<InventorySlotSyncPacket> TYPE = new Type<>(TConstruct.getResource("inventory_slot_sync"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, InventorySlotSyncPacket> CODEC = StreamCodec.ofMember(InventorySlotSyncPacket::encode, InventorySlotSyncPacket::new);
+
 
   public final ItemStack itemStack;
   public final int slot;
@@ -23,21 +29,20 @@ public class InventorySlotSyncPacket implements IThreadsafePacket {
     this.pos = pos;
   }
 
-  public InventorySlotSyncPacket(FriendlyByteBuf buffer) {
-    this.itemStack = buffer.readItem();
+  public InventorySlotSyncPacket(RegistryFriendlyByteBuf buffer) {
+    this.itemStack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
     this.slot = buffer.readShort();
     this.pos = buffer.readBlockPos();
   }
 
-  @Override
-  public void encode(FriendlyByteBuf packetBuffer) {
-    packetBuffer.writeItem(this.itemStack);
+  public void encode(RegistryFriendlyByteBuf packetBuffer) {
+    ItemStack.OPTIONAL_STREAM_CODEC.encode(packetBuffer, this.itemStack);
     packetBuffer.writeShort(this.slot);
     packetBuffer.writeBlockPos(this.pos);
   }
 
   @Override
-  public void handleThreadsafe(Context context) {
+  public void handle(IPayloadContext context) {
     HandleClient.handle(this);
   }
 
@@ -58,5 +63,10 @@ public class InventorySlotSyncPacket implements IThreadsafePacket {
         }
       }
     }
+  }
+
+  @Override
+  public Type<InventorySlotSyncPacket> type() {
+    return TYPE;
   }
 }

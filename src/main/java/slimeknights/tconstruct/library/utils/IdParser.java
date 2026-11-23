@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.utils;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -47,12 +48,12 @@ public record IdParser<T extends ResourceLocation>(Function<String, T> construct
   }
 
   @Override
-  public T decode(FriendlyByteBuf buf, TypedMap context) {
+  public T decode(RegistryFriendlyByteBuf buf, TypedMap context) {
     return constructor.apply(buf.readUtf(Short.MAX_VALUE));
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, T object) throws EncoderException {
+  public void encode(RegistryFriendlyByteBuf buffer, T object, TypedMap context) throws EncoderException {
     buffer.writeResourceLocation(object);
   }
 

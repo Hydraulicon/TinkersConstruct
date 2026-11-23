@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.core.NonNullList;
@@ -156,14 +157,14 @@ public class ShapedMaterialRecipe extends ShapedRecipe {
 
     @Override
     @Nullable
-    public ShapedMaterialRecipe fromNetworkSafe(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public ShapedMaterialRecipe fromNetworkSafe(ResourceLocation recipeId, RegistryFriendlyByteBuf buffer) {
       ShapedRecipe recipe = SHAPED_RECIPE.fromNetwork(recipeId, buffer);
       List<MaterialVariantId> extraMaterials = MATERIAL_FIELD.decode(buffer);
       return recipe == null ? null : new ShapedMaterialRecipe(recipe, extraMaterials);
     }
 
     @Override
-    public void toNetworkSafe(FriendlyByteBuf buffer, ShapedMaterialRecipe recipe) {
+    public void toNetworkSafe(RegistryFriendlyByteBuf buffer, ShapedMaterialRecipe recipe) {
       SHAPED_RECIPE.toNetwork(buffer, recipe);
       MATERIAL_FIELD.encode(buffer, recipe);
     }

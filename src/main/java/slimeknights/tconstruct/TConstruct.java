@@ -100,7 +100,6 @@ public class TConstruct {
     instance = this;
 
     Config.init(container);
-    TinkerItemDisplays.init();
     MaterialRegistry.init();
 
     // initialize modules, done this way rather than with annotations to give us control over the order
@@ -125,7 +124,7 @@ public class TConstruct {
     // init deferred registers
     TinkerModule.initRegisters(bus);
     registerAliases();
-    TinkerNetwork.setup();
+    TinkerNetwork.setup(bus);
     TinkerTags.init();
     // init client logic
     if (FMLEnvironment.dist == Dist.CLIENT) {

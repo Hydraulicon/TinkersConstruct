@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.behavior;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,7 +31,7 @@ public record AttributeUniqueField<P>(String key, Function<P,String> getter) imp
   }
 
   @Override
-  public void serialize(P parent, JsonObject json) {
+  public void serializeInto(P parent, JsonObject json, TypedMap context) {
     String unique = getter.apply(parent);
     if (!unique.isEmpty()) {
       json.addProperty(key, unique);
@@ -38,12 +39,12 @@ public record AttributeUniqueField<P>(String key, Function<P,String> getter) imp
   }
 
   @Override
-  public String decode(FriendlyByteBuf buffer, TypedMap typedMap) {
+  public String decode(RegistryFriendlyByteBuf buffer, TypedMap typedMap) {
     return buffer.readUtf();
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, P parent) {
+  public void encode(RegistryFriendlyByteBuf buffer, P parent, TypedMap context) {
     buffer.writeUtf(getter.apply(parent));
   }
 }

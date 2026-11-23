@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
@@ -226,7 +227,7 @@ public class MaterialIngredient extends NestedIngredient {
     }
 
     @Override
-    public MaterialIngredient parse(FriendlyByteBuf buffer) {
+    public MaterialIngredient parse(RegistryFriendlyByteBuf buffer) {
       return new MaterialIngredient(
         Ingredient.fromNetwork(buffer),
         MATERIAL_FIELD.decode(buffer)
@@ -234,7 +235,7 @@ public class MaterialIngredient extends NestedIngredient {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer, MaterialIngredient ingredient) {
+    public void write(RegistryFriendlyByteBuf buffer, MaterialIngredient ingredient) {
       ingredient.nested.toNetwork(buffer);
       MATERIAL_FIELD.encode(buffer, ingredient);
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.menu;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -90,13 +91,13 @@ public class ToolContainerMenu extends AbstractContainerMenu {
   }
 
   /** Creates a new instance of this container on the client side */
-  public static ToolContainerMenu forClient(int id, Inventory inventory, FriendlyByteBuf buffer) {
+  public static ToolContainerMenu forClient(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
     int slotIndex = buffer.readVarInt();
     ToolSyncType syncType = buffer.readEnum(ToolSyncType.class);
     // when syncing the full stack, overwrite the spot in the inventory
     ItemStack stack;
     if (syncType == ToolSyncType.FULL_STACK) {
-      stack = buffer.readItem();
+      stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
       inventory.setItem(slotIndex, stack);
     } else {
       stack = inventory.getItem(slotIndex);

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.layout;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -61,12 +62,12 @@ public abstract class LayoutIcon {
   public abstract <T> T getValue(Class<T> clazz);
 
   /** Reads the button icon from the buffer */
-  public static LayoutIcon read(FriendlyByteBuf buffer) {
+  public static LayoutIcon read(RegistryFriendlyByteBuf buffer) {
     Type type = buffer.readEnum(Type.class);
     switch (type) {
       case EMPTY: return EMPTY;
       case ITEM: {
-        ItemStack stack = buffer.readItem();
+        ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
         return new ItemStackIcon(stack);
       }
       case PATTERN: {
@@ -98,9 +99,9 @@ public abstract class LayoutIcon {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
       buffer.writeEnum(Type.ITEM);
-      buffer.writeItem(stack);
+      ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, stack);
     }
 
     @Override

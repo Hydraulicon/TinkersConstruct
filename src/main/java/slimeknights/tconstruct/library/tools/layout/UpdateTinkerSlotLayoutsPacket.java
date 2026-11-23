@@ -1,13 +1,16 @@
 package slimeknights.tconstruct.library.tools.layout;
 
+import slimeknights.tconstruct.TConstruct;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import slimeknights.mantle.network.ISimplePacket;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.FriendlyByteBuf;
-// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
-// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 
 import java.util.Collection;
 
@@ -15,11 +18,14 @@ import java.util.Collection;
  * Packet to update the slot layouts for the tinker station
  */
 @RequiredArgsConstructor
-public class UpdateTinkerSlotLayoutsPacket implements IThreadsafePacket {
+public class UpdateTinkerSlotLayoutsPacket implements ISimplePacket {
+  public static final Type<UpdateTinkerSlotLayoutsPacket> TYPE = new Type<>(TConstruct.getResource("update_tinker_slot_layouts"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, UpdateTinkerSlotLayoutsPacket> CODEC = StreamCodec.ofMember(UpdateTinkerSlotLayoutsPacket::encode, UpdateTinkerSlotLayoutsPacket::new);
+
   @Getter(AccessLevel.PACKAGE) @VisibleForTesting
   private final Collection<StationSlotLayout> layouts;
 
-  public UpdateTinkerSlotLayoutsPacket(FriendlyByteBuf buffer) {
+  public UpdateTinkerSlotLayoutsPacket(RegistryFriendlyByteBuf buffer) {
     ImmutableList.Builder<StationSlotLayout> builder = ImmutableList.builder();
     int max = buffer.readVarInt();
     for (int i = 0; i < max; i++) {
@@ -28,8 +34,7 @@ public class UpdateTinkerSlotLayoutsPacket implements IThreadsafePacket {
     layouts = builder.build();
   }
 
-  @Override
-  public void encode(FriendlyByteBuf buffer) {
+  public void encode(RegistryFriendlyByteBuf buffer) {
     buffer.writeVarInt(layouts.size());
     for (StationSlotLayout layout : layouts) {
       layout.write(buffer);
@@ -37,7 +42,12 @@ public class UpdateTinkerSlotLayoutsPacket implements IThreadsafePacket {
   }
 
   @Override
-  public void handleThreadsafe(Context context) {
+  public void handle(IPayloadContext context) {
     StationSlotLayoutLoader.getInstance().setSlots(layouts);
+  }
+
+  @Override
+  public Type<UpdateTinkerSlotLayoutsPacket> type() {
+    return TYPE;
   }
 }

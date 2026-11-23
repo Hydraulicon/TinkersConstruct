@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.field;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -44,7 +45,7 @@ public record MergingListField<T,P>(LoadableField<T,T> field, String key, Functi
   }
 
   @Override
-  public void serialize(P parent, JsonObject json) {
+  public void serializeInto(P parent, JsonObject json, TypedMap context) {
     List<T> objects = getter.apply(parent);
     if (json.has(key)) {
       JsonArray array = GsonHelper.getAsJsonArray(json, key);
@@ -60,7 +61,7 @@ public record MergingListField<T,P>(LoadableField<T,T> field, String key, Functi
   }
 
   @Override
-  public List<T> decode(FriendlyByteBuf buffer, TypedMap context) {
+  public List<T> decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     ImmutableList.Builder<T> builder = ImmutableList.builder();
     int size = buffer.readVarInt();
     for (int i = 0; i < size; i++) {
@@ -70,7 +71,7 @@ public record MergingListField<T,P>(LoadableField<T,T> field, String key, Functi
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, P parent) {
+  public void encode(RegistryFriendlyByteBuf buffer, P parent, TypedMap context) {
     List<T> list = getter.apply(parent);
     buffer.writeVarInt(list.size());
     for (T value : list) {

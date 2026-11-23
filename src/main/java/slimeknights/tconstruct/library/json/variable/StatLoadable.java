@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.json.variable;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -106,7 +107,7 @@ public enum StatLoadable implements Loadable<Stat<?>> {
 
   @SuppressWarnings("deprecation")
   @Override
-  public Stat<?> decode(FriendlyByteBuf buffer, TypedMap context) {
+  public Stat<?> decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     return decodeValue(buffer, decodeRegistry(buffer, BuiltInRegistries.STAT_TYPE));
   }
 
@@ -116,7 +117,7 @@ public enum StatLoadable implements Loadable<Stat<?>> {
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, Stat<?> value) {
+  public void encode(RegistryFriendlyByteBuf buffer, Stat<?> value, TypedMap context) {
     encodeGeneric(buffer, value);
   }
 

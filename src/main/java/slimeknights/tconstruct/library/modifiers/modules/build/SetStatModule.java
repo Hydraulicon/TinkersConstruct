@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.build;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +70,7 @@ public record SetStatModule<T>(IToolStat<T> stat, T value, ModifierCondition<ITo
     }
 
     @Override
-    public void serialize(SetStatModule<?> object, JsonObject json) {
+    public void serializeInto(SetStatModule<?> object, JsonObject json, TypedMap context) {
       ModifierCondition.CONTEXT_FIELD.serialize(object, json);
       json.add("stat", ToolStats.LOADER.serialize(object.stat));
       serializeValue(object, json);
@@ -81,12 +82,12 @@ public record SetStatModule<T>(IToolStat<T> stat, T value, ModifierCondition<ITo
     }
 
     @Override
-    public SetStatModule<?> decode(FriendlyByteBuf buffer, TypedMap context) {
+    public SetStatModule<?> decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
       return decode(buffer, ToolStats.LOADER.decode(buffer, context), context);
     }
 
     /** Handles generics for reading the value from network */
-    private static <T> SetStatModule<T> decode(FriendlyByteBuf buffer, IToolStat<T> stat, TypedMap context) {
+    private static <T> SetStatModule<T> decode(RegistryFriendlyByteBuf buffer, IToolStat<T> stat, TypedMap context) {
       return new SetStatModule<>(
         stat, stat.fromNetwork(buffer),
         ModifierCondition.CONTEXT_FIELD.decode(buffer, context)
@@ -94,7 +95,7 @@ public record SetStatModule<T>(IToolStat<T> stat, T value, ModifierCondition<ITo
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer, SetStatModule<?> object) {
+    public void encode(RegistryFriendlyByteBuf buffer, SetStatModule<?> object, TypedMap context) {
       ToolStats.LOADER.encode(buffer, object.stat);
       writeValue(object, buffer);
       ModifierCondition.CONTEXT_FIELD.encode(buffer, object);

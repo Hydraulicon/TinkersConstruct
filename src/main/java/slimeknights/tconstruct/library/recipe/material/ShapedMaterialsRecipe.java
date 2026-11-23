@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
@@ -195,14 +196,14 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
     @SuppressWarnings("Java8ListReplaceAll")
     @Override
     @Nullable
-    public ShapedMaterialsRecipe fromNetworkSafe(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+    public ShapedMaterialsRecipe fromNetworkSafe(ResourceLocation recipeId, RegistryFriendlyByteBuf buffer) {
       // shaped syncing
       int width = buffer.readVarInt();
       int height = buffer.readVarInt();
       String group = buffer.readUtf();
       CraftingBookCategory category = buffer.readEnum(CraftingBookCategory.class);
       // skipping ingredients for now
-      ItemStack result = buffer.readItem();
+      ItemStack result = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
       boolean showNotification = buffer.readBoolean();
       // fetch remaining non-ingredient elements
       List<MaterialVariantId> extraMaterials = MATERIAL_FIELD.decode(buffer);
@@ -229,14 +230,14 @@ public class ShapedMaterialsRecipe extends ShapedRecipe implements MaterialsCraf
     }
 
     @Override
-    public void toNetworkSafe(FriendlyByteBuf buffer, ShapedMaterialsRecipe recipe) {
+    public void toNetworkSafe(RegistryFriendlyByteBuf buffer, ShapedMaterialsRecipe recipe) {
       // standard shaped recipe stuff
       buffer.writeVarInt(recipe.getWidth());
       buffer.writeVarInt(recipe.getHeight());
       buffer.writeUtf(recipe.getGroup());
       buffer.writeEnum(recipe.category());
       // skipping ingredients for now
-      buffer.writeItem(recipe.result);
+      ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.result);
       buffer.writeBoolean(recipe.showNotification());
       // sync remaining non-ingredient elements
       MATERIAL_FIELD.encode(buffer, recipe);

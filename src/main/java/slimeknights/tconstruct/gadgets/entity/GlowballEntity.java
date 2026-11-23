@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.gadgets.entity;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,7 +16,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
-// TODO 1.21 import: net.minecraftforge.network.NetworkHooks;
 import slimeknights.tconstruct.gadgets.TinkerGadgets;
 import slimeknights.tconstruct.shared.TinkerCommons;
 
@@ -71,17 +72,12 @@ public class GlowballEntity extends ThrowableItemProjectile implements IEntityWi
 
   @Override
   public void writeSpawnData(FriendlyByteBuf buffer) {
-    buffer.writeItem(this.getItemRaw());
+    ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, this.getItemRaw());
   }
 
   @Override
-  public void readSpawnData(FriendlyByteBuf additionalData) {
-    this.setItem(additionalData.readItem());
+  public void readSpawnData(RegistryFriendlyByteBuf additionalData) {
+    this.setItem(ItemStack.OPTIONAL_STREAM_CODEC.decode(additionalData));
   }
 
-  @Nonnull
-  @Override
-  public Packet<ClientGamePacketListener> getAddEntityPacket() {
-    return NetworkHooks.getEntitySpawningPacket(this);
-  }
 }

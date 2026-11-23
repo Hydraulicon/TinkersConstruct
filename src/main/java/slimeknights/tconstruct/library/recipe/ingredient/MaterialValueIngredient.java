@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
@@ -165,7 +166,7 @@ public class MaterialValueIngredient extends AbstractIngredient {
     }
 
     @Override
-    public MaterialValueIngredient parse(FriendlyByteBuf buffer) {
+    public MaterialValueIngredient parse(RegistryFriendlyByteBuf buffer) {
       return new MaterialValueIngredient(
         MATERIAL_FIELD.decode(buffer),
         buffer.readFloat(),
@@ -174,7 +175,7 @@ public class MaterialValueIngredient extends AbstractIngredient {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer, MaterialValueIngredient ingredient) {
+    public void write(RegistryFriendlyByteBuf buffer, MaterialValueIngredient ingredient) {
       MATERIAL_FIELD.encode(buffer, ingredient);
       buffer.writeFloat(ingredient.minValue);
       buffer.writeFloat(ingredient.maxValue);

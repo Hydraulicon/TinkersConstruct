@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.materials;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
@@ -35,7 +36,7 @@ enum MaterialTextureField implements RecordField<ResourceLocation, MaterialRende
   }
 
   @Override
-  public void serialize(MaterialRenderInfo parent, JsonObject json) {
+  public void serializeInto(MaterialRenderInfo parent, JsonObject json, TypedMap context) {
     ResourceLocation texture = parent.texture();
     if (texture == null) {
       json.add("texture", JsonNull.INSTANCE);
@@ -56,7 +57,7 @@ enum MaterialTextureField implements RecordField<ResourceLocation, MaterialRende
 
   @Nullable
   @Override
-  public ResourceLocation decode(FriendlyByteBuf buffer, TypedMap context) {
+  public ResourceLocation decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
     return switch (buffer.readEnum(TextureType.class)) {
       case NONE -> null;
       case DEFAULT -> Objects.requireNonNull(context.get(MaterialVariantId.CONTEXT_KEY)).getLocation('_');
@@ -65,7 +66,7 @@ enum MaterialTextureField implements RecordField<ResourceLocation, MaterialRende
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer, MaterialRenderInfo parent) {
+  public void encode(RegistryFriendlyByteBuf buffer, MaterialRenderInfo parent, TypedMap context) {
     ResourceLocation texture = parent.texture();
     // save some network traffic if the texture is the ID, since we already need an extra byte to specify null
     if (texture == null) {

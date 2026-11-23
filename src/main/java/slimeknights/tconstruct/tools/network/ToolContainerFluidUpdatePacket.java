@@ -1,29 +1,39 @@
 package slimeknights.tconstruct.tools.network;
 
+import slimeknights.tconstruct.TConstruct;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import slimeknights.mantle.network.ISimplePacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.fluids.FluidStack;
-// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.client.SafeClientAccess;
-// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.tconstruct.tools.menu.ToolContainerMenu;
 
 /** Packet used when a fluid is changed inside a tool container menu */
-public record ToolContainerFluidUpdatePacket(FluidStack fluid) implements IThreadsafePacket {
-  public ToolContainerFluidUpdatePacket(FriendlyByteBuf buffer) {
-    this(buffer.readFluidStack());
+public record ToolContainerFluidUpdatePacket(FluidStack fluid) implements ISimplePacket {
+  public static final Type<ToolContainerFluidUpdatePacket> TYPE = new Type<>(TConstruct.getResource("tool_container_fluid_update"));
+  public static final StreamCodec<RegistryFriendlyByteBuf, ToolContainerFluidUpdatePacket> CODEC = StreamCodec.ofMember(ToolContainerFluidUpdatePacket::encode, ToolContainerFluidUpdatePacket::new);
+
+  public ToolContainerFluidUpdatePacket(RegistryFriendlyByteBuf buffer) {
+    this(FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer));
+  }
+
+  public void encode(RegistryFriendlyByteBuf buffer) {
+    FluidStack.OPTIONAL_STREAM_CODEC.encode(buffer, fluid);
   }
 
   @Override
-  public void encode(FriendlyByteBuf buffer) {
-    buffer.writeFluidStack(fluid);
-  }
-
-  @Override
-  public void handleThreadsafe(Context context) {
+  public void handle(IPayloadContext context) {
     Player player = SafeClientAccess.getPlayer();
     if (player != null && player.containerMenu instanceof ToolContainerMenu toolMenu) {
       toolMenu.getTank().setFluid(fluid);
     }
+  }
+
+  @Override
+  public Type<ToolContainerFluidUpdatePacket> type() {
+    return TYPE;
   }
 }
