@@ -769,7 +769,7 @@ public class ItemTagProvider extends ItemTagsProvider {
 
   @SafeVarargs
   private void optionalToolTags(IdAwareObject tool, TagKey<Item>... tags) {
-    ResourceLocation id = tool.getId();
+    ResourceLocation id = tool.id();
     for (TagKey<Item> tag : tags) {
       this.tag(tag).addOptional(id);
     }

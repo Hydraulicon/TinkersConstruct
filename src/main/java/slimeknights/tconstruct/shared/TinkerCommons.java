@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.shared;
 
+import net.neoforged.neoforge.common.conditions.ICondition;
+import com.mojang.serialization.MapCodec;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -55,11 +57,7 @@ import slimeknights.tconstruct.common.json.BlockOrEntityCondition;
 import slimeknights.tconstruct.common.json.ConfigEnabledCondition;
 import slimeknights.tconstruct.common.recipe.RecipeCacheInvalidator;
 import slimeknights.tconstruct.gadgets.TinkerGadgets;
-import slimeknights.tconstruct.library.json.condition.TagDifferencePresentCondition;
-import slimeknights.tconstruct.library.json.condition.TagIntersectionPresentCondition;
-import slimeknights.tconstruct.library.json.condition.TagNotEmptyCondition;
 import slimeknights.tconstruct.library.json.loot.HasLootContextSetCondition;
-import slimeknights.tconstruct.library.json.loot.TagPreferenceLootEntry;
 import slimeknights.tconstruct.library.json.predicate.BlockAtFeetEntityPredicate;
 import slimeknights.tconstruct.library.json.predicate.BlockVariableRangePredicate;
 import slimeknights.tconstruct.library.json.predicate.EntityVariableRangePredicate;
@@ -163,17 +161,10 @@ public final class TinkerCommons extends TinkerModule {
   public static final DeferredHolder<ParticleType<?>, ParticleType<FluidParticleData>> fluidParticle = PARTICLE_TYPES.register("fluid", FluidParticleData.Type::new);
 
   /* Loot conditions */
-  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> lootConfig = LOOT_CONDITIONS.register(ConfigEnabledCondition.ID.getPath(), () -> new LootItemConditionType(ConfigEnabledCondition.SERIALIZER));
-  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> lootBlockOrEntity = LOOT_CONDITIONS.register("block_or_entity", () -> new LootItemConditionType(new BlockOrEntityCondition.ConditionSerializer()));
-  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> hasLootContextSet = LOOT_CONDITIONS.register("has_context_set", () -> new LootItemConditionType(new HasLootContextSetCondition.Serializer()));
-  /** @deprecated use {@link slimeknights.mantle.loot.MantleLoot#TAG_FILLED} */
-  @SuppressWarnings("removal")
-  @Deprecated(forRemoval = true)
-  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> lootTagNotEmptyCondition = LOOT_CONDITIONS.register("tag_not_empty", () -> new LootItemConditionType(new TagNotEmptyCondition.ConditionSerializer()));
-  /** @deprecated use {@link slimeknights.mantle.loot.MantleLoot#TAG_PREFERENCE} */
-  @SuppressWarnings("removal")
-  @Deprecated(forRemoval = true)
-  public static final DeferredHolder<LootPoolEntryType, LootPoolEntryType> lootTagPreference = LOOT_ENTRIES.register("tag_preference", () -> new LootPoolEntryType(new TagPreferenceLootEntry.Serializer()));
+  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> lootConfig = LOOT_CONDITIONS.register(ConfigEnabledCondition.ID.getPath(), ConfigEnabledCondition.CODEC);
+  public static final DeferredHolder<MapCodec<? extends ICondition>, MapCodec<ConfigEnabledCondition>> configCondition = CONDITION_CODECS.register(ConfigEnabledCondition.ID.getPath(), () -> ConfigEnabledCondition.CODEC);
+  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> lootBlockOrEntity = LOOT_CONDITIONS.register("block_or_entity", BlockOrEntityCondition.CODEC);
+  public static final DeferredHolder<LootItemConditionType, LootItemConditionType> hasLootContextSet = LOOT_CONDITIONS.register("has_context_set", HasLootContextSetCondition.CODEC);
 
   /* Slime Balls are edible, believe it or not */
   public static final EnumObject<SlimeType, Item> slimeball = new EnumObject.Builder<SlimeType, Item>(SlimeType.class)
@@ -200,15 +191,8 @@ public final class TinkerCommons extends TinkerModule {
       CraftingHelper.register(NoContainerIngredient.ID, NoContainerIngredient.Serializer.INSTANCE);
       CraftingHelper.register(BlockTagIngredient.Serializer.ID, BlockTagIngredient.Serializer.INSTANCE);
       CraftingHelper.register(InstrumentIngredient.ID, InstrumentIngredient.SERIALIZER);
-      CraftingHelper.register(ConfigEnabledCondition.SERIALIZER);
       CriteriaTriggers.register(CONTAINER_OPENED_TRIGGER);
 
-      //noinspection removal
-      CraftingHelper.register(TagIntersectionPresentCondition.SERIALIZER);
-      //noinspection removal
-      CraftingHelper.register(TagDifferencePresentCondition.SERIALIZER);
-      //noinspection removal
-      CraftingHelper.register(new TagNotEmptyCondition.ConditionSerializer());
       // mantle
       DamageSourcePredicate.LOADER.register(getResource("direct"), TinkerPredicate.DIRECT_DAMAGE.getLoader());
       // entity

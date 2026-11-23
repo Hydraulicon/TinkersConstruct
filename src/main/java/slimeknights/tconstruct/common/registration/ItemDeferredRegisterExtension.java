@@ -44,6 +44,6 @@ public class ItemDeferredRegisterExtension extends ItemDeferredRegister {
    * @return  Object containing casts
    */
   public CastItemObject registerCast(ItemObject<Item, ? extends IMaterialItem> item, Item.Properties props) {
-    return registerCast(item.getId().getPath(), () -> new PartCastItem(props, item));
+    return registerCast(item.id().getPath(), () -> new PartCastItem(props, item));
   }
 }

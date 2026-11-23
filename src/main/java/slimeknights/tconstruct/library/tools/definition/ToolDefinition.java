@@ -22,6 +22,12 @@ public class ToolDefinition implements IdAwareObject {
 
   @Getter
   private final ResourceLocation id;
+
+  /** Same as {@code getId()}, required by {@link IdAwareObject} as of Mantle 1.21 */
+  @Override
+  public ResourceLocation id() {
+    return id;
+  }
   /** Base data loaded from JSON, contains stats, traits, and starting slots */
   @Getter
   protected ToolDefinitionData data = ToolDefinitionData.EMPTY;

@@ -18,7 +18,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.ICondition.IContext;
-// TODO 1.21 import: slimeknights.mantle.data.gson.ConditionSerializer;
+import slimeknights.mantle.data.gson.CodecSerializer;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.exception.TinkerJSONException;
 import slimeknights.tconstruct.library.json.JsonRedirect;
@@ -63,7 +63,7 @@ public class MaterialManager extends SimpleJsonResourceReloadListener {
   /** GSON for loading materials */
   public static final Gson GSON = (new GsonBuilder())
     .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-    .registerTypeHierarchyAdapter(ICondition.class, ConditionSerializer.INSTANCE)
+    .registerTypeHierarchyAdapter(ICondition.class, CodecSerializer.CONDITION)
     .setPrettyPrinting()
     .disableHtmlEscaping()
     .create();

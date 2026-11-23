@@ -241,3 +241,51 @@ def upgrade_buffers(errs):
 
 if __name__ == '__main__' and sys.argv[2] == 'upgrade-buffers':
     upgrade_buffers(parse(sys.argv[1]))
+
+
+def split_call_args(s, start):
+    """s[start] == '('; returns (args, index after ')') respecting nesting and strings"""
+    depth, i, args, cur = 0, start, [], start + 1
+    while i < len(s):
+        ch = s[i]
+        if ch in '"\'':
+            q = ch; i += 1
+            while s[i] != q: i += 2 if s[i] == '\\' else 1
+        elif ch in '([{': depth += 1
+        elif ch in ')]}':
+            depth -= 1
+            if depth == 0:
+                args.append(s[cur:i]); return args, i + 1
+        elif ch == ',' and depth == 1:
+            args.append(s[cur:i]); cur = i + 1
+        i += 1
+    return None, None
+
+
+def fluidstack_copy(errs):
+    """new FluidStack(FluidStack, int) -> stack.copyWithAmount(int), at lines javac reports"""
+    edits = collections.defaultdict(set)
+    for e in errs:
+        if e['msg'].startswith('no suitable constructor found for FluidStack(FluidStack,int)'): edits[e['file']].add(e['line'])
+    n = 0
+    for f, lines in edits.items():
+        src = open(f, encoding='utf-8').read()
+        starts = [0]
+        for l in src.split('\n'): starts.append(starts[-1] + len(l) + 1)
+        reps = []
+        for line in lines:
+            for m in re.finditer(r'new FluidStack\(', src[starts[line - 1]:starts[line]]):
+                k = starts[line - 1] + m.end() - 1
+                args, end = split_call_args(src, k)
+                if args and len(args) == 2:
+                    first = args[0].strip()
+                    if not re.fullmatch(r'[\w.()]+', first): first = '(' + first + ')'
+                    reps.append((starts[line - 1] + m.start(), end, f'{first}.copyWithAmount({args[1].strip()})'))
+        for a, b, r in sorted(reps, reverse=True):
+            src = src[:a] + r + src[b:]; n += 1
+        open(f, 'w', encoding='utf-8').write(src)
+    print(f'{n} FluidStack copies rewritten')
+
+
+if __name__ == '__main__' and sys.argv[2] == 'fluidstack-copy':
+    fluidstack_copy(parse(sys.argv[1]))

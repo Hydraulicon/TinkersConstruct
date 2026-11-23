@@ -22,6 +22,12 @@ public class MaterialStatType<T extends IMaterialStats> implements IdAwareObject
   public static final ContextKey<MaterialStatType<?>> CONTEXT_KEY = new ContextKey<>("material_stat_type");
 
   private final MaterialStatsId id;
+
+  /** Same as {@code getId()}, required by {@link IdAwareObject} as of Mantle 1.21 */
+  @Override
+  public MaterialStatsId id() {
+    return id;
+  }
   private final T defaultStats;
   private final RecordLoadable<T> loadable;
   @Accessors(fluent = true)

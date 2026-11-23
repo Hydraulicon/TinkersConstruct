@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.materials.definition;
 
+import net.minecraft.network.codec.StreamCodec;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -28,7 +29,7 @@ public sealed interface MaterialVariantId permits MaterialId, MaterialVariantIdI
     return location;
   }, (id, error) -> id.toString());
   ContextKey<MaterialVariantId> CONTEXT_KEY = new ContextKey<>("material_variant");
-  EntityDataSerializer<MaterialVariantId> DATA_ACCESSOR = EntityDataSerializer.simple((buffer, material) -> material.toNetwork(buffer), MaterialVariantId::fromNetwork);
+  EntityDataSerializer<MaterialVariantId> DATA_ACCESSOR = EntityDataSerializer.forValueType(StreamCodec.of((buffer, material) -> material.toNetwork(buffer), MaterialVariantId::fromNetwork));
 
   /** Variant ID that will match normal {@link MaterialId} with no variant, to allow checking for non-variant materials specifically. */
   String DEFAULT_VARIANT = "default";

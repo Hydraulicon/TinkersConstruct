@@ -277,7 +277,7 @@ public class AdvancementsProvider extends GenericDataProvider {
       builder.requirements(RequirementsStrategy.OR);
     });
     builder(TinkerTools.veinHammer.get().getRenderTool(), resource("smeltery/tool_forge"), anvil, AdvancementType.CHALLENGE, builder -> {
-      Consumer<ItemObject<?, ?>> with = item -> builder.addCriterion(item.getId().getPath(), hasItem(item));
+      Consumer<ItemObject<?, ?>> with = item -> builder.addCriterion(item.id().getPath(), hasItem(item));
       with.accept(TinkerTools.sledgeHammer);
       with.accept(TinkerTools.veinHammer);
       with.accept(TinkerTools.excavator);
@@ -468,7 +468,7 @@ public class AdvancementsProvider extends GenericDataProvider {
       with.accept(MaterialIds.knightmetal);
     });
     builder(TinkerTools.battlesign.get().getRenderTool(), resource("world/ancient_tools"), tinkersGadgetry, AdvancementType.CHALLENGE, builder -> {
-      Consumer<ItemObject<?, ?>> with = item -> builder.addCriterion(item.getId().getPath(), hasItem(item));
+      Consumer<ItemObject<?, ?>> with = item -> builder.addCriterion(item.id().getPath(), hasItem(item));
       with.accept(TinkerTools.meltingPan);
       with.accept(TinkerTools.warPick);
       with.accept(TinkerTools.battlesign);

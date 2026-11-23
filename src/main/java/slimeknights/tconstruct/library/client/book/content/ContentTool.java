@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import net.minecraft.locale.Language;
 import net.minecraft.core.registries.BuiltInRegistries;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -19,7 +20,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-// TODO 1.21 import: net.neoforged.fml.I18nExtension;
 // TODO 1.21 import: net.minecraftforge.common.crafting.IShapedRecipe;
 import slimeknights.mantle.client.book.HTMLUtils;
 import slimeknights.mantle.client.book.data.BookData;
@@ -112,7 +112,7 @@ public class ContentTool extends PageContent {
   public ContentTool(IModifiableDisplay tool) {
     this.tool = tool;
     this.toolName = Loadables.ITEM.getKey(tool.asItem()).toString();
-    this.text = new TextData[] { new TextData(I18nExtension.getPattern(tool.asItem().getDescriptionId() + ".description"))};
+    this.text = new TextData[] { new TextData(Language.getInstance().getOrDefault(tool.asItem().getDescriptionId() + ".description"))};
   }
 
   public ContentTool(Item item) {
@@ -122,7 +122,7 @@ public class ContentTool extends PageContent {
     } else {
       this.tool = new Fallback(item);
     }
-    this.text = new TextData[] { new TextData(I18nExtension.getPattern(tool.asItem().getDescriptionId() + ".description"))};
+    this.text = new TextData[] { new TextData(Language.getInstance().getOrDefault(tool.asItem().getDescriptionId() + ".description"))};
   }
 
   @SuppressWarnings("removal")

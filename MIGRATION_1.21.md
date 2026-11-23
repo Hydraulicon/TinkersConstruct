@@ -1,6 +1,6 @@
 # Port plan: Minecraft 1.20.1 (Forge) → 1.21.1 (NeoForge)
 
-Status: **Phases 0 and 1 complete.** The tool-data approach (two steps, below) is approved.
+Status: **Phases 0 and 1 complete; phase 2 in progress.** The tool-data approach (two steps, below) is approved.
 
 ## Workspace setup (during the port)
 ```
@@ -136,6 +136,25 @@ Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tool
 - Recipes: `Container` → `RecipeInput` implementations for the tinker station, part builder, casting, melting, alloying and modifier recipes.
 - Attribute modifiers: UUIDs → `ResourceLocation` ids.
 - Enchantment-related modifiers and hooks: adapt to data-driven `Holder<Enchantment>`.
+
+- **Progress so far** (errors 17,014 → 4,380). Porting notes and helper scripts are in `project_files/port_1.21/MANTLE_API.md`.
+  - **Build unblocked for Lombok.** javac skips annotation processing after certain early errors, which hid every Lombok member.
+    Fixed with `-XDshould-stop.ifError=FLOW` (temporary) and by stubbing unresolvable imports with `// TODO 1.21 import:` markers.
+  - **Typed IDs:** `ResourceLocation` is final in 1.21. The AT removes `final` and widens its constructor, so `MaterialId`, `ModifierId`,
+    `MaterialStatsId`, `ToolStatId` and `Pattern` keep extending it (decided with the user over a wrapper redesign).
+  - **Registration:** `DeferredHolder`/`DeferredItem`/`DeferredBlock`, Mantle's specialized registers, the injected mod event bus,
+    and registry aliases instead of missing mappings.
+  - **Networking:** all 30 packets are `CustomPacketPayload`s; `TinkerNetwork` is a facade over `PacketDistributor` (network version 6).
+  - **Conditions:** codec based. `ConfigEnabledCondition` serves both recipe and loot conditions. The deprecated-for-removal
+    `TagNotEmptyCondition`, `TagIntersectionPresentCondition`, `TagDifferencePresentCondition` and `TagPreferenceLootEntry` were removed
+    in favour of their Mantle replacements; the books now use `mantle:tag_filled`.
+  - **Item display contexts** are enum extensions (`META-INF/enumextensions.json`). Serialized names are unchanged.
+  - **Block positions in NBT:** 1.21 writes them as int arrays. `TagUtil.readPos` reads both that and the 1.20 compound format,
+    so block entities from 1.20 worlds still load their multiblock state.
+  - `TinkerToolEvent` has its own `Result` enum, because NeoForge removed event results.
+  - Fixed while porting: `JsonRedirect` parsed its whole object as the condition instead of the nested `condition` field.
+- **Remaining in phase 2:** loot functions and entries (`MapCodec`), harvest tiers (`TierSortingRegistry` removed in 1.21), `CustomExplosion`,
+  the tool data component, recipes (`RecipeInput`, `RecipeHolder`, Mantle's new serializers), and modifier hooks (enchantment holders, attribute ids).
 
 ### Phase 3: Content modules
 `common` → `shared` → `fluids` → `smeltery` → `tables` → `gadgets` → `world` → `tools`.

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.content;
 
+import net.minecraft.locale.Language;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.ChatFormatting;
@@ -12,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-// TODO 1.21 import: net.neoforged.fml.I18nExtension;
 import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.client.book.HTMLUtils;
 import slimeknights.mantle.client.book.data.BookData;
@@ -466,7 +466,7 @@ public abstract class AbstractMaterialContent extends PageContent {
     String textKey = getTextKey(materialVariant.getId());
     if (I18n.exists(textKey)) {
       // using forge instead of I18n.format as that prevents % from being interpreted as a format key
-      String translated = I18nExtension.getPattern(textKey);
+      String translated = Language.getInstance().getOrDefault(textKey);
       if (!detailed ) {
         translated = '"' + translated + '"';
       }
@@ -516,7 +516,7 @@ public abstract class AbstractMaterialContent extends PageContent {
       .add(makeTitleHTML().classes("format-custom").color(rgb))
       .add(makeStatsHtml(book));
     HtmlElement description = HtmlElement.p().classes("trait");
-    String text = I18nExtension.getPattern(getTextKey(getMaterialVariant().getId()));
+    String text = Language.getInstance().getOrDefault(getTextKey(getMaterialVariant().getId()));
     page.add(description);
     if (!detailed) {
       description.style("font-style", "italic");

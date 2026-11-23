@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.layout;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.collect.ImmutableList;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -91,7 +92,7 @@ public class StationSlotLayout {
   /* Buffers */
 
   /** Reads a slot from the packet buffer */
-  public static StationSlotLayout read(FriendlyByteBuf buffer) {
+  public static StationSlotLayout read(RegistryFriendlyByteBuf buffer) {
     ResourceLocation name = buffer.readResourceLocation();
     String translationKey = buffer.readUtf(Short.MAX_VALUE);
     LayoutIcon icon = LayoutIcon.read(buffer);

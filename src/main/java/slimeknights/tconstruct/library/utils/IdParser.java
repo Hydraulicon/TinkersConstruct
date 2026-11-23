@@ -43,7 +43,7 @@ public record IdParser<T extends ResourceLocation>(Function<String, T> construct
   }
 
   @Override
-  public String getString(T object) {
+  public String getString(T object, TypedMap context) {
     return object.toString();
   }
 

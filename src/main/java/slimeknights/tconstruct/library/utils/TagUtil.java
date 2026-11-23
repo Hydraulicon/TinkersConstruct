@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.utils;
 
+import net.minecraft.nbt.IntArrayTag;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
@@ -23,10 +24,47 @@ public final class TagUtil {
    */
   @Nullable
   public static BlockPos readOptionalPos(CompoundTag parent, String key, BlockPos offset) {
-    if (parent.contains(key, Tag.TAG_COMPOUND)) {
-      return NbtUtils.readBlockPos(parent.getCompound(key)).offset(offset);
+    BlockPos pos = readPos(parent, key);
+    return pos == null ? null : pos.offset(offset);
+  }
+
+  /**
+   * Writes a block position to NBT using the vanilla format, an int array as of 1.21
+   * @param pos  Position to write
+   * @return  Position tag
+   */
+  public static Tag writePos(BlockPos pos) {
+    return NbtUtils.writeBlockPos(pos);
+  }
+
+  /**
+   * Reads a block position from NBT. Supports both the 1.21 int array format and the 1.20 compound format with X, Y, and Z keys,
+   * the latter is found in worlds saved before 1.21.
+   * @param tag  Tag to read
+   * @return  Block position, or null if invalid or missing
+   */
+  @Nullable
+  public static BlockPos readPos(@Nullable Tag tag) {
+    if (tag instanceof IntArrayTag array) {
+      int[] ints = array.getAsIntArray();
+      if (ints.length == 3) {
+        return new BlockPos(ints[0], ints[1], ints[2]);
+      }
+    } else if (tag instanceof CompoundTag compound && compound.contains("X", Tag.TAG_ANY_NUMERIC) && compound.contains("Y", Tag.TAG_ANY_NUMERIC) && compound.contains("Z", Tag.TAG_ANY_NUMERIC)) {
+      return new BlockPos(compound.getInt("X"), compound.getInt("Y"), compound.getInt("Z"));
     }
     return null;
+  }
+
+  /**
+   * Reads a block position from NBT, see {@link #readPos(Tag)}
+   * @param parent  Parent tag
+   * @param key     Position key
+   * @return  Block position, or null if invalid or missing
+   */
+  @Nullable
+  public static BlockPos readPos(CompoundTag parent, String key) {
+    return readPos(parent.get(key));
   }
 
   /**

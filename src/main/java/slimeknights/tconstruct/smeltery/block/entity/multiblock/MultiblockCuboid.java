@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.multiblock;
 
+import java.util.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import lombok.AccessLevel;
@@ -12,7 +13,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -442,11 +442,12 @@ public abstract class MultiblockCuboid<T extends MultiblockStructureData> {
     if (!rootTag.contains(key, Tag.TAG_LIST)) {
       return Collections.emptyList();
     }
-    ListTag list = rootTag.getList(key, Tag.TAG_COMPOUND);
+    // positions are int arrays as of 1.21, but older worlds may have compounds, so read the list without a type
+    ListTag list = (ListTag) Objects.requireNonNull(rootTag.get(key));
     List<BlockPos> collection = new ArrayList<>(list.size());
-    for (int i = 0; i < list.size(); i++) {
-      BlockPos pos = NbtUtils.readBlockPos(list.getCompound(i));
-      if (!pos.equals(BlockPos.ZERO)) {
+    for (Tag element : list) {
+      BlockPos pos = TagUtil.readPos(element);
+      if (pos != null && !pos.equals(BlockPos.ZERO)) {
         collection.add(pos.offset(offset));
       }
     }

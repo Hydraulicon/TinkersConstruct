@@ -99,6 +99,12 @@ public class TinkerDataCapability {
     @Getter
     private final ResourceLocation id;
 
+    /** Same as {@code getId()}, required by {@link IdAwareObject} as of Mantle 1.21 */
+    @Override
+    public ResourceLocation id() {
+      return id;
+    }
+
     @Override
     public String toString() {
       return "TinkerDataKey{" + id + '}';

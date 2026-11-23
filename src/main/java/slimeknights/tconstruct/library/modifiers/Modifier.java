@@ -49,6 +49,12 @@ public class Modifier implements IdAwareObject {
   /** Registry name of this modifier, null before fully registered */
   private ModifierId id;
 
+  /** Same as {@code getId()}, required by {@link IdAwareObject} as of Mantle 1.21 */
+  @Override
+  public ModifierId id() {
+    return getId();
+  }
+
   /** Cached key used for translations */
   @Nullable
   protected String translationKey;

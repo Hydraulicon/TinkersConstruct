@@ -137,12 +137,12 @@ public abstract class AbstractModifierModelMapProvider extends GenericDataProvid
 
   /** Adds the given model to the tool */
   protected Builder tool(IdAwareObject tool) {
-    return tool(tool.getId());
+    return tool(tool.id());
   }
 
   /** Adds the given model to the tool variant */
   protected Builder tool(IdAwareObject tool, String variant) {
-    return tool(tool.getId(), variant);
+    return tool(tool.id(), variant);
   }
 
   /** Adds the given model to the tool */

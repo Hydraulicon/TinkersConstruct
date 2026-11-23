@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.entity;
 
+import slimeknights.tconstruct.library.utils.TagUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -341,7 +341,7 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
     nbt.putFloat(KEY_KNOCKBACK, knockback);
     nbt.putFloat(KEY_WATER_INERTIA, this.entityData.get(WATER_INERTIA));
     if (cannon != null) {
-      nbt.put(KEY_CANNON, NbtUtils.writeBlockPos(cannon));
+      nbt.put(KEY_CANNON, TagUtil.writePos(cannon));
     }
     FluidStack fluid = getFluid();
     if (!fluid.isEmpty()) {
@@ -356,7 +356,7 @@ public class FluidEffectProjectile extends Projectile implements ProjectileWithK
     this.knockback = nbt.getFloat(KEY_KNOCKBACK);
     this.entityData.set(WATER_INERTIA, nbt.getFloat(KEY_WATER_INERTIA));
     if (nbt.contains(KEY_CANNON)) {
-      this.cannon = NbtUtils.readBlockPos(nbt.getCompound(KEY_CANNON));
+      this.cannon = TagUtil.readPos(nbt, KEY_CANNON);
     } else {
       this.cannon = null;
     }

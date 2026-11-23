@@ -18,6 +18,12 @@ public class LazyModifier implements Supplier<Modifier>, IdAwareObject {
   /** ID of the modifier to fetch */
   @Getter
   protected final ModifierId id;
+
+  /** Same as {@code getId()}, required by {@link IdAwareObject} as of Mantle 1.21 */
+  @Override
+  public ModifierId id() {
+    return id;
+  }
   /** Cached value for the modifier */
   protected Modifier result;
 

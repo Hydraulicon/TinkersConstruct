@@ -4,7 +4,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -139,7 +138,7 @@ public class ServantTileEntity extends MantleBlockEntity implements IServantLogi
   @SuppressWarnings({"UnusedReturnValue"})
   protected CompoundTag writeMaster(CompoundTag tags) {
     if (masterPos != null && masterBlock != null) {
-      tags.put(TAG_MASTER_POS, NbtUtils.writeBlockPos(masterPos.subtract(this.worldPosition)));
+      tags.put(TAG_MASTER_POS, TagUtil.writePos(masterPos.subtract(this.worldPosition)));
       tags.putString(TAG_MASTER_BLOCK, Loadables.BLOCK.getKey(masterBlock).toString());
     }
     return tags;

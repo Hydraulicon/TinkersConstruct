@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.common;
 
+import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import com.mojang.serialization.MapCodec;
@@ -78,6 +79,7 @@ public abstract class TinkerModule {
   // datapacks
   protected static final RecipeSerializerDeferredRegister RECIPE_SERIALIZERS = new RecipeSerializerDeferredRegister(TConstruct.MOD_ID);
   protected static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, TConstruct.MOD_ID);
+  protected static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS = DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, TConstruct.MOD_ID);
   protected static final LootConditionDeferredRegister LOOT_CONDITIONS = new LootConditionDeferredRegister(TConstruct.MOD_ID);
   protected static final LootFunctionDeferredRegister LOOT_FUNCTIONS = new LootFunctionDeferredRegister(TConstruct.MOD_ID);
   protected static final LootEntryDeferredRegister LOOT_ENTRIES = new LootEntryDeferredRegister(TConstruct.MOD_ID);
@@ -107,6 +109,7 @@ public abstract class TinkerModule {
     // datapacks
     RECIPE_SERIALIZERS.register(bus);
     GLOBAL_LOOT_MODIFIERS.register(bus);
+    CONDITION_CODECS.register(bus);
     LOOT_CONDITIONS.register(bus);
     LOOT_FUNCTIONS.register(bus);
     LOOT_ENTRIES.register(bus);

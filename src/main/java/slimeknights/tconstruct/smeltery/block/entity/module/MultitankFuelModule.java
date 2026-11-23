@@ -1,8 +1,8 @@
 package slimeknights.tconstruct.smeltery.block.entity.module;
 
+import slimeknights.tconstruct.library.utils.TagUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -176,8 +176,9 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
   @Override
   public void readFromTag(CompoundTag nbt) {
     super.readFromTag(nbt);
-    if (nbt.contains(TAG_LAST_FUEL, Tag.TAG_COMPOUND)) {
-      lastPos = NbtUtils.readBlockPos(nbt.getCompound(TAG_LAST_FUEL)).offset(parent.getBlockPos());
+    BlockPos lastFuel = TagUtil.readOptionalPos(nbt, TAG_LAST_FUEL, parent.getBlockPos());
+    if (lastFuel != null) {
+      lastPos = lastFuel;
     }
   }
 
@@ -185,7 +186,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
   public CompoundTag writeToTag(CompoundTag nbt) {
     nbt = super.writeToTag(nbt);
     if (lastPos != NULL_POS) {
-      nbt.put(TAG_LAST_FUEL, NbtUtils.writeBlockPos(lastPos.subtract(parent.getBlockPos())));
+      nbt.put(TAG_LAST_FUEL, TagUtil.writePos(lastPos.subtract(parent.getBlockPos())));
     }
     return nbt;
   }
@@ -349,7 +350,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
         }
         // if this was our first fill, copy the resource
         if (totalFilled == filled) {
-          resource = new FluidStack(resource, resource.getAmount() - filled);
+          resource = resource.copyWithAmount(resource.getAmount() - filled);
         } else {
           resource.shrink(filled);
         }
@@ -377,7 +378,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
           if (drained.getAmount() >= resource.getAmount()) {
             break;
           }
-          resource = new FluidStack(resource, resource.getAmount() - drained.getAmount());
+          resource = resource.copyWithAmount(resource.getAmount() - drained.getAmount());
         } else {
           // resource is guaranteed a copy, and drainedSoFar is a newly created stack, both safe to mutate
           drainedSoFar.grow(drained.getAmount());
@@ -410,7 +411,7 @@ public class MultitankFuelModule extends FuelModule implements IFluidHandler {
           if (drained.getAmount() >= maxDrain) {
             break;
           }
-          toDrain = new FluidStack(drained, maxDrain - drained.getAmount());
+          toDrain = drained.copyWithAmount(maxDrain - drained.getAmount());
         }
       } else {
         // if we already drained some fluid, type sensitive and increase our results

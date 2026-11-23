@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.utils;
 
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -27,7 +28,7 @@ public record GsonLoadable<T>(Gson gson, Class<T> classType) implements Loadable
 
   @Override
   public T decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
-    CompoundTag tag = buffer.readAnySizeNbt();
+    Tag tag = buffer.readNbt(NbtAccounter.unlimitedHeap());
     if (tag != null) {
       return gson.fromJson(NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tag), classType);
     }

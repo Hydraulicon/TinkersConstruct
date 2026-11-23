@@ -15,6 +15,12 @@ public class ModuleHook<T> implements IdAwareObject {
   /** Unique name of this hook, used for serialization */
   @Getter
   private final ResourceLocation id;
+
+  /** Same as {@code getId()}, required by {@link IdAwareObject} as of Mantle 1.21 */
+  @Override
+  public ResourceLocation id() {
+    return id;
+  }
   /** Filter to check if an object is valid for this hook */
   private final Class<T> filter;
   /** Logic to merge multiple instances into a single instance */
