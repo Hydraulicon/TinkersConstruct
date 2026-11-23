@@ -5,7 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-import slimeknights.mantle.recipe.ingredient.SizedIngredient;
+// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 
 import java.util.ArrayList;
 import java.util.List;

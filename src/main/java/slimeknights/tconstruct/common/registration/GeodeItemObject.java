@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.registries.RegistryObject;
+// TODO 1.21 import: net.minecraftforge.registries.RegistryObject;
 import slimeknights.mantle.registration.deferred.BlockDeferredRegister;
 import slimeknights.mantle.registration.object.ItemObject;
 import slimeknights.tconstruct.world.block.BuddingCrystalBlock;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 /** Item object for geode related blocks. Main methods represent the block */
-public class GeodeItemObject extends ItemObject<Item> {
+public class GeodeItemObject extends ItemObject<Item, Item> {
   private final Supplier<? extends Block> block;
   private final Supplier<? extends Block> budding;
   private final Supplier<? extends Block> cluster;

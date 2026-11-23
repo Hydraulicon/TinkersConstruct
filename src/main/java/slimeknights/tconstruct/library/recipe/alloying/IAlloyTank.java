@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.alloying;
 
 import net.neoforged.neoforge.fluids.FluidStack;
-import slimeknights.mantle.recipe.container.IEmptyContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.IEmptyContainer;
 
 /**
  * Inventory interface for the sake of alloying

@@ -13,8 +13,8 @@ import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-import slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
-import slimeknights.mantle.recipe.ingredient.FluidIngredient;
+// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
+// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 
 import java.util.Arrays;
 import java.util.List;

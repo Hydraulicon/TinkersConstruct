@@ -2,7 +2,7 @@ package slimeknights.tconstruct.library.recipe.casting;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.material.Fluid;
-import slimeknights.mantle.recipe.container.ISingleStackContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.ISingleStackContainer;
 
 import javax.annotation.Nullable;
 

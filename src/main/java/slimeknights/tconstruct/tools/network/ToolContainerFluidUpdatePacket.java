@@ -3,9 +3,9 @@ package slimeknights.tconstruct.tools.network;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.minecraftforge.network.NetworkEvent.Context;
+// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.client.SafeClientAccess;
-import slimeknights.mantle.network.packet.IThreadsafePacket;
+// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.tconstruct.tools.menu.ToolContainerMenu;
 
 /** Packet used when a fluid is changed inside a tool container menu */

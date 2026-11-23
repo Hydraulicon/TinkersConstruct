@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.molding;
 
 import net.minecraft.world.item.ItemStack;
-import slimeknights.mantle.recipe.container.IRecipeContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.IRecipeContainer;
 
 /**
  * Inventory for molding recipes

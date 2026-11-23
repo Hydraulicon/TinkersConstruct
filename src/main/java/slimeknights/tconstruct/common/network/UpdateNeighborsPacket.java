@@ -7,9 +7,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.NetworkEvent.Context;
+// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import net.neoforged.neoforge.registries.GameData;
-import slimeknights.mantle.network.packet.IThreadsafePacket;
+// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 
 /**
  * Packet to notify neighbors that a block changed, used when breaking blocks in weird contexts that vanilla suppresses updates in for some reason

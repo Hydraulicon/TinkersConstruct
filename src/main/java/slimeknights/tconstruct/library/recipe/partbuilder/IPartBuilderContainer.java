@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.partbuilder;
 
 import net.minecraft.world.item.ItemStack;
-import slimeknights.mantle.recipe.container.ISingleStackContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.ISingleStackContainer;
 import slimeknights.tconstruct.library.recipe.material.IMaterialValue;
 
 import javax.annotation.Nullable;

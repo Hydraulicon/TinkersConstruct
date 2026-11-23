@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.recipe.material;
 import net.minecraft.world.item.ItemStack;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
-import slimeknights.mantle.recipe.container.ISingleStackContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.ISingleStackContainer;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariant;
 
 /**

@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.network.NetworkEvent.Context;
+// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.inventory.BaseContainerMenu;
-import slimeknights.mantle.network.packet.IThreadsafePacket;
+// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.tconstruct.smeltery.block.entity.tank.ISmelteryTankHandler;
 
 /**

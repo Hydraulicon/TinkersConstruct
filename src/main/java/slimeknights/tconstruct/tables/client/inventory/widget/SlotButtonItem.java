@@ -3,7 +3,7 @@ package slimeknights.tconstruct.tables.client.inventory.widget;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import slimeknights.mantle.client.screen.ElementScreen;
+// TODO 1.21 import: slimeknights.mantle.client.screen.ElementScreen;
 import slimeknights.tconstruct.library.client.Icons;
 import slimeknights.tconstruct.library.tools.layout.StationSlotLayout;
 import slimeknights.tconstruct.tables.client.inventory.TinkerStationScreen;

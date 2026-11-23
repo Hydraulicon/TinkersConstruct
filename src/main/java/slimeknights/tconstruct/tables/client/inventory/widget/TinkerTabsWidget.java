@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.tuple.Pair;
-import slimeknights.mantle.client.screen.ElementScreen;
+// TODO 1.21 import: slimeknights.mantle.client.screen.ElementScreen;
 import slimeknights.mantle.client.screen.widget.TabsWidget;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.network.TinkerNetwork;

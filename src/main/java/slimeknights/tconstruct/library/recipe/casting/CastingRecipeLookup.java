@@ -3,7 +3,7 @@ package slimeknights.tconstruct.library.recipe.casting;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import slimeknights.mantle.recipe.data.ItemNameOutput;
+// TODO 1.21 import: slimeknights.mantle.recipe.data.ItemNameOutput;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.util.RegistryHelper;
 import slimeknights.tconstruct.common.recipe.RecipeCacheInvalidator;

@@ -6,14 +6,14 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullConsumer;
+// TODO 1.21 import: net.minecraftforge.common.capabilities.ForgeCapabilities;
+// TODO 1.21 import: net.minecraftforge.common.util.LazyOptional;
+// TODO 1.21 import: net.minecraftforge.common.util.NonNullConsumer;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
-import slimeknights.mantle.util.WeakConsumerWrapper;
+// TODO 1.21 import: slimeknights.mantle.util.WeakConsumerWrapper;
 import slimeknights.tconstruct.library.utils.Util;
 
 import javax.annotation.Nonnull;

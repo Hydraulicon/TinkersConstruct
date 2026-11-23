@@ -8,7 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+// TODO 1.21 import: net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import slimeknights.mantle.command.argument.TagSourceArgument;
 import slimeknights.mantle.registration.deferred.ArgumentTypeDeferredRegister;
 import slimeknights.tconstruct.TConstruct;

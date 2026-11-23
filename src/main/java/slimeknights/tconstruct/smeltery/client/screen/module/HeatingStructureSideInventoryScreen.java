@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import slimeknights.mantle.client.screen.ScalableElementScreen;
+// TODO 1.21 import: slimeknights.mantle.client.screen.ScalableElementScreen;
 import slimeknights.tconstruct.smeltery.block.entity.controller.HeatingStructureBlockEntity;
 import slimeknights.tconstruct.smeltery.client.screen.HeatingStructureScreen;
 import slimeknights.tconstruct.tables.client.inventory.module.SideInventoryScreen;

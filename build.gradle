@@ -256,6 +256,10 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    // TODO 1.21: remove both once the port compiles (MIGRATION_1.21.md)
     // show every error, the port will have many
     options.compilerArgs << '-Xmaxerrs' << '100000'
+    // keep running annotation processors (Lombok) and later compile stages despite errors in earlier stages.
+    // Without this, a single non-recoverable error hides every Lombok generated member and floods the log with false errors
+    options.compilerArgs << '-XDshould-stop.ifError=FLOW'
 }

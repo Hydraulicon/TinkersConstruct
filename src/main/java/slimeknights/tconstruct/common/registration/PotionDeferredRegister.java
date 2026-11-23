@@ -4,8 +4,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraftforge.registries.RegistryObject;
-import slimeknights.mantle.registration.deferred.DeferredRegisterWrapper;
+// TODO 1.21 import: net.minecraftforge.registries.RegistryObject;
+// TODO 1.21 import: slimeknights.mantle.registration.deferred.DeferredRegisterWrapper;
 import slimeknights.mantle.registration.object.EnumObject;
 
 import java.util.Locale;

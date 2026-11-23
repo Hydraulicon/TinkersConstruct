@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraftforge.common.PlantType;
+// TODO 1.21 import: net.minecraftforge.common.PlantType;
 import slimeknights.tconstruct.world.TinkerWorld;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;

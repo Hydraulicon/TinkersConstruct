@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.tools.modifiers.traits.ranged;
 
-import net.minecraft.world.entity.MobType;
-import slimeknights.mantle.data.predicate.entity.MobTypePredicate;
+// TODO 1.21 import: net.minecraft.world.entity.MobType;
+// TODO 1.21 import: slimeknights.mantle.data.predicate.entity.MobTypePredicate;
 import slimeknights.tconstruct.library.modifiers.Modifier;
 import slimeknights.tconstruct.library.modifiers.modules.combat.ConditionalPowerModule;
 import slimeknights.tconstruct.library.module.ModuleHookMap.Builder;

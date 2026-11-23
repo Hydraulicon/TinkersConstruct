@@ -9,9 +9,9 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
+// TODO 1.21 import: net.minecraftforge.registries.ForgeRegistries;
+// TODO 1.21 import: net.minecraftforge.registries.ForgeRegistry;
+// TODO 1.21 import: net.minecraftforge.registries.IForgeRegistry;
 import slimeknights.tconstruct.common.TinkerEffect;
 
 import java.util.Objects;

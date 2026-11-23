@@ -1,6 +1,6 @@
 package slimeknights.tconstruct.common.data;
 
-import net.minecraft.advancements.RequirementsStrategy;
+// TODO 1.21 import: net.minecraft.advancements.RequirementsStrategy;
 
 import java.util.ArrayList;
 import java.util.Collection;

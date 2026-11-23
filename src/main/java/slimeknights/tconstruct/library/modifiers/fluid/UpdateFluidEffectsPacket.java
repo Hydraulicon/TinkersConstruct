@@ -2,9 +2,9 @@ package slimeknights.tconstruct.library.modifiers.fluid;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent.Context;
+// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import org.jetbrains.annotations.ApiStatus.Internal;
-import slimeknights.mantle.network.packet.IThreadsafePacket;
+// TODO 1.21 import: slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.tconstruct.TConstruct;
 
 import java.util.ArrayList;

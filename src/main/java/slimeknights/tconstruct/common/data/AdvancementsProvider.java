@@ -6,7 +6,7 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.RequirementsStrategy;
+// TODO 1.21 import: net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
@@ -38,7 +38,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.ItemAbilities;
-import net.minecraftforge.common.crafting.ConditionalAdvancement;
+// TODO 1.21 import: net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -277,7 +277,7 @@ public class AdvancementsProvider extends GenericDataProvider {
       builder.requirements(RequirementsStrategy.OR);
     });
     builder(TinkerTools.veinHammer.get().getRenderTool(), resource("smeltery/tool_forge"), anvil, AdvancementType.CHALLENGE, builder -> {
-      Consumer<ItemObject<?>> with = item -> builder.addCriterion(item.getId().getPath(), hasItem(item));
+      Consumer<ItemObject<?, ?>> with = item -> builder.addCriterion(item.getId().getPath(), hasItem(item));
       with.accept(TinkerTools.sledgeHammer);
       with.accept(TinkerTools.veinHammer);
       with.accept(TinkerTools.excavator);
@@ -468,7 +468,7 @@ public class AdvancementsProvider extends GenericDataProvider {
       with.accept(MaterialIds.knightmetal);
     });
     builder(TinkerTools.battlesign.get().getRenderTool(), resource("world/ancient_tools"), tinkersGadgetry, AdvancementType.CHALLENGE, builder -> {
-      Consumer<ItemObject<?>> with = item -> builder.addCriterion(item.getId().getPath(), hasItem(item));
+      Consumer<ItemObject<?, ?>> with = item -> builder.addCriterion(item.getId().getPath(), hasItem(item));
       with.accept(TinkerTools.meltingPan);
       with.accept(TinkerTools.warPick);
       with.accept(TinkerTools.battlesign);

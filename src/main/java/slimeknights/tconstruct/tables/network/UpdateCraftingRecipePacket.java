@@ -5,9 +5,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent.Context;
+// TODO 1.21 import: net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.network.BlockEntityPacket;
-import slimeknights.mantle.recipe.helper.RecipeHelper;
+// TODO 1.21 import: slimeknights.mantle.recipe.helper.RecipeHelper;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.tables.block.entity.table.CraftingStationBlockEntity;
 

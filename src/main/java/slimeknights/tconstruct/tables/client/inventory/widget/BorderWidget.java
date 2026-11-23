@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.tables.client.inventory.widget;
 
 import net.minecraft.client.gui.GuiGraphics;
-import slimeknights.mantle.client.screen.ElementScreen;
+// TODO 1.21 import: slimeknights.mantle.client.screen.ElementScreen;
 import slimeknights.mantle.client.screen.ModuleScreen;
-import slimeknights.mantle.client.screen.ScalableElementScreen;
+// TODO 1.21 import: slimeknights.mantle.client.screen.ScalableElementScreen;
 import slimeknights.mantle.client.screen.widget.Widget;
 import slimeknights.tconstruct.tables.client.inventory.module.GenericScreen;
 

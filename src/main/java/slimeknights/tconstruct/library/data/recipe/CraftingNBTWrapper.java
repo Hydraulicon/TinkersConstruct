@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.data.recipe;
 
 import com.google.gson.JsonObject;
-import net.minecraft.data.recipes.FinishedRecipe;
+// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;

@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.client;
 
 import net.minecraft.resources.ResourceLocation;
-import slimeknights.mantle.client.screen.ElementScreen;
+// TODO 1.21 import: slimeknights.mantle.client.screen.ElementScreen;
 import slimeknights.tconstruct.TConstruct;
 
 /** TODO: consider using {@link slimeknights.tconstruct.library.recipe.partbuilder.Pattern} instead. */

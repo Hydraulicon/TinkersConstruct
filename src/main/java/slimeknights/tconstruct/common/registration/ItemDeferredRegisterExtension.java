@@ -20,9 +20,9 @@ public class ItemDeferredRegisterExtension extends ItemDeferredRegister {
    * @return  Object containing casts
    */
   public CastItemObject registerCast(String name, Supplier<? extends Item> constructor) {
-    ItemObject<Item> cast = register(name + "_cast", constructor);
-    ItemObject<Item> sandCast = register(name + "_sand_cast", constructor);
-    ItemObject<Item> redSandCast = register(name + "_red_sand_cast", constructor);
+    ItemObject<Item, Item> cast = register(name + "_cast", constructor);
+    ItemObject<Item, Item> sandCast = register(name + "_sand_cast", constructor);
+    ItemObject<Item, Item> redSandCast = register(name + "_red_sand_cast", constructor);
     return new CastItemObject(resource(name), cast, sandCast, redSandCast);
   }
 
@@ -42,7 +42,7 @@ public class ItemDeferredRegisterExtension extends ItemDeferredRegister {
    * @param props  Item properties
    * @return  Object containing casts
    */
-  public CastItemObject registerCast(ItemObject<? extends IMaterialItem> item, Item.Properties props) {
+  public CastItemObject registerCast(ItemObject<Item, ? extends IMaterialItem> item, Item.Properties props) {
     return registerCast(item.getId().getPath(), () -> new PartCastItem(props, item));
   }
 }

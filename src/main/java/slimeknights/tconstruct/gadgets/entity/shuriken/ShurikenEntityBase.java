@@ -14,7 +14,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
-import net.minecraftforge.network.NetworkHooks;
+// TODO 1.21 import: net.minecraftforge.network.NetworkHooks;
 import slimeknights.tconstruct.tools.entity.ThrownShuriken;
 import slimeknights.tconstruct.tools.entity.ToolProjectile;
 

@@ -2,7 +2,7 @@ package slimeknights.tconstruct.library.recipe;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import slimeknights.mantle.recipe.container.IRecipeContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.IRecipeContainer;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 
 /** Container that contains a tinkerable stack and a number of inputs after */

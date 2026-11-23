@@ -2,9 +2,9 @@ package slimeknights.tconstruct.library.tools.capability;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
+// TODO 1.21 import: net.minecraftforge.common.capabilities.Capability;
+// TODO 1.21 import: net.minecraftforge.common.capabilities.ForgeCapabilities;
+// TODO 1.21 import: net.minecraftforge.common.util.LazyOptional;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.modifiers.modules.ModifierModule;

@@ -5,11 +5,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+// TODO 1.21 import: net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import slimeknights.mantle.client.screen.MultiModuleScreen;
 import slimeknights.mantle.inventory.BaseContainerMenu;
-import slimeknights.mantle.inventory.EmptyItemHandler;
+// TODO 1.21 import: slimeknights.mantle.inventory.EmptyItemHandler;
 import slimeknights.tconstruct.tables.block.entity.inventory.IScalingContainer;
 
 import java.util.Optional;

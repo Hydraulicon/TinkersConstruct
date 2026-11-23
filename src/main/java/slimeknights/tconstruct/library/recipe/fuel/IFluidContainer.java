@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.fuel;
 
 import net.minecraft.world.level.material.Fluid;
-import slimeknights.mantle.recipe.container.IEmptyContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.IEmptyContainer;
 
 /**
  * Inventory containing just a single fluid

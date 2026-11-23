@@ -9,10 +9,10 @@ import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+// TODO 1.21 import: net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import slimeknights.mantle.inventory.EmptyItemHandler;
+// TODO 1.21 import: slimeknights.mantle.inventory.EmptyItemHandler;
 
 /** @deprecated tinkers no longer does rails. If you need this reimplement it */
 @Deprecated(forRemoval = true)

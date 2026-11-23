@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.melting;
 
 import net.neoforged.neoforge.fluids.FluidStack;
-import slimeknights.mantle.recipe.container.ISingleStackContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.ISingleStackContainer;
 
 /** Interface for melting inventories */
 public interface IMeltingContainer extends ISingleStackContainer {

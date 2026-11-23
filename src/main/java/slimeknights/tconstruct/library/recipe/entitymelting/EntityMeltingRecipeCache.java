@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.crafting.RecipeManager;
-import slimeknights.mantle.recipe.helper.RecipeHelper;
+// TODO 1.21 import: slimeknights.mantle.recipe.helper.RecipeHelper;
 import slimeknights.tconstruct.common.recipe.RecipeCacheInvalidator;
 import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
 

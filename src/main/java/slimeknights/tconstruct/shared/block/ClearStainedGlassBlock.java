@@ -1,6 +1,6 @@
 package slimeknights.tconstruct.shared.block;
 
-import net.minecraft.world.level.block.AbstractGlassBlock;
+// TODO 1.21 import: net.minecraft.world.level.block.AbstractGlassBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.util.StringRepresentable;
