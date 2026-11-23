@@ -1,6 +1,15 @@
 # Port plan: Minecraft 1.20.1 (Forge) → 1.21.1 (NeoForge)
 
-Status: **draft for review**. Nothing is ported yet.
+Status: **Phase 0 complete.** The tool-data approach (two steps, below) is approved.
+
+## Workspace setup (during the port)
+```
+git clone -b 1.21 https://github.com/SlimeKnights/Mantle ../Mantle
+(cd ../Mantle && git checkout f631160 && ./gradlew build -x test)
+./gradlew compileJava
+```
+The Mantle jar is resolved from `mantle_libs` (default `../Mantle/build/libs`) in `gradle.properties`.
+When bumping the pinned commit, update `mantle_version` to match the built jar name.
 
 ## Decisions
 
@@ -83,6 +92,17 @@ Each phase ends with a commit. From phase 2 on, it also ends with a compiling (o
 - Migrate `accesstransformer.cfg` (198 lines). This means re-mapping names for 1.21.1 and dropping obsolete entries.
 - Temporarily exclude optional compat (`plugin/`: JEI, IE, JSON Things, Diet, CraftingTweaks) from compilation.
 - **Exit:** Gradle configures and decompiles. Compilation fails with a long list of errors, which is expected.
+- **Done.** Notes:
+  - Gradle 9.2.1 wrapper, ModDevGradle 2.0.141 and NeoForge 21.1.265, all matching Mantle.
+  - The AT was converted from SRG to Mojang names using MCPConfig 1.20.1 and the official mappings.
+    The comment names were unreliable because many were old MCP names. 11 entries were removed that were already dead in 1.20.1.
+    26 entries whose targets were removed or changed in 1.21.1 are kept, commented out, under `TODO 1.21` at the bottom of the file.
+    Resolve each one as the code using it is ported.
+  - `plugin/**` is excluded from compilation, and the compat hooks in `TConstruct` are commented out.
+    JEI 19.64 stays on the classpath.
+  - Baseline: 25,980 javac errors, mostly unresolved `net.minecraftforge` symbols. javac reports in stages,
+    so the count will rise once imports resolve and type checking begins.
+  - Not yet updated: the `Jenkinsfile` (still uses `JDK_17`; it needs a JDK 21 on the CI agent) and the test setup (phase 6).
 
 ### Phase 1: Mechanical renames (scripted)
 - `net.minecraftforge` → `net.neoforged` package moves (with the per-class mapping table, since not everything moved 1:1).
