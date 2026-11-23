@@ -3,9 +3,9 @@ package slimeknights.tconstruct.smeltery.network;
 import lombok.AllArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.minecraftforge.network.NetworkEvent.Context;
-import slimeknights.mantle.network.packet.BlockEntityPacket;
+import slimeknights.mantle.network.BlockEntityPacket;
 import slimeknights.tconstruct.smeltery.block.entity.tank.ISmelteryTankHandler;
 
 import java.util.ArrayList;

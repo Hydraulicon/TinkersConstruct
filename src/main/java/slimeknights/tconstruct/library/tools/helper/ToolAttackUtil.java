@@ -25,9 +25,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.entity.PartEntity;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import slimeknights.mantle.util.CombatHelper;
 import slimeknights.mantle.util.OffhandCooldownTracker;
 import slimeknights.tconstruct.TConstruct;
@@ -51,7 +51,7 @@ import java.util.function.DoubleSupplier;
 
 public class ToolAttackUtil {
   private static final float DEGREE_TO_RADIANS = (float)Math.PI / 180F;
-  private static final AttributeModifier ANTI_KNOCKBACK_MODIFIER = new AttributeModifier(TConstruct.MOD_ID + ".anti_knockback", 1f, Operation.ADDITION);
+  private static final AttributeModifier ANTI_KNOCKBACK_MODIFIER = new AttributeModifier(TConstruct.MOD_ID + ".anti_knockback", 1f, Operation.ADD_VALUE);
   /** @deprecated new default for {@link ToolAttackContext.Builder} */
   @Deprecated(forRemoval = true)
   public static final DoubleSupplier NO_COOLDOWN = () -> 1.0;
@@ -111,7 +111,7 @@ public class ToolAttackUtil {
 
     float criticalModifier = isCritical ? 1.5f : 1.0f;
     if (attackerPlayer != null) {
-      CriticalHitEvent hitResult = ForgeHooks.getCriticalHit(attackerPlayer, target, isCritical, criticalModifier);
+      CriticalHitEvent hitResult = CommonHooks.getCriticalHit(attackerPlayer, target, isCritical, criticalModifier);
       if (hitResult != null) {
         criticalModifier = hitResult.getDamageModifier();
       } else {

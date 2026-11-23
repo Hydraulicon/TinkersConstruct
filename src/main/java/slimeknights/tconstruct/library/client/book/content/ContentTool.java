@@ -18,7 +18,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeI18n;
+import net.neoforged.fml.I18nExtension;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.client.book.HTMLUtils;
@@ -112,7 +112,7 @@ public class ContentTool extends PageContent {
   public ContentTool(IModifiableDisplay tool) {
     this.tool = tool;
     this.toolName = Loadables.ITEM.getKey(tool.asItem()).toString();
-    this.text = new TextData[] { new TextData(ForgeI18n.getPattern(tool.asItem().getDescriptionId() + ".description"))};
+    this.text = new TextData[] { new TextData(I18nExtension.getPattern(tool.asItem().getDescriptionId() + ".description"))};
   }
 
   public ContentTool(Item item) {
@@ -122,7 +122,7 @@ public class ContentTool extends PageContent {
     } else {
       this.tool = new Fallback(item);
     }
-    this.text = new TextData[] { new TextData(ForgeI18n.getPattern(tool.asItem().getDescriptionId() + ".description"))};
+    this.text = new TextData[] { new TextData(I18nExtension.getPattern(tool.asItem().getDescriptionId() + ".description"))};
   }
 
   @SuppressWarnings("removal")
@@ -131,7 +131,7 @@ public class ContentTool extends PageContent {
       if (this.toolName == null) {
         this.toolName = this.parent.name;
       }
-      Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(this.toolName));
+      Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(this.toolName));
       if (item instanceof IModifiableDisplay tool) {
         this.tool = tool;
       } else {

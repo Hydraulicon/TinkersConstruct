@@ -1,6 +1,6 @@
 # Port plan: Minecraft 1.20.1 (Forge) → 1.21.1 (NeoForge)
 
-Status: **Phase 0 complete.** The tool-data approach (two steps, below) is approved.
+Status: **Phases 0 and 1 complete.** The tool-data approach (two steps, below) is approved.
 
 ## Workspace setup (during the port)
 ```
@@ -110,6 +110,24 @@ Each phase ends with a commit. From phase 2 on, it also ends with a compiling (o
 - `RegistryObject` → `DeferredHolder`, `ForgeRegistries` → `BuiltInRegistries`, `ForgeConfigSpec` → `ModConfigSpec`.
 - Event renames (`TickEvent.*` → split `*TickEvent.Pre/Post`, `LivingHurtEvent` → `LivingIncomingDamageEvent`, and others).
 - **Exit:** The error count is dominated by real API changes, not renames.
+- **Done.** The scripts are in `project_files/port_1.21/` (`build_index.sh`, `mapimports.py`, `rewrite.py`). Results:
+  - 548 files changed. Forge imports were mapped by direct package move (140), by unique class name in NeoForge (17)
+    or by a hand-written rename table (17: `MinecraftForge`→`NeoForge`, `ForgeConfigSpec`→`ModConfigSpec`,
+    `ToolAction(s)`→`ItemAbility`/`ItemAbilities`, `ForgeHooks`→`CommonHooks`, `ForgeEventFactory`→`EventHooks`, …).
+    Identifiers were renamed only in files that imported the old class.
+  - 17 Mantle classes that moved packages in Mantle 1.21 had their imports rewritten.
+  - `@Mod.EventBusSubscriber` → `@EventBusSubscriber` (now top level), with `Bus.FORGE` → `Bus.GAME`. `@Cancelable` was removed from our
+    teleport events, since their NeoForge parent already implements `ICancellableEvent`.
+  - 116 `new ResourceLocation(...)` → `ResourceLocation.fromNamespaceAndPath` / `parse`.
+  - `AttributeModifier.Operation` constants (`ADDITION`→`ADD_VALUE`, …) and `FrameType`→`AdvancementType`, applied only
+    where the vanilla class is imported. Tinkers has its own `FrameType` and `StatOperation`, which were left alone.
+  - Errors: 25,980 → 17,014.
+- **Left on purpose for phases 2–3** (they need redesign, not renaming): 38 Forge classes with no NeoForge
+  counterpart (`LazyOptional`, `Capability`/`ForgeCapabilities`, `NetworkEvent`, `ForgeRegistries`, `RegistryObject`,
+  `FMLJavaModLoadingContext`, `DistExecutor`, `TickEvent`, `LivingHurtEvent`, `TierSortingRegistry`, recipe conditions/serializers, …)
+  and 34 Mantle classes removed in 1.21 (`FinishedRecipe` helpers, `IRecipeContainer`, `NetworkWrapper`,
+  `ElementScreen`, Mantle `FluidIngredient`/`SizedIngredient` → NeoForge `FluidIngredient`/`SizedFluidIngredient`, …).
+  - Data to watch in phase 5: datapack JSON that names attribute operations (`addition`, …) must use the 1.21 names.
 
 ### Phase 2: `library` core
 Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tools` (incl. tool data component) → `recipe` → `module`.

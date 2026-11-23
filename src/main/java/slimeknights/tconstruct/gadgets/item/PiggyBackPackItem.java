@@ -22,9 +22,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
-import net.minecraftforge.items.ItemHandlerHelper;
-import slimeknights.mantle.item.TooltipItem;
+import net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import slimeknights.mantle.item.tooltip.TooltipItem;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerEffect;
 import slimeknights.tconstruct.common.TinkerTags;
@@ -168,7 +168,7 @@ public class PiggyBackPackItem extends TooltipItem {
     public CarryPotionEffect() {
       super(MobEffectCategory.NEUTRAL, true);
 
-      this.addAttributeModifier(Attributes.MOVEMENT_SPEED, UUID, -0.05D, AttributeModifier.Operation.MULTIPLY_TOTAL);
+      this.addAttributeModifier(Attributes.MOVEMENT_SPEED, UUID, -0.05D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     }
 
     @Override

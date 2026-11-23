@@ -3,7 +3,7 @@ package slimeknights.tconstruct.test;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.neoforged.fml.ModLoadingContext;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import org.junit.jupiter.api.BeforeAll;
