@@ -17,15 +17,15 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-// TODO 1.21 import: net.minecraftforge.fml.DistExecutor;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-// TODO 1.21 import: net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-// TODO 1.21 import: net.minecraftforge.registries.MissingMappingsEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import slimeknights.mantle.registration.RegistrationHelper;
 import slimeknights.tconstruct.common.TinkerModule;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.common.config.Config;
@@ -96,16 +96,14 @@ public class TConstruct {
   /* Instance of this mod, used for grabbing prototype fields */
   public static TConstruct instance;
 
-  public TConstruct() {
+  public TConstruct(IEventBus bus, ModContainer container) {
     instance = this;
 
-    Config.init();
+    Config.init(container);
     TinkerItemDisplays.init();
     MaterialRegistry.init();
 
     // initialize modules, done this way rather than with annotations to give us control over the order
-    NeoForge.EVENT_BUS.addListener(TConstruct::missingMappings);
-    IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
     // base
     bus.register(new TinkerCommons());
     bus.register(new TinkerMaterials());
@@ -125,11 +123,14 @@ public class TConstruct {
     bus.register(new TinkerFluids());
 
     // init deferred registers
-    TinkerModule.initRegisters();
+    TinkerModule.initRegisters(bus);
+    registerAliases();
     TinkerNetwork.setup();
     TinkerTags.init();
     // init client logic
-    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> TinkerClient::onConstruct);
+    if (FMLEnvironment.dist == Dist.CLIENT) {
+      TinkerClient.onConstruct();
+    }
 
     // compat
     // TODO 1.21: restore once optional compat is ported (MIGRATION_1.21.md, phase 7)
@@ -197,31 +198,30 @@ public class TConstruct {
   }
 
   /** Handles missing mappings of all types */
-  private static void missingMappings(MissingMappingsEvent event) {
-    RegistrationHelper.handleMissingMappings(event, MOD_ID, Registries.BLOCK, name -> switch (name) {
-      // silky jewel removal
-      case "silky_jewel_block" -> Blocks.EMERALD_BLOCK;
-      // piglin heads are vanilla
-      case "piglin_head" -> Blocks.PIGLIN_HEAD;
-      case "piglin_wall_head" -> Blocks.PIGLIN_WALL_HEAD;
-      default -> null;
-    });
-    RegistrationHelper.handleMissingMappings(event, MOD_ID, Registries.ITEM, name -> switch (name) {
-      // silky jewel removal
-      case "silky_jewel" -> Items.EMERALD;
-      case "silky_jewel_block" -> Items.EMERALD_BLOCK;
-      // piglin heads are vanilla
-      case "piglin_head" -> Items.PIGLIN_HEAD;
-      // round plate rename
-      case "round_plate" -> TinkerToolParts.adzeHead.get();
-      case "round_plate_cast" -> TinkerSmeltery.adzeHeadCast.get();
-      case "round_plate_sand_cast" -> TinkerSmeltery.adzeHeadCast.getSand();
-      case "round_plate_red_sand_cast" -> TinkerSmeltery.adzeHeadCast.getRedSand();
-      // slimesuit rework
-      case "slime_chestplate" -> TinkerTools.slimeWings.get();
-      default -> null;
-    });
+  /** Registry aliases for removed and renamed entries, replaces the missing mappings event from Forge */
+  private static void registerAliases() {
+    alias(BuiltInRegistries.BLOCK, "silky_jewel_block", ResourceLocation.withDefaultNamespace("emerald_block"));
+    alias(BuiltInRegistries.BLOCK, "piglin_head", ResourceLocation.withDefaultNamespace("piglin_head"));
+    alias(BuiltInRegistries.BLOCK, "piglin_wall_head", ResourceLocation.withDefaultNamespace("piglin_wall_head"));
+    // silky jewel removal
+    alias(BuiltInRegistries.ITEM, "silky_jewel", ResourceLocation.withDefaultNamespace("emerald"));
+    alias(BuiltInRegistries.ITEM, "silky_jewel_block", ResourceLocation.withDefaultNamespace("emerald_block"));
+    // piglin heads are vanilla
+    alias(BuiltInRegistries.ITEM, "piglin_head", ResourceLocation.withDefaultNamespace("piglin_head"));
+    // round plate rename
+    alias(BuiltInRegistries.ITEM, "round_plate", getResource("adze_head"));
+    alias(BuiltInRegistries.ITEM, "round_plate_cast", getResource("adze_head_cast"));
+    alias(BuiltInRegistries.ITEM, "round_plate_sand_cast", getResource("adze_head_sand_cast"));
+    alias(BuiltInRegistries.ITEM, "round_plate_red_sand_cast", getResource("adze_head_red_sand_cast"));
+    // slimesuit rework
+    alias(BuiltInRegistries.ITEM, "slime_chestplate", getResource("slime_wings"));
   }
+
+  /** Adds an alias from a removed Tinkers ID */
+  private static void alias(Registry<?> registry, String from, ResourceLocation to) {
+    registry.addAlias(getResource(from), to);
+  }
+
 
   /* Utils */
 

@@ -107,3 +107,66 @@ def stub_imports(errs):
 
 if __name__ == '__main__' and sys.argv[2] == 'stub-imports':
     stub_imports(parse(sys.argv[1]))
+
+
+def add_import(src, fqn):
+    """adds an import after the package line if missing. src is a list of lines"""
+    imp = f'import {fqn};'
+    if imp in src: return
+    for i, l in enumerate(src):
+        if l.startswith('import '):
+            src.insert(i, imp); return
+    for i, l in enumerate(src):
+        if l.startswith('package '):
+            src.insert(i + 1, ''); src.insert(i + 2, imp); return
+
+
+def retype_deferred(errs):
+    """ItemObject<Item,X> fields assigned from Mantle's item register become DeferredItem<X>, blocks become DeferredBlock<X>"""
+    rx = re.compile(r'(DeferredItem|DeferredBlock)<\w*> (?:conforms to|cannot be converted to) ItemObject<')
+    edits = collections.defaultdict(set)
+    for e in errs:
+        if rx.search(e['msg']): edits[e['file']].add(e['line'])
+    n = 0
+    for f, lines in edits.items():
+        src = open(f, encoding='utf-8').read().split('\n')
+        changed = set()
+        for line in lines:
+            # the declaration may start a few lines above the reported initializer
+            for k in range(line - 1, max(line - 6, -1), -1):
+                s = src[k]
+                t = re.sub(r'\bItemObject<Item,\s*([^<>]*(?:<[^<>]*>)?)>', r'DeferredItem<\1>', s)
+                t = re.sub(r'\bItemObject<Block,\s*([^<>]*(?:<[^<>]*>)?)>', r'DeferredBlock<\1>', t)
+                if t != s:
+                    src[k] = t; n += 1
+                    changed.add('DeferredItem' if 'DeferredItem<' in t else 'DeferredBlock')
+                    break
+        for c in changed: add_import(src, 'net.neoforged.neoforge.registries.' + c)
+        open(f, 'w', encoding='utf-8').write('\n'.join(src))
+    print(f'{n} declarations retyped in {len(edits)} files')
+
+
+if __name__ == '__main__' and sys.argv[2] == 'retype-deferred':
+    retype_deferred(parse(sys.argv[1]))
+
+
+def drop_get(errs, types):
+    """For 'X cannot be converted to Holder<X>' errors where the argument is 'something.get()', drops the .get() as our DeferredHolders are holders"""
+    rx = re.compile(r'incompatible types: (' + types + r') cannot be converted to Holder<\1>')
+    edits = collections.defaultdict(set)
+    for e in errs:
+        if rx.search(e['msg']) and e['col'] is not None: edits[e['file']].add((e['line'], e['col']))
+    n = 0
+    for f, pos in edits.items():
+        src = open(f, encoding='utf-8').read().split('\n')
+        for line, col in sorted(pos, reverse=True):
+            s = src[line - 1]
+            # javac points at the '(' of the get() call
+            if s[col - 4:col + 2] == '.get()':
+                src[line - 1] = s[:col - 4] + s[col + 2:]; n += 1
+        open(f, 'w', encoding='utf-8').write('\n'.join(src))
+    print(f'{n} .get() calls dropped')
+
+
+if __name__ == '__main__' and sys.argv[2] == 'drop-get':
+    drop_get(parse(sys.argv[1]), sys.argv[3])
