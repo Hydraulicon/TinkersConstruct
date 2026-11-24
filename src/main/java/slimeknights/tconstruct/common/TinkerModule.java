@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.common;
 
+import slimeknights.mantle.registration.deferred.DataComponentTypeDeferredRegister;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -68,6 +69,7 @@ public abstract class TinkerModule {
   protected static final BlockDeferredRegisterExtension BLOCKS = new BlockDeferredRegisterExtension(TConstruct.MOD_ID);
   protected static final ItemDeferredRegisterExtension ITEMS = new ItemDeferredRegisterExtension(TConstruct.MOD_ID);
   protected static final FluidDeferredRegisterExtension FLUIDS = new FluidDeferredRegisterExtension(TConstruct.MOD_ID);
+  protected static final DataComponentTypeDeferredRegister DATA_COMPONENTS = new DataComponentTypeDeferredRegister(Registries.DATA_COMPONENT_TYPE, TConstruct.MOD_ID);
   protected static final EnumDeferredRegister<MobEffect> MOB_EFFECTS = new EnumDeferredRegister<>(Registries.MOB_EFFECT, TConstruct.MOD_ID);
   protected static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, TConstruct.MOD_ID);
   protected static final DeferredRegister<EntityDataSerializer<?>> DATA_SERIALIZERS = DeferredRegister.create(NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, TConstruct.MOD_ID);
@@ -98,6 +100,7 @@ public abstract class TinkerModule {
     BLOCKS.register(bus);
     ITEMS.register(bus);
     FLUIDS.register(bus);
+    DATA_COMPONENTS.register(bus);
     MOB_EFFECTS.register(bus);
     PARTICLE_TYPES.register(bus);
     DATA_SERIALIZERS.register(bus);

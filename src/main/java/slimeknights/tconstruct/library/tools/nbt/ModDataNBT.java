@@ -1,9 +1,5 @@
 package slimeknights.tconstruct.library.tools.nbt;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -15,13 +11,17 @@ import java.util.function.BiFunction;
  * NBT representing extra data on the tool for modifiers, with a wrapper around the compound for to enforce namespacing data.
  * On a typical tool, there are two copies of this class, one for persistent data, and one that rebuilds when the modifiers refresh.
  * Note unlike other NBT classes, the data inside this one is mutable as most of it is directly used by the tools.
+ * <p>
+ * All access goes through {@link #getData()} for reading and {@link #getDataForWrite()} plus {@link #onChanged()} for writing.
+ * This lets {@link ToolStack} back the data with its copy-on-write tool NBT, as data components are immutable in 1.21.
  */
-@EqualsAndHashCode
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class ModDataNBT implements IModDataView {
   /** Compound representing modifier data */
-  @Getter(AccessLevel.PROTECTED)
   private final CompoundTag data;
+
+  protected ModDataNBT(CompoundTag data) {
+    this.data = data;
+  }
 
   /**
    * Creates a new mod data containing empty data
@@ -30,25 +30,38 @@ public class ModDataNBT implements IModDataView {
     this(new CompoundTag());
   }
 
+  /** Gets the data for reading. Callers must not modify the returned tag, use {@link #getDataForWrite()} */
+  protected CompoundTag getData() {
+    return data;
+  }
+
+  /** Gets the data for writing, call {@link #onChanged()} after modifying it */
+  protected CompoundTag getDataForWrite() {
+    return data;
+  }
+
+  /** Called after the data is modified */
+  protected void onChanged() {}
+
   @Override
   public <T> T get(ResourceLocation name, BiFunction<CompoundTag,String,T> function) {
-    return function.apply(data, name.toString());
+    return function.apply(getData(), name.toString());
   }
 
   @Override
   public ListTag getList(ResourceLocation name, int type) {
     // save generation of the extra lambda object
-    return data.getList(name.toString(), type);
+    return getData().getList(name.toString(), type);
   }
 
   @Override
   public boolean contains(ResourceLocation name) {
-    return data.contains(name.toString());
+    return getData().contains(name.toString());
   }
 
   @Override
   public boolean contains(ResourceLocation name, int type) {
-    return data.contains(name.toString(), type);
+    return getData().contains(name.toString(), type);
   }
 
   /**
@@ -57,7 +70,8 @@ public class ModDataNBT implements IModDataView {
    * @param nbt   NBT value
    */
   public void put(ResourceLocation name, Tag nbt) {
-    data.put(name.toString(), nbt);
+    getDataForWrite().put(name.toString(), nbt);
+    onChanged();
   }
 
   /**
@@ -66,7 +80,8 @@ public class ModDataNBT implements IModDataView {
    * @param value  Integer value
    */
   public void putInt(ResourceLocation name, int value) {
-    data.putInt(name.toString(), value);
+    getDataForWrite().putInt(name.toString(), value);
+    onChanged();
   }
 
   /**
@@ -75,7 +90,8 @@ public class ModDataNBT implements IModDataView {
    * @param value  Boolean value
    */
   public void putBoolean(ResourceLocation name, boolean value) {
-    data.putBoolean(name.toString(), value);
+    getDataForWrite().putBoolean(name.toString(), value);
+    onChanged();
   }
 
   /**
@@ -84,7 +100,8 @@ public class ModDataNBT implements IModDataView {
    * @param value  Float value
    */
   public void putFloat(ResourceLocation name, float value) {
-    data.putFloat(name.toString(), value);
+    getDataForWrite().putFloat(name.toString(), value);
+    onChanged();
   }
 
   /**
@@ -93,7 +110,8 @@ public class ModDataNBT implements IModDataView {
    * @param value  String value
    */
   public void putString(ResourceLocation name, String value) {
-    data.putString(name.toString(), value);
+    getDataForWrite().putString(name.toString(), value);
+    onChanged();
   }
 
   /**
@@ -101,7 +119,8 @@ public class ModDataNBT implements IModDataView {
    * @param name  Key to remove
    */
   public void remove(ResourceLocation name) {
-    data.remove(name.toString());
+    getDataForWrite().remove(name.toString());
+    onChanged();
   }
 
 
@@ -109,7 +128,7 @@ public class ModDataNBT implements IModDataView {
 
   /** Gets a copy of the internal data, generally should only be used for syncing, no reason to call directly */
   public CompoundTag getCopy() {
-    return data.copy();
+    return getData().copy();
   }
 
   /**
@@ -117,8 +136,10 @@ public class ModDataNBT implements IModDataView {
    * @param data  data
    */
   public void copyFrom(CompoundTag data) {
-    this.data.getAllKeys().clear();
-    this.data.merge(data);
+    CompoundTag tag = getDataForWrite();
+    tag.getAllKeys().clear();
+    tag.merge(data);
+    onChanged();
   }
 
   /**
@@ -128,5 +149,15 @@ public class ModDataNBT implements IModDataView {
    */
   public static ModDataNBT readFromNBT(CompoundTag data) {
     return new ModDataNBT(data);
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    return this == other || other instanceof ModDataNBT mod && getData().equals(mod.getData());
+  }
+
+  @Override
+  public int hashCode() {
+    return getData().hashCode();
   }
 }

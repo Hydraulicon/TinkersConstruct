@@ -2,30 +2,27 @@ package slimeknights.tconstruct.library.tools.capability;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.common.NeoForge;
-// TODO 1.21 import: net.minecraftforge.common.capabilities.Capability;
-// TODO 1.21 import: net.minecraftforge.common.capabilities.CapabilityManager;
-// TODO 1.21 import: net.minecraftforge.common.capabilities.CapabilityToken;
-// TODO 1.21 import: net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-// TODO 1.21 import: net.minecraftforge.common.util.LazyOptional;
-// TODO 1.21 import: net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.neoforged.bus.api.EventPriority;
-// TODO 1.21 import: net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import slimeknights.mantle.registration.holder.DeferredAttachment;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.tools.nbt.ModifierNBT;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-/** Capability to allow an entity to store modifiers, used on projectiles fired from modifiable items */
+/**
+ * Allows an entity to store modifiers, used on projectiles fired from modifiable items.
+ * As of 1.21 this is a data attachment rather than a capability; the name is kept for compatibility.
+ */
 public class EntityModifierCapability {
   /** Default instance to use with orElse */
   public static final EntityModifiers EMPTY = new EntityModifiers() {
@@ -48,19 +45,33 @@ public class EntityModifierCapability {
   /** List of predicates to check if the entity supports this capability */
   private static final List<Predicate<Entity>> ENTITY_PREDICATES = new ArrayList<>();
 
-  /** Capability ID */
+  /** Attachment ID */
   private static final ResourceLocation ID = TConstruct.getResource("modifiers");
-  /** Capability type */
-  public static final Capability<EntityModifiers> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+  /** Attachment type */
+  public static final DeferredAttachment<Modifiers> TYPE = DeferredAttachment.createType(ID);
+  /** Serializer for the attachment */
+  private static final IAttachmentSerializer<ListTag,Modifiers> SERIALIZER = new IAttachmentSerializer<>() {
+    @Override
+    public Modifiers read(IAttachmentHolder holder, ListTag tag, HolderLookup.Provider provider) {
+      Modifiers modifiers = new Modifiers();
+      modifiers.setModifiers(ModifierNBT.readFromNBT(tag));
+      return modifiers;
+    }
 
-  /** Gets the capability for the entity or an empty instance if missing */
+    @Override
+    public ListTag write(Modifiers attachment, HolderLookup.Provider provider) {
+      return attachment.getModifiers().serializeToNBT();
+    }
+  };
+
+  /** Gets the modifiers for the entity or an empty instance if unsupported */
   public static EntityModifiers getCapability(Entity entity) {
-    return entity.getCapability(CAPABILITY).orElse(EMPTY);
+    return supportCapability(entity) ? entity.getData(TYPE) : EMPTY;
   }
 
   /** Gets the data or an empty instance if missing */
   public static ModifierNBT getOrEmpty(Entity entity) {
-    return entity.getCapability(CAPABILITY).orElse(EMPTY).getModifiers();
+    return getCapability(entity).getModifiers();
   }
 
   /** Checks if the given entity supports this capability */
@@ -78,53 +89,15 @@ public class EntityModifierCapability {
     ENTITY_PREDICATES.add(predicate);
   }
 
-  /** Registers this capability with relevant busses*/
-  public static void register() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.NORMAL, false, RegisterCapabilitiesEvent.class, event -> event.register(ModifierNBT.class));
-    NeoForge.EVENT_BUS.addGenericListener(Entity.class, EntityModifierCapability::attachCapability);
+  /** Registers the attachment type */
+  public static void register(RegisterEvent event) {
+    event.register(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ID, () -> AttachmentType.builder(Modifiers::new).serialize(SERIALIZER).build());
   }
 
-  /** Event listener to attach the capability */
-  private static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-    if (supportCapability(event.getObject())) {
-      Provider provider = new Provider();
-      event.addCapability(ID, provider);
-      event.addListener(provider);
-    }
-  }
-
-  /** Capability provider instance */
-  private static class Provider implements ICapabilitySerializable<ListTag>, Runnable, EntityModifiers {
+  /** Attachment instance */
+  public static class Modifiers implements EntityModifiers {
     @Getter @Setter
     private ModifierNBT modifiers = ModifierNBT.EMPTY;
-    private LazyOptional<EntityModifiers> capability;
-    private Provider() {
-      this.capability = LazyOptional.of(() -> this);
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-      return CAPABILITY.orEmpty(cap, capability);
-    }
-
-    @Override
-    public void run() {
-      // called when capabilities invalidate, create a new cap just in case they are revived later
-      capability.invalidate();
-      capability = LazyOptional.of(() -> this);
-    }
-
-    @Override
-    public ListTag serializeNBT() {
-      return modifiers.serializeToNBT();
-    }
-
-    @Override
-    public void deserializeNBT(ListTag nbt) {
-      modifiers = ModifierNBT.readFromNBT(nbt);
-      run();
-    }
   }
 
   /** Interface for callers to use */

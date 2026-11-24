@@ -1105,10 +1105,15 @@ public final class TinkerModifiers extends TinkerModule {
   }
 
   @SubscribeEvent
+  void registerAttachments(RegisterEvent event) {
+    TinkerDataCapability.register(event);
+    PersistentDataCapability.register(event);
+    EntityModifierCapability.register(event);
+  }
+
+  @SubscribeEvent
   void commonSetup(final FMLCommonSetupEvent event) {
-    TinkerDataCapability.register();
-    PersistentDataCapability.register();
-    EntityModifierCapability.register();
+    PersistentDataCapability.init();
     BlockItemProviderCapability.register();
     // by default, we support modifying projectiles (arrows or fireworks mainly, but maybe other stuff). other entities may come in the future
     EntityModifierCapability.registerEntityPredicate(entity -> entity instanceof Projectile);

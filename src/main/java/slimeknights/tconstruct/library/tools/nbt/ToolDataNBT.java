@@ -26,10 +26,11 @@ public class ToolDataNBT extends ModDataNBT {
    */
   public void setSlots(SlotType type, int value) {
     if (value == 0) {
-      getData().remove(type.getName());
+      getDataForWrite().remove(type.getName());
     } else {
-      getData().putInt(type.getName(), value);
+      getDataForWrite().putInt(type.getName(), value);
     }
+    onChanged();
   }
 
   /**

@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.shared;
 
+import slimeknights.tconstruct.library.tools.nbt.ToolNBT;
+import slimeknights.mantle.registration.holder.DeferredDataComponent;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import com.mojang.serialization.MapCodec;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -157,6 +159,10 @@ public final class TinkerCommons extends TinkerModule {
   public static final DeferredItem<TinkerBookItem> tinkersGadgetry  = ITEMS.register("tinkers_gadgetry",  () -> new TinkerBookItem(UNSTACKABLE_PROPS, BookType.TINKERS_GADGETRY));
   public static final DeferredItem<TinkerBookItem> fantasticFoundry = ITEMS.register("fantastic_foundry", () -> new TinkerBookItem(UNSTACKABLE_PROPS, BookType.FANTASTIC_FOUNDRY));
   public static final DeferredItem<TinkerBookItem> encyclopedia     = ITEMS.register("encyclopedia",      () -> new TinkerBookItem(UNSTACKABLE_PROPS, BookType.ENCYCLOPEDIA));
+
+  /* Data components */
+  /** Tool NBT for all modifiable items, see {@link ToolNBT} */
+  public static final DeferredDataComponent<ToolNBT> toolData = DATA_COMPONENTS.registerPersistent("tool_data", ToolNBT.CODEC, ToolNBT.STREAM_CODEC);
 
   public static final DeferredHolder<ParticleType<?>, ParticleType<FluidParticleData>> fluidParticle = PARTICLE_TYPES.register("fluid", FluidParticleData.Type::new);
 
