@@ -490,6 +490,12 @@ public class TooltipUtil {
     }
   }
 
+  /** Checks if vanilla attribute tooltips should be shown for the current ctrl+shift combination, as we display our own stats instead */
+  public static boolean showAttributes(ToolDefinition definition) {
+    TooltipKey key = SafeClientAccess.getTooltipKey();
+    return !(key == TooltipKey.SHIFT || (key == TooltipKey.CONTROL && definition.hasMaterials()));
+  }
+
   /** Gets the tooltip flags for the current ctrl+shift combination, used to hide enchantments and modifiers from the tooltip as needed */
   public static int getModifierHideFlags(ToolDefinition definition) {
     TooltipKey key = SafeClientAccess.getTooltipKey();

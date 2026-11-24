@@ -79,7 +79,12 @@ Non-tool stack NBT (slime sling, retextured blocks, tanks, casts, potion fluids,
 components, using Mantle's new `DataComponentTypeDeferredRegister` / `DataComponentHelper`.
 
 Old worlds: Vanilla's data fixer does not know our NBT. A 1.20.1 → 1.21.1 world upgrade needs a
-fixer that moves `tag.*` tool keys into the new component. This is optional but should be decided before release.
+fixer that moves `tag.*` tool keys into the new component. This is optional but should be decided before release. Findings so far:
+- Vanilla's 1.21 item fixer moves unknown root stack NBT into `minecraft:custom_data`. So a tool from a 1.20 world arrives with its
+  Tinkers keys in `custom_data`, and could be migrated into `tconstruct:tool_data` in `Item#verifyComponentsAfterLoad`.
+- Stacks stored inside tool NBT (tool inventories, and fluids in tool tanks) use the 1.20 stack format (`Count`, `tag`) and are not
+  fixed by vanilla. Reading them needs a legacy fallback, or the inventory contents are lost.
+- Block positions in block entity NBT already read both formats (`TagUtil.readPos`).
 
 ## Phases
 

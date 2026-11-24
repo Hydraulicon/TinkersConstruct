@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.build;
 
+import slimeknights.tconstruct.library.tools.nbt.IToolStackView;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -49,9 +50,18 @@ public record RarityModule(Rarity rarity) implements VolatileDataModifierHook, M
 
   /** Gets the rarity for the given stack */
   public static Rarity getRarity(ItemStack stack) {
-    int rarity = ModifierUtil.getVolatileInt(stack, RARITY);
+    return getRarity(ModifierUtil.getVolatileInt(stack, RARITY));
+  }
+
+  /** Gets the rarity for the given tool */
+  public static Rarity getRarity(IToolStackView tool) {
+    return getRarity(tool.getVolatileData().getInt(RARITY));
+  }
+
+  /** Gets the rarity from its index */
+  private static Rarity getRarity(int rarity) {
     Rarity[] values = Rarity.values();
-    return values[Mth.clamp(rarity, 0, values.length)];
+    return values[Mth.clamp(rarity, 0, values.length - 1)];
   }
 
   /**

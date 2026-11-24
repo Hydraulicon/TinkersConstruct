@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.capability.fluid;
 
+import slimeknights.tconstruct.library.utils.RegistryAccessHelper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +25,7 @@ import java.util.function.BiFunction;
 @RequiredArgsConstructor
 public class ToolTankHelper {
   /** Helper function to parse a fluid from NBT */
-  public static final BiFunction<CompoundTag, String, FluidStack> PARSE_FLUID = (nbt, key) -> FluidStack.loadFluidStackFromNBT(nbt.getCompound(key));
+  public static final BiFunction<CompoundTag, String, FluidStack> PARSE_FLUID = (nbt, key) -> FluidStack.parseOptional(RegistryAccessHelper.get(), nbt.getCompound(key));
 
   /** Format key for the stat */
   public static final String MB_FORMAT = Mantle.makeDescriptionId("gui", "fluid.millibucket");
@@ -68,7 +69,7 @@ public class ToolTankHelper {
     if (fluid.getAmount() > capacity) {
       fluid.setAmount(capacity);
     }
-    tool.getPersistentData().put(fluidKey, fluid.writeToNBT(new CompoundTag()));
+    tool.getPersistentData().put(fluidKey, fluid.saveOptional(RegistryAccessHelper.get()));
     return fluid;
   }
 }

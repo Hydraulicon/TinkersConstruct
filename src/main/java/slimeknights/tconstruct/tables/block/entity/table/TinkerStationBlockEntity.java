@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 // TODO 1.21 import: net.minecraftforge.common.util.LazyOptional;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
 import slimeknights.mantle.util.RetexturedHelper;
 import slimeknights.tconstruct.TConstruct;
@@ -236,7 +235,7 @@ public class TinkerStationBlockEntity extends RetexturedTableBlockEntity impleme
       if (tinkerable.getCount() <= shrinkToolSlot) {
         this.setItem(TINKER_SLOT, ItemStack.EMPTY);
       } else {
-        this.setItem(TINKER_SLOT, ItemHandlerHelper.copyStackWithSize(tinkerable, tinkerable.getCount() - shrinkToolSlot));
+        this.setItem(TINKER_SLOT, tinkerable.copyWithCount(tinkerable.getCount() - shrinkToolSlot));
       }
     }
     this.itemName = "";

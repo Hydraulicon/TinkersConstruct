@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import net.minecraft.core.Holder;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.common.ItemAbility;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.client.item.ModifiableItemClientExtension;
@@ -45,7 +45,6 @@ import slimeknights.tconstruct.library.modifiers.hook.interaction.SlotStackModif
 import slimeknights.tconstruct.library.modifiers.hook.interaction.UsingToolModifierHook;
 import slimeknights.tconstruct.library.modifiers.modules.build.RarityModule;
 import slimeknights.tconstruct.library.tools.IndestructibleItemEntity;
-import slimeknights.tconstruct.library.tools.capability.ToolCapabilityProvider;
 import slimeknights.tconstruct.library.tools.capability.inventory.ToolInventoryCapability;
 import slimeknights.tconstruct.library.tools.definition.ToolDefinition;
 import slimeknights.tconstruct.library.tools.definition.module.display.ToolNameHook;
@@ -136,11 +135,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
 
   /* Loading */
 
-  @Nullable
-  @Override
-  public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-    return new ToolCapabilityProvider(stack);
-  }
 
   @Override
   public void verifyTagAfterLoad(CompoundTag nbt) {
@@ -277,7 +271,7 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public Multimap<Attribute,AttributeModifier> getAttributeModifiers(IToolStackView tool, EquipmentSlot slot) {
+  public Multimap<Holder<Attribute>,AttributeModifier> getAttributeModifiers(IToolStackView tool, EquipmentSlot slot) {
     return AttributesModifierHook.getHeldAttributeModifiers(tool, slot);
   }
 

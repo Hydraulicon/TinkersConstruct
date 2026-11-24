@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tools;
 
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import com.mojang.serialization.MapCodec;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -1111,10 +1113,14 @@ public final class TinkerModifiers extends TinkerModule {
     EntityModifierCapability.register(event);
   }
 
+  @SubscribeEvent(priority = EventPriority.LOW)
+  void registerCapabilities(RegisterCapabilitiesEvent event) {
+    BlockItemProviderCapability.registerDefault(event);
+  }
+
   @SubscribeEvent
   void commonSetup(final FMLCommonSetupEvent event) {
     PersistentDataCapability.init();
-    BlockItemProviderCapability.register();
     // by default, we support modifying projectiles (arrows or fireworks mainly, but maybe other stuff). other entities may come in the future
     EntityModifierCapability.registerEntityPredicate(entity -> entity instanceof Projectile);
   }

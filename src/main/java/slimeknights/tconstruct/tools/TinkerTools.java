@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tools;
 
+import slimeknights.tconstruct.library.tools.capability.BlockItemProviderCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -167,6 +170,11 @@ import static slimeknights.tconstruct.TConstruct.getResource;
 public final class TinkerTools extends TinkerModule {
   public TinkerTools() {
     SlotType.init();
+    // tool capabilities, must be registered before RegisterCapabilitiesEvent
+    ToolCapabilityProvider.register(Capabilities.FluidHandler.ITEM, ToolFluidCapability.PROVIDER);
+    ToolCapabilityProvider.register(Capabilities.ItemHandler.ITEM, ToolInventoryCapability.PROVIDER);
+    ToolCapabilityProvider.register(Capabilities.EnergyStorage.ITEM, ToolEnergyCapability.PROVIDER);
+    ToolCapabilityProvider.register(BlockItemProviderCapability.CAPABILITY, BlockItemProviderModifierHook.PROVIDER);
     BlockSideHitListener.init();
     ModifierLootingHandler.init();
     RandomMaterial.init();
@@ -288,12 +296,13 @@ public final class TinkerTools extends TinkerModule {
    */
 
   @SubscribeEvent
+  void registerCapabilities(RegisterCapabilitiesEvent event) {
+    ToolCapabilityProvider.registerCapabilities(event);
+  }
+
+  @SubscribeEvent
   void commonSetup(FMLCommonSetupEvent event) {
     EquipmentChangeWatcher.register();
-    ToolCapabilityProvider.register(ToolFluidCapability.Provider::new);
-    ToolCapabilityProvider.register(ToolInventoryCapability.Provider::new);
-    ToolCapabilityProvider.register((stack, tool) -> new ToolEnergyCapability.Provider(tool));
-    ToolCapabilityProvider.register((stack, tool) -> new BlockItemProviderModifierHook.Provider(tool));
     for (ConfigurableAction action : Config.COMMON.toolTweaks) {
       event.enqueueWork(action);
     }

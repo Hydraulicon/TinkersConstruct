@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.capability.inventory;
 
+import slimeknights.tconstruct.library.utils.RegistryAccessHelper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -145,7 +146,7 @@ public class InventoryModule implements ModifierModule, InventoryModifierHook, V
       for (int i = 0; i < list.size(); i++) {
         CompoundTag compound = list.getCompound(i);
         if (compound.getInt(TAG_SLOT) == slot) {
-          return ItemStack.of(compound);
+          return ItemStack.parseOptional(RegistryAccessHelper.get(), compound);
         }
       }
     }
@@ -266,7 +267,9 @@ public class InventoryModule implements ModifierModule, InventoryModifierHook, V
    * @return Tag written to, same as {@code compound}.
    */
   public static CompoundTag writeStack(ItemStack stack, int slot, CompoundTag compound) {
-    stack.save(compound);
+    if (!stack.isEmpty()) {
+      stack.save(RegistryAccessHelper.get(), compound);
+    }
     compound.putInt(TAG_SLOT, slot);
     return compound;
   }
@@ -286,7 +289,7 @@ public class InventoryModule implements ModifierModule, InventoryModifierHook, V
           // slot must be valid
           int slot = compound.getInt(TAG_SLOT);
           if (slot < max) {
-            ItemStack stack = ItemStack.of(compound);
+            ItemStack stack = ItemStack.parseOptional(RegistryAccessHelper.get(), compound);
             if (!stack.isEmpty() && predicate.test(stack)) {
               return new StackMatch(stack, slot);
             }
@@ -314,7 +317,7 @@ public class InventoryModule implements ModifierModule, InventoryModifierHook, V
           // slot must be valid
           int slot = compound.getInt(TAG_SLOT);
           if (slot < max) {
-            parsed[slot] = ItemStack.of(compound);
+            parsed[slot] = ItemStack.parseOptional(RegistryAccessHelper.get(), compound);
           }
         }
         // add stacks into the list

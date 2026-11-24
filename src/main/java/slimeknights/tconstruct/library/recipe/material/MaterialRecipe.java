@@ -8,7 +8,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 // TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
@@ -129,7 +128,7 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   public List<ItemStack> getDisplayItems() {
     if (displayItems == null) {
       if (needed > 1) {
-        displayItems = Arrays.stream(ingredient.getItems()).map(stack -> ItemHandlerHelper.copyStackWithSize(stack, needed)).toList();
+        displayItems = Arrays.stream(ingredient.getItems()).map(stack -> stack.copyWithCount(needed)).toList();
       } else {
         displayItems = List.of(ingredient.getItems());
       }

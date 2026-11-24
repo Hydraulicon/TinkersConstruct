@@ -4,9 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-// TODO 1.21 import: net.minecraftforge.common.capabilities.Capability;
-// TODO 1.21 import: net.minecraftforge.common.capabilities.ForgeCapabilities;
-// TODO 1.21 import: net.minecraftforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import slimeknights.tconstruct.TConstruct;
@@ -317,18 +314,6 @@ public class ToolFluidCapability extends FluidModifierHookIterator<ModifierEntry
   }
 
   /** Provider instance for a fluid cap */
-  public static class Provider implements IToolCapabilityProvider {
-    private final LazyOptional<IFluidHandlerItem> fluidCap;
-    public Provider(ItemStack stack, Supplier<? extends IToolStackView> toolStack) {
-      this.fluidCap = LazyOptional.of(() -> new ToolFluidCapability(stack, toolStack));
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(IToolStackView tool, Capability<T> cap) {
-      if (cap == ForgeCapabilities.FLUID_HANDLER_ITEM && tool.getVolatileData().getInt(TOTAL_TANKS) > 0) {
-        return fluidCap.cast();
-      }
-      return LazyOptional.empty();
-    }
-  }
+  /** Provides this capability on tools with tanks */
+  public static final IToolCapabilityProvider<IFluidHandlerItem> PROVIDER = (stack, tool) -> tool.getVolatileData().getInt(TOTAL_TANKS) > 0 ? new ToolFluidCapability(stack, () -> tool) : null;
 }

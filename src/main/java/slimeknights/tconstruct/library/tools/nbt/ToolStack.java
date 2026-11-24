@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.nbt;
 
+import slimeknights.tconstruct.library.modifiers.modules.build.RarityModule;
 import slimeknights.tconstruct.shared.TinkerCommons;
 import net.minecraft.core.component.DataComponents;
 import com.google.common.collect.ImmutableSet;
@@ -400,6 +401,8 @@ public class ToolStack implements IToolStackView {
       target.remove(DataComponents.MAX_DAMAGE);
       target.remove(DataComponents.DAMAGE);
     }
+    // rarity is also a component as of 1.21
+    target.set(DataComponents.RARITY, RarityModule.getRarity(this));
   }
 
 
