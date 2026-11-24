@@ -9,5 +9,5 @@ import net.minecraft.world.item.ItemStack;
 /** Simple class for an inventory containing just one item */
 public class SingleItemContainer implements SingleItemInput {
   @Getter @Setter
-  private ItemStack stack = ItemStack.EMPTY;
+  private ItemStack item = ItemStack.EMPTY;
 }

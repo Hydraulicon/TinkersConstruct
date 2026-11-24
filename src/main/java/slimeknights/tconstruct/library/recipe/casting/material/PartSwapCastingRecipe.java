@@ -9,7 +9,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -67,7 +66,7 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
   private MaterialFluidRecipe cachedPartSwapping = null;
 
   protected PartSwapCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, int index, IJsonPredicate<MaterialVariantId> materials) {
-    super(serializer, group, cast, itemCost, true, false, materials);
+    super(type, serializer, group, cast, itemCost, true, false, materials);
     this.index = index;
   }
 
@@ -146,12 +145,12 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess registryAccess) {
+  public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
     return getCast().getItems()[0].copy();
   }
 
   @Override
-  public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ICastingContainer inv, HolderLookup.Provider access) {
     MaterialFluidRecipe fluidRecipe = getFluidRecipe(inv);
     MaterialVariant material = fluidRecipe.getOutput();
     ItemStack cast = inv.getItem();
@@ -327,7 +326,7 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
   }
 
   /** Gets the display recipes before naming */
-  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       List<ToolRequirement> tools = getTools(getCast().getItems());
       if (tools.isEmpty()) {
@@ -520,13 +519,13 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayableCastingRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayableCastingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

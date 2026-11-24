@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.plugin.jei;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeHelper;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -256,7 +257,7 @@ public class JEIPlugin implements IModPlugin {
     // melting
     // need to register the fuels before the categories so they are available
     MeltingFuelHandler.registerSolidFuels(register.getIngredientManager());
-    List<MeltingFuel> fuels = RecipeHelper.getRecipes(manager, TinkerRecipeTypes.FUEL.get(), MeltingFuel.class);
+    List<MeltingFuel> fuels = TinkerRecipeHelper.getRecipes(manager, TinkerRecipeTypes.FUEL.get(), MeltingFuel.class);
     MeltingFuelHandler.setMeltngFuels(fuels);
     register.addRecipes(TConstructJEIConstants.FUEL, fuels);
     // register melting recipes

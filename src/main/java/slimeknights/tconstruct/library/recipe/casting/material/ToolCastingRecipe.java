@@ -5,7 +5,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -63,12 +62,12 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe {
   private final boolean fluidSwapping;
 
   protected ToolCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, CastPurpose castPurpose, IModifiable result, IJsonPredicate<MaterialVariantId> allowedMaterials, List<MaterialVariantId> extraMaterials, boolean fluidSwapping) {
-    super(serializer, group, cast, itemCost, castPurpose.fluidIndex, allowedMaterials);
+    super(type, serializer, group, cast, itemCost, castPurpose.fluidIndex, allowedMaterials);
     this.result = result;
     this.extraMaterials = extraMaterials;
     CastingRecipeLookup.registerCastable(result);
     if (castPurpose == CastPurpose.CONSUMED_OFFSET && extraMaterials.isEmpty()) {
-      TConstruct.LOG.error("Error creating recipe {}: Cannot use cast purpose of consume offset for a tool casting recipe with no extra materials, subbing in consumed.", id);
+      TConstruct.LOG.error("Error creating tool casting recipe for {}: Cannot use cast purpose of consume offset for a tool casting recipe with no extra materials, subbing in consumed.", result);
       this.castPurpose = CastPurpose.CONSUMED;
     } else {
       this.castPurpose = castPurpose;
@@ -106,7 +105,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe {
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return new ItemStack(result);
   }
 
@@ -145,7 +144,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe {
   }
 
   @Override
-  public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ICastingContainer inv, HolderLookup.Provider access) {
     // if the cast is the result, we are part swapping, replace the last material
     ItemStack cast = inv.getItem();
     if (fluidSwapping && cast.getItem() == result) {
@@ -190,11 +189,11 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe {
   }
 
   @Override
-  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       List<MaterialStatsId> requirements = ToolMaterialHook.stats(result.getToolDefinition());
       if (requirements.size() < castPurpose.minMaterials) {
-        TConstruct.LOG.error("Failed to create display recipes for Tool Casting {}: tool {} has too few materials.", getId(), result.getToolDefinition().getId());
+        TConstruct.LOG.error("Failed to create display recipes for Tool Casting {}: tool {} has too few materials.", id, result.getToolDefinition().getId());
         multiRecipes = List.of();
       } else {
         // tool is valid, create setup to call part swapping methods
@@ -209,7 +208,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe {
         int maxCoolingTime = prepareRecipes(fluidRecipes, MaterialCastingLookup.getSortedCastingFluids(), false, requirement);
         // this should never happen or the recipe would not exist, but better to not make broken JEI
         if (fluidRecipes.isEmpty()) {
-          TConstruct.LOG.error("Failed to create display recipes for Tool Casting {}: no fluid casting matches conditions.", getId());
+          TConstruct.LOG.error("Failed to create display recipes for Tool Casting {}: no fluid casting matches conditions.", id);
         } else {
           // build the cast swapping recipe, it has our fluids
           IDisplayableCastingRecipe castSwap = makeRecipe(tool, fluidRecipes, false, maxCoolingTime);
@@ -232,7 +231,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe {
             } else {
               tools = castSwap.getOutputs();
             }
-            displayRecipes.add(DisplayCastingRecipe.from(this)
+            displayRecipes.add(DisplayCastingRecipe.from(id, this)
               .casts(casts).consumed(isConsumed())
               .fluids(castSwap.getFluids()).results(tools)
               .coolingTime(maxCoolingTime).materialCasting(false)

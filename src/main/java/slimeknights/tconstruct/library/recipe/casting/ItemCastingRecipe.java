@@ -1,11 +1,12 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import lombok.Getter;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -26,7 +27,7 @@ import java.util.List;
 public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplayableCastingRecipe {
   /* Shared fields */
   protected static final LoadableField<SizedFluidIngredient,ItemCastingRecipe> FLUID_FIELD = Loadables.SIZED_FLUID_INGREDIENT.requiredField("fluid", ItemCastingRecipe::getFluid);
-  protected static final LoadableField<ItemOutput,ItemCastingRecipe> RESULT_FIELD = ItemOutput.Loadable.REQUIRED_ITEM.requiredField("result", r -> r.result);
+  protected static final LoadableField<ItemOutput,ItemCastingRecipe> RESULT_FIELD = ItemOutput.REQUIRED_ITEM_LOADABLE.requiredField("result", r -> r.result);
   protected static final LoadableField<Integer,ItemCastingRecipe> COOLING_TIME_FIELD = IntLoadable.FROM_ONE.requiredField("cooling_time", ItemCastingRecipe::getCoolingTime);
   /** Loader instance */
   public static final RecordLoadable<ItemCastingRecipe> LOADER = RecordLoadable.create(
@@ -54,11 +55,11 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
 
   @Override
   public boolean matches(ICastingContainer inv, Level worldIn) {
-    return getCast().test(inv.getItem()) && fluid.test(inv.getFluid());
+    return getCast().test(inv.getItem()) && FluidIngredients.test(fluid, inv.getFluid());
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return this.result.get();
   }
 
@@ -70,11 +71,6 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
 
   /* JEI */
 
-  @Override
-  public ResourceLocation getRecipeId() {
-    // need a separate method as remapping makes the names mismatch
-    return getId();
-  }
 
   @Override
   public boolean hasCast() {
@@ -98,6 +94,6 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
    */
   @Override
   public List<FluidStack> getFluids() {
-    return this.fluid.getFluids();
+    return FluidIngredients.getFluids(this.fluid);
   }
 }

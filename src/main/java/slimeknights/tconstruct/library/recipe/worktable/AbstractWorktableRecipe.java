@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.worktable;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import slimeknights.mantle.data.loadable.Loadables;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.Getter;

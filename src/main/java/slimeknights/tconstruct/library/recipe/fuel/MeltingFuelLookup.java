@@ -21,8 +21,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MeltingFuelLookup {
   /** Dummy fuel instance sine caches don't support caching null */
-  @SuppressWarnings("removal")
-  private static final MeltingFuel EMPTY = new MeltingFuel(ResourceLocation.parse("missingno"), FluidIngredients.EMPTY, 0, 0, 0);
+  private static final MeltingFuel EMPTY = new MeltingFuel(FluidIngredients.EMPTY, 0, 0, 0);
   /** Temperature for solid fuels in the heater */
   private static MeltingFuel SOLID = EMPTY;
   /** List of all recipes */
@@ -58,7 +57,7 @@ public class MeltingFuelLookup {
     } else if (SOLID == EMPTY) {
       SOLID = fuel;
     } else {
-      TConstruct.LOG.warn("Multiple fuel recipes for solid fuel. This usually indicates a datapack error and may cause desyncs. Original {}, latest {}", SOLID.getId(), fuel.getId());
+      TConstruct.LOG.warn("Multiple fuel recipes for solid fuel. This usually indicates a datapack error and may cause desyncs. Original {}, latest {}", SOLID, fuel);
     }
   }
 

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.fluid;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
@@ -36,7 +37,7 @@ public record FluidEffects(SizedFluidIngredient ingredient, List<FluidEffect<? s
    * @return  True if this recipe handles the given fluid
    */
   public boolean matches(Fluid fluid) {
-    return ingredient.test(fluid);
+    return FluidIngredients.test(ingredient, fluid);
   }
 
   /** Gets the amount of fluid needed for a single level */

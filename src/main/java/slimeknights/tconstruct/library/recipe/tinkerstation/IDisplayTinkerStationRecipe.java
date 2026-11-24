@@ -18,7 +18,9 @@ public interface IDisplayTinkerStationRecipe {
 
   /** Gets the ID of this recipe. If this is a generated display recipe, uses the parent recipe ID */
   @Nullable
-  ResourceLocation getRecipeId();
+  default ResourceLocation getRecipeId() {
+    return null;
+  }
 
   /**
    * Gets the variant for this recipe. Mutually exclusive with level for recipe display.

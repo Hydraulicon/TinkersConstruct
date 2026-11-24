@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.entitymelting;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeHelper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.minecraft.world.entity.EntityType;
@@ -36,7 +37,7 @@ public class EntityMeltingRecipeCache {
     }
 
     // find a recipe if none exist
-    for (EntityMeltingRecipe recipe : RecipeHelper.getRecipes(manager, TinkerRecipeTypes.ENTITY_MELTING.get(), EntityMeltingRecipe.class)) {
+    for (EntityMeltingRecipe recipe : TinkerRecipeHelper.getRecipes(manager, TinkerRecipeTypes.ENTITY_MELTING.get(), EntityMeltingRecipe.class)) {
       if (recipe.matches(type)) {
         CACHE.put(type, recipe);
         return recipe;

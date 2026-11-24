@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +38,7 @@ public class IncrementalModifierRecipe extends AbstractModifierRecipe {
   protected static final LoadableField<Ingredient,IncrementalModifierRecipe> INPUT_FIELD = Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("input", r -> r.input);
   protected static final LoadableField<Integer,IncrementalModifierRecipe> AMOUNT_FIELD = IntLoadable.FROM_ONE.defaultField("amount_per_item", 1, true, r -> r.amountPerInput);
   protected static final LoadableField<Integer,IncrementalModifierRecipe> NEEDED_FIELD = IntLoadable.FROM_ONE.requiredField("needed_per_level", r -> r.neededPerLevel);
-  protected static final LoadableField<ItemOutput,IncrementalModifierRecipe> LEFTOVER_FIELD = ItemOutput.Loadable.OPTIONAL_STACK.emptyField("leftover", r -> r.leftover);
+  protected static final LoadableField<ItemOutput,IncrementalModifierRecipe> LEFTOVER_FIELD = ItemOutput.OPTIONAL_STACK_LOADABLE.defaultField("leftover", ItemOutput.EMPTY, false, r -> r.leftover);
   public static final RecordLoadable<IncrementalModifierRecipe> LOADER = RecordLoadable.create(
     INPUT_FIELD, AMOUNT_FIELD, NEEDED_FIELD,
     TOOLS_FIELD, MAX_TOOL_SIZE_FIELD, RESULT_FIELD, LEVEL_FIELD, SLOTS_FIELD,
@@ -73,7 +73,7 @@ public class IncrementalModifierRecipe extends AbstractModifierRecipe {
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
 
     // fetch the amount from the modifier, will be 0 if we have a full level

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -168,7 +167,7 @@ public class TinkerStationRepairRecipe implements ITinkerStationRecipe, MultiNam
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
     if (tool.getDefinition() == ToolDefinition.EMPTY) {
       return RecipeResult.pass();
@@ -260,7 +259,7 @@ public class TinkerStationRepairRecipe implements ITinkerStationRecipe, MultiNam
   private List<IDisplayCraftingTinkering> displayRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayCraftingTinkering> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayCraftingTinkering> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       CompoundTag stats = StatsNBT.builder().set(ToolStats.DURABILITY, 1000).build().serializeToNBT();
       MaterialNBT displayMaterials = new MaterialNBT(IntStream.range(0, 5).mapToObj(i -> MaterialVariant.of(ToolBuildHandler.getRenderMaterial(i))).toList());
@@ -490,13 +489,13 @@ public class TinkerStationRepairRecipe implements ITinkerStationRecipe, MultiNam
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayCraftingTinkering>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayCraftingTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

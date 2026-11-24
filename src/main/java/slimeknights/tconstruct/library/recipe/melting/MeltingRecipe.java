@@ -112,10 +112,6 @@ public class MeltingRecipe implements IMeltingRecipe, IDisplayableMeltingRecipe 
 
   /* JEI */
 
-  @Override
-  public ResourceLocation getRecipeId() {
-    return getId();
-  }
 
   @Override
   public List<ItemStack> getInputs() {

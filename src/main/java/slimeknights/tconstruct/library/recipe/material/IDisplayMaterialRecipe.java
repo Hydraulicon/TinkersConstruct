@@ -10,8 +10,11 @@ import java.util.List;
 
 /** Interface for recipes in the materials tab, showing items and fluids used to create materials. Common interface between {@link MaterialRecipe} and {@link slimeknights.tconstruct.library.recipe.casting.material.MaterialFluidRecipe} */
 public interface IDisplayMaterialRecipe {
-  /** Gets the ID of this recipe */
-  ResourceLocation getRecipeId();
+  /** Gets the ID of this display recipe. If null, the ID comes from the recipe holder or {@link slimeknights.mantle.recipe.NamedRecipe} */
+  @Nullable
+  default ResourceLocation getRecipeId() {
+    return null;
+  }
 
   /** Gets the material result for this recipe */
   MaterialVariant getMaterial();

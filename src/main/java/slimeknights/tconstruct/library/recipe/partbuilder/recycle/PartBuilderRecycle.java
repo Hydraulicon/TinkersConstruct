@@ -51,7 +51,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, MultiNamedRecipe<
   public static final RecordLoadable<PartBuilderRecycle> LOADER = RecordLoadable.create(
     Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("tool", r -> r.tool),
     Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("pattern", r -> r.pattern),
-    Pattern.PARSER.mapWithValues(ItemOutput.Loadable.REQUIRED_STACK).requiredField("results", r -> r.results),
+    Pattern.PARSER.mapWithValues(ItemOutput.REQUIRED_STACK_LOADABLE).requiredField("results", r -> r.results),
     PartBuilderRecycle::new);
 
   private final Ingredient tool;
@@ -147,7 +147,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, MultiNamedRecipe<
   /** @deprecated use {@link #assemble(IPartBuilderContainer, RegistryAccess, Pattern)} */
   @Deprecated
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return ItemStack.EMPTY;
   }
 
@@ -181,7 +181,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, MultiNamedRecipe<
   private List<IDisplayPartBuilderRecipe> displayRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayPartBuilderRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayPartBuilderRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<ItemStack> patternItems = List.of(pattern.getItems());
       displayRecipes = Arrays.stream(tool.getItems()).map(tool -> DisplayPartRecipe.id(id)
@@ -195,13 +195,13 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, MultiNamedRecipe<
     return displayRecipes;
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayPartBuilderRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayPartBuilderRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

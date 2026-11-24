@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.library.recipe.molding;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -24,7 +24,7 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
     Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("material", MoldingRecipe::getMaterial),
     Loadables.ITEM_INGREDIENT.defaultField("pattern", Ingredient.EMPTY, MoldingRecipe::getPattern),
     BooleanLoadable.INSTANCE.defaultField("pattern_consumed", false, false, MoldingRecipe::isPatternConsumed),
-    ItemOutput.Loadable.REQUIRED_ITEM.requiredField("result", r -> r.recipeOutput),
+    ItemOutput.REQUIRED_ITEM_LOADABLE.requiredField("result", r -> r.recipeOutput),
     MoldingRecipe::new);
 
   @Getter
@@ -59,7 +59,7 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return recipeOutput.get();
   }
 }

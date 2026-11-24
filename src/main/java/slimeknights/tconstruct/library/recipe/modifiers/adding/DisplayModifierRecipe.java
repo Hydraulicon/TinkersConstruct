@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -93,7 +94,7 @@ public class DisplayModifierRecipe implements IDisplayModifierRecipe {
 
   /** Resolves a list of sized ingredients into a list of item stack lists */
   private static List<List<ItemStack>> resolve(List<SizedIngredient> ingredients) {
-    return ingredients.stream().map(SizedIngredient::getMatchingStacks).toList();
+    return ingredients.stream().map(SizedIngredients::getMatchingStacks).toList();
   }
 
   /** Builder for creating a display recipe */

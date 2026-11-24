@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules.ranged.ammo;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;

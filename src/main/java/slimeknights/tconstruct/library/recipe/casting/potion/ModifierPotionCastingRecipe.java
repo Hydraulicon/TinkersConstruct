@@ -28,7 +28,7 @@ public abstract class ModifierPotionCastingRecipe extends PotionCastingRecipe {
 
   protected final ModifierId modifier;
   public ModifierPotionCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient bottle, SizedFluidIngredient fluid, Item result, int coolingTime, ModifierId modifier) {
-    super(serializer, group, bottle, fluid, result, coolingTime);
+    super(type, serializer, group, bottle, fluid, result, coolingTime);
     this.modifier = modifier;
   }
 

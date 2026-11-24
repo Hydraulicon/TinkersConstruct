@@ -74,7 +74,7 @@ public class ModifierMaterialRepairRecipe extends TinkerStationRepairRecipe impl
   }
 
   @Override
-  public List<IDisplayCraftingTinkering> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayCraftingTinkering> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     return List.of();
   }
 

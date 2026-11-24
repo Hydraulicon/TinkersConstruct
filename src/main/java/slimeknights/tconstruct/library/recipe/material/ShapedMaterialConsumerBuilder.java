@@ -1,19 +1,20 @@
 package slimeknights.tconstruct.library.recipe.material;
 
-import net.minecraft.data.recipes.RecipeOutput;
-import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.data.ConsumerWrapperBuilder;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.neoforged.neoforge.common.conditions.ICondition;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
-import slimeknights.tconstruct.tables.TinkerTables;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Special variant of {@link ConsumerWrapperBuilder} for {@link ShapedMaterialRecipe} */
+/** Recipe output wrapper converting vanilla shaped recipes into {@link ShapedMaterialRecipe} */
 @Deprecated
 @NoArgsConstructor(staticName = "wrap")
 public class ShapedMaterialConsumerBuilder {
@@ -26,39 +27,21 @@ public class ShapedMaterialConsumerBuilder {
   }
 
   /** Builds the wrapped consumer */
-  public RecipeOutput build(RecipeOutput consumer) {
-    return (recipe) -> consumer.accept(new Wrapped(recipe, materials));
-  }
-
-  private record Wrapped(FinishedRecipe original, List<MaterialVariantId> materials) implements FinishedRecipe {
-    @Override
-    public ResourceLocation getId() {
-      return original.getId();
-    }
-
-    @Override
-    public RecipeSerializer<?> getType() {
-      return TinkerTables.shapedMaterialRecipeSerializer.get();
-    }
-
-    @Override
-    public void serializeRecipeData(JsonObject json) {
-      original.serializeRecipeData(json);
-      if (!materials.isEmpty()) {
-        json.add(ShapedMaterialRecipe.Serializer.MATERIAL_FIELD.key(), ShapedMaterialRecipe.Serializer.EXTRA_MATERIALS.serialize(materials));
+  public RecipeOutput build(RecipeOutput output) {
+    List<MaterialVariantId> materials = List.copyOf(this.materials);
+    return new RecipeOutput() {
+      @Override
+      public Advancement.Builder advancement() {
+        return output.advancement();
       }
-    }
 
-    @Nullable
-    @Override
-    public JsonObject serializeAdvancement() {
-      return original.serializeAdvancement();
-    }
-
-    @Nullable
-    @Override
-    public ResourceLocation getAdvancementId() {
-      return original.getAdvancementId();
-    }
+      @Override
+      public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+        if (!(recipe instanceof ShapedRecipe shaped)) {
+          throw new IllegalArgumentException("Shaped material recipe " + id + " must wrap a shaped recipe, got " + recipe.getClass());
+        }
+        output.accept(id, new ShapedMaterialRecipe(shaped, materials), advancement, conditions);
+      }
+    };
   }
 }

@@ -1,8 +1,9 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -140,7 +141,7 @@ public class ModifierRecipe extends AbstractModifierRecipe {
    * @return Validated result
    */
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
 
     // common errors

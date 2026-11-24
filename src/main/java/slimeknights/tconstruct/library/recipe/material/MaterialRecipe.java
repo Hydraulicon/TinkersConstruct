@@ -31,14 +31,14 @@ import java.util.List;
 public class MaterialRecipe implements ICustomOutputRecipe<SingleItemInput>, IMaterialValue, IDisplayMaterialRecipe {
   /** Empty material instance for the cache */
   @SuppressWarnings("removal")
-  public static final MaterialRecipe EMPTY = new MaterialRecipe(ResourceLocation.parse("missingno"), "", Ingredient.EMPTY, 0, 0, MaterialId.UNKNOWN, ItemOutput.EMPTY);
+  public static final MaterialRecipe EMPTY = new MaterialRecipe("", Ingredient.EMPTY, 0, 0, MaterialId.UNKNOWN, ItemOutput.EMPTY);
   public static final RecordLoadable<MaterialRecipe> LOADER = RecordLoadable.create(
     LoadableRecipeSerializer.RECIPE_GROUP,
     Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("ingredient", MaterialRecipe::getIngredient),
     IMaterialValue.VALUE_FIELD,
     IMaterialValue.NEEDED_FIELD,
     MaterialVariantId.LOADABLE.requiredField("material", r -> r.getMaterial().getVariant()),
-    ItemOutput.Loadable.OPTIONAL_STACK.emptyField("leftover", r -> r.leftover),
+    ItemOutput.OPTIONAL_STACK_LOADABLE.defaultField("leftover", ItemOutput.EMPTY, false, r -> r.leftover),
     MaterialRecipe::new);
 
   /** Vanilla requires 4 ingots for full repair, we drop it down to 3 to mesh better with nuggets and blocks and to fit small head costs better */
@@ -152,8 +152,4 @@ public class MaterialRecipe implements ICustomOutputRecipe<SingleItemInput>, IMa
 
   /* JEI */
 
-  @Override
-  public ResourceLocation getRecipeId() {
-    return getId();
-  }
 }

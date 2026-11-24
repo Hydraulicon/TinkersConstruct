@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
 import net.minecraft.core.HolderLookup;
@@ -8,7 +9,6 @@ import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -29,16 +29,16 @@ public class CastDuplicationRecipe extends ItemCastingRecipe implements MultiNam
     CastDuplicationRecipe::new);
 
   public CastDuplicationRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, SizedFluidIngredient fluid, int coolingTime) {
-    super(serializer, group, cast, fluid, ItemOutput.EMPTY, coolingTime, false, false);
+    super(type, serializer, group, cast, fluid, ItemOutput.EMPTY, coolingTime, false, false);
   }
 
   @Override
-  public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ICastingContainer inv, HolderLookup.Provider access) {
     return inv.getItem().copy();
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     ItemStack[] items = getCast().getItems();
     return items.length == 0 ? ItemStack.EMPTY : items[0];
   }
@@ -47,25 +47,25 @@ public class CastDuplicationRecipe extends ItemCastingRecipe implements MultiNam
   private List<IDisplayableCastingRecipe> displayRecipes = null;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<ItemStack> casts = List.of(getCast().getItems());
-      displayRecipes = List.of(DisplayCastingRecipe.from(this)
+      displayRecipes = List.of(DisplayCastingRecipe.from(id, this)
         .casts(casts).results(casts).linkCastToOutput()
-        .fluids(fluid.getFluids())
+        .fluids(FluidIngredients.getFluids(fluid))
         .coolingTime(coolingTime)
         .build());
     }
     return displayRecipes;
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayableCastingRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayableCastingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

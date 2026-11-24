@@ -1,8 +1,8 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import lombok.Getter;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -77,7 +77,7 @@ public class OverslimeModifierRecipe implements ITinkerStationRecipe, IDisplayMo
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
     ModifierId overslime = TinkerModifiers.overslime.getId();
     // if the tool lacks true overslime, add overslime
@@ -125,11 +125,6 @@ public class OverslimeModifierRecipe implements ITinkerStationRecipe, IDisplayMo
   /** Cache of input and output tools for display */
   private List<ItemStack> toolWithoutModifier, toolWithModifier = null;
 
-  @Nullable
-  @Override
-  public ResourceLocation getRecipeId() {
-    return getId();
-  }
 
   @Override
   public int getInputCount() {

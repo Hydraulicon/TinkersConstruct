@@ -6,7 +6,6 @@ import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import lombok.Getter;
 import net.minecraft.core.Holder.Reference;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -96,7 +95,7 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, MultiNamedRecipe<I
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     // first need to find our trim and material instances
     TrimItems trimItems = findInputs(inv);
     // should never happen
@@ -145,14 +144,14 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, MultiNamedRecipe<I
 
   @SuppressWarnings("deprecation")
   /** Gets the display recipes before naming */
-  public List<IDisplayModifierRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayModifierRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<ItemStack> trims = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, ItemTags.TRIM_TEMPLATES)
                                             .map(ItemStack::new).toList();
       List<ItemStack> toolInputs = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, TinkerTags.Items.TRIM)
                                                  .map(IModifiableDisplay::getDisplayStack).toList();
       if (!trims.isEmpty() && !toolInputs.isEmpty()) {
-        ResourceLocation id = getId();
+        ResourceLocation id = id;
         // one recipe per material
         // TODO: worth using just a single material? focus link material to output tool?
         displayRecipes = access.registryOrThrow(Registries.TRIM_MATERIAL).holders()
@@ -256,13 +255,13 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, MultiNamedRecipe<I
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayModifierRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayModifierRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

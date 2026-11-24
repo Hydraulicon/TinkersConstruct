@@ -46,7 +46,7 @@ public record MobEquipment(EquipmentSlot slot, IJsonPredicate<Item> match, ItemO
   public static final RecordLoadable<MobEquipment> LOADABLE = RecordLoadable.create(
     TinkerLoadables.EQUIPMENT_SLOT.requiredField("slot", MobEquipment::slot),
     ItemPredicate.LOADER.defaultField("match", MobEquipment::match),
-    ItemOutput.Loadable.REQUIRED_STACK.requiredField("tool", MobEquipment::tool),
+    ItemOutput.REQUIRED_STACK_LOADABLE.requiredField("tool", MobEquipment::tool),
     RandomMaterial.LOADER.list(0).defaultField("materials", List.of(), false, MobEquipment::materials),
     Loadables.FLUID_TAG.nullableField("fluid", MobEquipment::fluid),
     FloatLoadable.PERCENT.defaultField("chance", 0.05f, true, MobEquipment::chance),

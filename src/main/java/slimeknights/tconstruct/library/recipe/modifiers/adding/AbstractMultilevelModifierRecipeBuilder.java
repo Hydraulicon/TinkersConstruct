@@ -148,8 +148,7 @@ public abstract class AbstractMultilevelModifierRecipeBuilder<T extends Abstract
     }
     for (LevelEntry levelEntry : levels) {
       if (levelEntry.slots() != null) {
-        consumer.accept(id, new ModifierSalvage(
-          id.withSuffix("_level_" + levelEntry.level().min()),
+        consumer.accept(id.withSuffix("_level_" + levelEntry.level().min()), new ModifierSalvage(
           tools, maxToolSize, result, levelEntry.level(), levelEntry.slots()), null);
       }
     }

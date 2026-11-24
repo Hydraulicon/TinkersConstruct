@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.alloying;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import slimeknights.mantle.data.loadable.Loadables;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import lombok.Getter;
@@ -81,7 +82,7 @@ public class AlloyRecipe implements ICustomOutputRecipe<IAlloyTank> {
       // must not have used that fluid yet
       if (!used.get(i)) {
         fluid = inv.getFluidInTank(i);
-        if (checkSize ? ingredient.test(fluid) : ingredient.test(fluid.getFluid())) {
+        if (checkSize ? ingredient.test(fluid) : FluidIngredients.test(ingredient, fluid.getFluid())) {
           used.set(i);
           return i;
         }
@@ -178,7 +179,7 @@ public class AlloyRecipe implements ICustomOutputRecipe<IAlloyTank> {
           drained = inv.drain(i, toDrain);
           // ensure the right amount of fluid was drained and skip to next ingredient
           if (drained.getAmount() != toDrain.getAmount()) {
-            TConstruct.LOG.error("Wrong amount of fluid {} drained for recipe {}", drained.getFluid(), id);
+            TConstruct.LOG.error("Wrong amount of fluid {} drained for alloy recipe producing {}", drained.getFluid(), output.get().getFluid());
           }
         }
       }
@@ -186,7 +187,7 @@ public class AlloyRecipe implements ICustomOutputRecipe<IAlloyTank> {
       // add the output
       int filled = inv.fill(output.copy());
       if (filled != output.getAmount()) {
-        TConstruct.LOG.error("Filled only {} for recipe {}", filled, id);
+        TConstruct.LOG.error("Filled only {} for alloy recipe producing {}", filled, output.get().getFluid());
       }
     }
   }

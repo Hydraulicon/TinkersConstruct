@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -49,7 +49,7 @@ public class TippedToolTransformRecipe extends ToolBuildingRecipe {
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     RecipeResult<LazyToolStack> result = super.getValidatedResult(inv, access);
     if (result.isSuccess()) {
       // tool must have modifier, else we are adding bad data

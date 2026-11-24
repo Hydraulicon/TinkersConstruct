@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -128,7 +127,7 @@ public class PartRecipe implements IPartBuilderRecipe, MultiNamedRecipe<IDisplay
   /** @deprecated use {@link #getRecipeOutput(MaterialVariantId)} */
   @Deprecated
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return new ItemStack(output);
   }
 
@@ -151,7 +150,7 @@ public class PartRecipe implements IPartBuilderRecipe, MultiNamedRecipe<IDisplay
   }
 
   @Override
-  public ItemStack assemble(IPartBuilderContainer inv, RegistryAccess access) {
+  public ItemStack assemble(IPartBuilderContainer inv, HolderLookup.Provider access) {
     MaterialVariant material = MaterialVariant.UNKNOWN;
     int count = outputCount;
     IMaterialValue materialRecipe = inv.getMaterial();
@@ -171,7 +170,7 @@ public class PartRecipe implements IPartBuilderRecipe, MultiNamedRecipe<IDisplay
   private List<IDisplayPartBuilderRecipe> multiRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayPartBuilderRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayPartBuilderRecipe> getDisplayRecipes(ResourceLocation recipeId, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       // start building the recipe
       List<MaterialVariant> materials = new ArrayList<>();
@@ -346,13 +345,13 @@ public class PartRecipe implements IPartBuilderRecipe, MultiNamedRecipe<IDisplay
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayPartBuilderRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayPartBuilderRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

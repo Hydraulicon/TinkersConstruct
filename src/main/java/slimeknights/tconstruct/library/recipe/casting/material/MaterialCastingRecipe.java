@@ -6,7 +6,6 @@ import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -45,7 +44,7 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
   protected final IMaterialItem result;
 
   public MaterialCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, IMaterialItem result, IJsonPredicate<MaterialVariantId> materials, boolean consumed, boolean switchSlots) {
-    super(serializer, group, cast, itemCost, consumed, switchSlots, materials);
+    super(type, serializer, group, cast, itemCost, consumed, switchSlots, materials);
     this.result = result;
     CastingRecipeLookup.registerCastable(result);
     MaterialCastingLookup.registerItemCost(result, itemCost);
@@ -62,12 +61,12 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return new ItemStack(result);
   }
 
   @Override
-  public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ICastingContainer inv, HolderLookup.Provider access) {
     return result.withMaterial(getFluidRecipe(inv).getOutput().getVariant());
   }
 
@@ -76,7 +75,7 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
   protected List<IDisplayableCastingRecipe> multiRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       List<MaterialFluidRecipe> recipes = MaterialCastingLookup.getSortedCastingFluids();
       List<FluidStack> fluids = new ArrayList<>(recipes.size());
@@ -107,7 +106,7 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
       if (fluids.isEmpty()) {
         multiRecipes = List.of();
       } else {
-        multiRecipes = List.of(DisplayCastingRecipe.from(this)
+        multiRecipes = List.of(DisplayCastingRecipe.from(id, this)
           .cast(getCast()).consumed(isConsumed())
           .fluids(List.copyOf(fluids))
           .results(List.copyOf(results))
@@ -118,13 +117,13 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
     return multiRecipes;
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayableCastingRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayableCastingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

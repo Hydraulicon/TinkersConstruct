@@ -209,7 +209,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, MultiNamedRec
   /** @deprecated use {@link IPartBuilderRecipe#assemble(IPartBuilderContainer, RegistryAccess, Pattern)} */
   @Deprecated
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return ItemStack.EMPTY;
   }
 
@@ -246,7 +246,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, MultiNamedRec
   }
 
   /** Gets the display recipes before naming */
-  public List<IDisplayPartBuilderRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayPartBuilderRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       // if we have a parts override, might as well only compute this map once
       Object2IntMap<IMaterialItem> partsOverride = parts.isEmpty() ? Object2IntMaps.emptyMap() : getDisplayParts(parts);
@@ -382,13 +382,13 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, MultiNamedRec
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayPartBuilderRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayPartBuilderRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

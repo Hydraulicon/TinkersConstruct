@@ -1,9 +1,11 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.tconstruct.library.tools.nbt.ToolNBT;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.HolderLookup;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -177,7 +179,7 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     int materialCount = ToolMaterialHook.stats(output.getToolDefinition()).size();
     // fill in materials
     List<MaterialVariant> materials = new ArrayList<>(materialCount);
@@ -201,7 +203,7 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
     // if we have any parts set, run the count hook
     // no point running it if all materials are set through override/no materials, just set the recipe count in that case
     // note there is an edge case when you have a fixed material that adjusts count plus parts, not really a good solution for that case
-    int itemMax = item.getMaxStackSize();
+    int itemMax = item.getDefaultMaxStackSize();
     if (parts > 0 && itemMax > 1) {
       count = CraftCountModifierHook.maxStackSize(tool, outputCount);
       if (count <= 0) {
@@ -271,7 +273,7 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
       int missingSlots = getAllToolParts().size() + getExtraRequirements().size() - layoutSlots.size();
       // check layout slots if its too small
       if (missingSlots > 0) {
-        TConstruct.LOG.error(String.format("Tool part count is greater than layout slot count for %s!", getId()));
+        TConstruct.LOG.error("Tool part count is greater than layout slot count for tool building recipe for {}!", BuiltInRegistries.ITEM.getKey(output.asItem()));
         layoutSlots = new ArrayList<>(layoutSlots);
         for (int additionalSlot = 0; additionalSlot < missingSlots; additionalSlot++) {
           layoutSlots.add(new LayoutSlot(null, null, additionalSlot * SLOT_SIZE - X_OFFSET, -Y_OFFSET, null));
@@ -309,7 +311,7 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
           } else {
             // not a full list? mark it for display with just the materials on the end
             result = new MaterialIdNBT(list).updateStack(new ItemStack(output, outputCount));
-            result.getOrCreateTag().putBoolean(TooltipUtil.KEY_DISPLAY, true);
+            ToolNBT.update(result, tag -> tag.putBoolean(TooltipUtil.KEY_DISPLAY, true));
           }
         }
       }
@@ -331,13 +333,13 @@ public class ToolBuildingRecipe implements ITinkerStationRecipe {
 
   @Deprecated
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return new ItemStack(this.output);
   }
 
   @Deprecated
   @Override
-  public ItemStack assemble(ITinkerStationContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ITinkerStationContainer inv, HolderLookup.Provider access) {
     return getValidatedResult(inv, access).getResult().getStack();
   }
 }

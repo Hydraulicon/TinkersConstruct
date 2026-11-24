@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -104,7 +104,7 @@ public abstract class AbstractModifierRecipe implements ITinkerStationRecipe, ID
   }
 
   @Override
-  public abstract RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access);
+  public abstract RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access);
 
   @Override
   public int shrinkToolSlotBy() {
@@ -120,10 +120,6 @@ public abstract class AbstractModifierRecipe implements ITinkerStationRecipe, ID
   @Nullable
   protected List<SlotCount> resultSlots = null;
 
-  @Override
-  public ResourceLocation getRecipeId() {
-    return getId();
-  }
 
   /** Gets or builds the list of tool inputs */
   protected List<ItemStack> getToolInputs() {
@@ -328,6 +324,6 @@ public abstract class AbstractModifierRecipe implements ITinkerStationRecipe, ID
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + '{' + id + '}';
+    return getClass().getSimpleName() + '{' + result.getId() + '}';
   }
 }

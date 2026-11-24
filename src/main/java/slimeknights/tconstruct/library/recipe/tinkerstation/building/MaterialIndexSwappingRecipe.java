@@ -1,7 +1,7 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import net.minecraft.core.HolderLookup;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -32,8 +32,8 @@ public abstract class MaterialIndexSwappingRecipe extends MaterialSwappingRecipe
   /** Options of indexes to set the material */
   protected final int[] indices;
 
-  protected MaterialIndexSwappingRecipe(ResourceLocation id, Ingredient tools, int maxStackSize, int[] indices, List<SizedIngredient> extraRequirements) {
-    super(id, tools, maxStackSize, extraRequirements);
+  protected MaterialIndexSwappingRecipe(Ingredient tools, int maxStackSize, int[] indices, List<SizedIngredient> extraRequirements) {
+    super(tools, maxStackSize, extraRequirements);
     this.indices = indices;
   }
 
@@ -73,7 +73,7 @@ public abstract class MaterialIndexSwappingRecipe extends MaterialSwappingRecipe
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     // copy the tool NBT to ensure the original tool is intact
     List<MaterialStatsId> materials = ToolMaterialHook.stats(inv.getTinkerable().getDefinition());
 

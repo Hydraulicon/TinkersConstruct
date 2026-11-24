@@ -1,8 +1,8 @@
 package slimeknights.tconstruct.library.recipe.partbuilder;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import lombok.Getter;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,7 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
     Pattern.PARSER.requiredField("pattern", ItemPartRecipe::getPattern),
     Loadables.ITEM_INGREDIENT_NONEMPTY.defaultField("pattern_item", DEFAULT_PATTERNS, r -> r.patternItem),
     IntLoadable.FROM_ZERO.defaultField("cost", 0, ItemPartRecipe::getCost),
-    ItemOutput.Loadable.REQUIRED_STACK.requiredField("result", r -> r.result),
+    ItemOutput.REQUIRED_STACK_LOADABLE.requiredField("result", r -> r.result),
     ResourceLocationLoadable.DEFAULT.nullableField("title_key", r -> r.titleKey),
     ItemPartRecipe::new).validate((recipe, error) -> {
       if (recipe.cost == 0 && !recipe.material.isEmpty()) {
@@ -128,12 +128,12 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
   }
 
   @Override
-  public ItemStack getResultItem(RegistryAccess access) {
+  public ItemStack getResultItem(HolderLookup.Provider access) {
     return result.get();
   }
 
   @Override
-  public ItemStack assemble(IPartBuilderContainer inv, RegistryAccess access) {
+  public ItemStack assemble(IPartBuilderContainer inv, HolderLookup.Provider access) {
     ItemStack result = getResultItem(access).copy();
     IMaterialValue materialRecipe = inv.getMaterial();
     if (materialRecipe != null) {

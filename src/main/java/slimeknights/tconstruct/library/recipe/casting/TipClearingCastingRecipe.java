@@ -1,10 +1,10 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import net.minecraft.core.HolderLookup;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,7 +32,7 @@ public class TipClearingCastingRecipe extends ModifierPotionCastingRecipe {
     TOOL_FIELD, FLUID_FIELD, COOLING_TIME_FIELD, MODIFIER_FIELD, TipClearingCastingRecipe::new);
 
   public TipClearingCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient tool, SizedFluidIngredient fluid, int coolingTime, ModifierId modifier) {
-    super(serializer, group, tool, fluid, Items.AIR, coolingTime, modifier);
+    super(type, serializer, group, tool, fluid, Items.AIR, coolingTime, modifier);
   }
 
   @Override
@@ -42,7 +42,7 @@ public class TipClearingCastingRecipe extends ModifierPotionCastingRecipe {
   }
 
   @Override
-  public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ICastingContainer inv, HolderLookup.Provider access) {
     ItemStack result = inv.getItem().copy();
     ToolStack.from(result).getPersistentData().remove(modifier);
     return result;
@@ -51,16 +51,16 @@ public class TipClearingCastingRecipe extends ModifierPotionCastingRecipe {
 
   /* JEI */
   @Override
-  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
-      List<FluidStack> fluids = fluid.getFluids();
+      List<FluidStack> fluids = FluidIngredients.getFluids(fluid);
       List<String> potions = getPotionIds();
 
       // create a recipe per tool
       displayRecipes = Arrays.stream(bottle.getItems()).map(stack -> {
         // start with just the tool with the modifier
         ItemStack withModifier = addModifier(stack);
-        return DisplayCastingRecipe.from(this)
+        return DisplayCastingRecipe.from(id, this)
           .casts(addPotion(withModifier, potions)).consumed()
           .result(withModifier).unlinkOutput()
           .fluids(fluids).coolingTime(coolingTime).build();

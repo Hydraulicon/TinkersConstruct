@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.network;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeHelper;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -52,7 +53,7 @@ public class UpdateCraftingRecipePacket implements BlockEntityPacket<CraftingSta
   public void handleBlockEntity(IPayloadContext context, CraftingStationBlockEntity be) {
     Level level = be.getLevel();
     assert level != null;
-    CraftingRecipe recipe = RecipeHelper.getRecipe(level.getRecipeManager(), this.recipe, CraftingRecipe.class).orElse(null);
+    CraftingRecipe recipe = TinkerRecipeHelper.getRecipe(level.getRecipeManager(), this.recipe, CraftingRecipe.class).orElse(null);
     if (recipe != null) {
       be.updateRecipe(recipe);
     } else {

@@ -6,7 +6,6 @@ import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import lombok.Getter;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -116,7 +115,7 @@ public class BannerModifierRecipe implements ITinkerStationRecipe, MultiNamedRec
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable().copy();
 
     ModifierId key = TinkerModifiers.banner.getId();
@@ -194,7 +193,7 @@ public class BannerModifierRecipe implements ITinkerStationRecipe, MultiNamedRec
   }
 
   /** Gets the display recipes before naming */
-  public List<IDisplayModifierRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayModifierRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<ItemStack> toolInputs = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, TinkerTags.Items.BANNER)
         .map(item -> {
@@ -215,7 +214,7 @@ public class BannerModifierRecipe implements ITinkerStationRecipe, MultiNamedRec
         TConstruct.LOG.error("Unable to create banner modifier display recipes {}: Banner tag {} has no BannerItem", id, ItemTags.BANNERS);
         displayRecipes = List.of();
       } else {
-        ResourceLocation id = getId();
+        ResourceLocation id = id;
         List<IDisplayModifierRecipe> recipes = new ArrayList<>(clearInput != Ingredient.EMPTY ? 2 : 1);
         // create standard recipe
         recipes.add(new DisplayRecipe(id, toolInputs, banners, List.of()));
@@ -374,13 +373,13 @@ public class BannerModifierRecipe implements ITinkerStationRecipe, MultiNamedRec
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayModifierRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayModifierRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

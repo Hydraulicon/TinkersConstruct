@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.repairing;
 
+import slimeknights.tconstruct.library.tools.nbt.ToolNBT;
 import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
 import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.recipe.NamedRecipe;
@@ -7,7 +8,6 @@ import slimeknights.mantle.recipe.MultiNamedRecipe;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -79,7 +79,7 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
     int amountPerItem = tool.getModifierLevel(modifier) * repairAmount;
     if (amountPerItem <= 0) {
@@ -138,7 +138,7 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
   private List<IDisplayToolTinkering> displayRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayToolTinkering> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayToolTinkering> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       displayRecipes = List.of(new DisplayRecipe(id, this, false));
     }
@@ -147,6 +147,7 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
 
   @Getter
   static class DisplayRecipe implements IDisplayCraftingTinkering {
+    private final ResourceLocation id;
     private final ModifierId modifier;
     private final int repairAmount;
     private final Component tooltip;
@@ -156,6 +157,7 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
     private final List<ItemStack> toolWithModifier;
 
     public DisplayRecipe(ResourceLocation id, IModifierRepairRecipe recipe, boolean isCrafting) {
+      this.id = id;
       this.modifier = recipe.getModifier();
       this.repairAmount = recipe.getRepairAmount();
       MutableComponent tooltip = Component.translatable(TOOLTIP_KEY, ModifierManager.getValue(modifier).getDisplayName());
@@ -173,11 +175,12 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
         .map(item -> {
           if (item instanceof IModifiableDisplay modifiable) {
             ItemStack stack = modifiable.getRenderTool().copy();
-            CompoundTag tag = stack.getOrCreateTag();
-            tag.put(ToolStack.TAG_STATS, stats);
-            tag.put(ToolStack.TAG_UPGRADES, modifiers);
-            tag.put(ToolStack.TAG_MODIFIERS, modifiers);
-            tag.putInt(ToolStack.TAG_DAMAGE, 200); // mostly broken
+            ToolNBT.update(stack, tag -> {
+              tag.put(ToolStack.TAG_STATS, stats.copy());
+              tag.put(ToolStack.TAG_UPGRADES, modifiers.copy());
+              tag.put(ToolStack.TAG_MODIFIERS, modifiers.copy());
+            });
+            ToolStack.from(stack).setDamage(200); // mostly broken
             return stack;
           }
           return ItemStack.EMPTY;
@@ -186,7 +189,7 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
         .toList();
       toolWithModifier = toolWithoutModifier.stream().map(stack -> {
         stack = stack.copy();
-        stack.getOrCreateTag().putInt(ToolStack.TAG_DAMAGE, 200 - repairAmount);
+        ToolStack.from(stack).setDamage(200 - repairAmount);
         return stack;
       }).toList();
     }
@@ -251,13 +254,13 @@ public class ModifierRepairTinkerStationRecipe implements ITinkerStationRecipe, 
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayToolTinkering>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayToolTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

@@ -5,7 +5,6 @@ import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -92,7 +91,7 @@ public class TinkerStationPartSwapping extends MaterialSwappingRecipe implements
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     // copy the tool NBT to ensure the original tool is intact
     List<IToolPart> parts = ToolPartsHook.parts(inv.getTinkerable().getDefinition());
 
@@ -148,7 +147,7 @@ public class TinkerStationPartSwapping extends MaterialSwappingRecipe implements
   private List<IDisplayToolTinkering> multiRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayToolTinkering> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayToolTinkering> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       IMaterialRegistry registry = MaterialRegistry.getInstance();
       Collection<IMaterial> materials = registry.getVisibleMaterials();
@@ -179,13 +178,13 @@ public class TinkerStationPartSwapping extends MaterialSwappingRecipe implements
     return multiRecipes;
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayToolTinkering>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayToolTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

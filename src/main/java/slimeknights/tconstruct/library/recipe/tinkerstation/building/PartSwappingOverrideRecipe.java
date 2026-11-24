@@ -73,7 +73,7 @@ public class PartSwappingOverrideRecipe extends MaterialIndexSwappingRecipe impl
   private List<IDisplayToolTinkering> multiRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayToolTinkering> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayToolTinkering> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       IMaterialRegistry registry = MaterialRegistry.getInstance();
       MaterialStatsId statType = part.getStatType();
@@ -105,13 +105,13 @@ public class PartSwappingOverrideRecipe extends MaterialIndexSwappingRecipe impl
     return multiRecipes;
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayToolTinkering>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayToolTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

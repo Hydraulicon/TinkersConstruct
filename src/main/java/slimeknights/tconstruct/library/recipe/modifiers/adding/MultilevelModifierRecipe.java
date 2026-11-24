@@ -7,7 +7,6 @@ import slimeknights.mantle.recipe.MultiNamedRecipe;
 import slimeknights.mantle.data.loadable.Loadables;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import com.google.common.collect.Streams;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -63,7 +62,7 @@ public class MultilevelModifierRecipe extends ModifierRecipe implements MultiNam
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
 
     // next few checks depend on the current level to decide
@@ -109,7 +108,7 @@ public class MultilevelModifierRecipe extends ModifierRecipe implements MultiNam
   private List<IDisplayModifierRecipe> displayRecipes = null;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayModifierRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayModifierRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     // no inputs means this recipe is to handle internal crystal stuff
     if (inputs.isEmpty()) {
       return Collections.emptyList();
@@ -117,7 +116,7 @@ public class MultilevelModifierRecipe extends ModifierRecipe implements MultiNam
     if (displayRecipes == null) {
       // this instance is a proper display recipe for the first level entry, for the rest build display instances with unique requirements keys
       DisplayModifierRecipe.Builder builder = DisplayModifierRecipe.builder()
-        .id(getId()).ingredients(inputs).resultSlots(getResultSlots()).checkTraitLevel(checkTraitLevel)
+        .id(id).ingredients(inputs).resultSlots(getResultSlots()).checkTraitLevel(checkTraitLevel)
         .isTool(toolRequirement).toolWithoutModifier(getToolWithoutModifier()).toolWithModifier(getToolWithModifier()).maxToolSize(shrinkToolSlotBy());
       displayRecipes = Streams.concat(
         Stream.of(this),
@@ -154,13 +153,13 @@ public class MultilevelModifierRecipe extends ModifierRecipe implements MultiNam
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayModifierRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayModifierRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

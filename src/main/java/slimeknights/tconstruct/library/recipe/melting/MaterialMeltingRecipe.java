@@ -107,7 +107,7 @@ public class MaterialMeltingRecipe implements IMeltingRecipe, MultiNamedRecipe<I
   private List<IDisplayableMeltingRecipe> multiRecipes = null;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayableMeltingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableMeltingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       if (input.get().isHidden()) {
         multiRecipes = List.of();
@@ -143,13 +143,13 @@ public class MaterialMeltingRecipe implements IMeltingRecipe, MultiNamedRecipe<I
     return multiRecipes;
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayableMeltingRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayableMeltingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

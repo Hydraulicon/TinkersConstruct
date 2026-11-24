@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.network;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeHelper;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -53,7 +54,7 @@ public class UpdateTinkerStationRecipePacket implements ISimplePacket {
       Level world = mc.level;
       if (world != null) {
         // start by fetching the recipe, no further work if it's missing
-        ITinkerStationRecipe recipe = RecipeHelper.getRecipe(world.getRecipeManager(), packet.recipe, ITinkerStationRecipe.class).orElse(null);
+        ITinkerStationRecipe recipe = TinkerRecipeHelper.getRecipe(world.getRecipeManager(), packet.recipe, ITinkerStationRecipe.class).orElse(null);
         if (recipe == null) {
           TConstruct.LOG.error("Failed to update Tinker Station Recipe at {}: unknown recipe {}", packet.pos, packet.recipe);
           return;

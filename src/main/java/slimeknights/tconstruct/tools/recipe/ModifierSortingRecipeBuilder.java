@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.data.recipes.RecipeOutput;
 import lombok.RequiredArgsConstructor;

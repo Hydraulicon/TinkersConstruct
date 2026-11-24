@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import slimeknights.mantle.data.loadable.Loadables;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.AccessLevel;
@@ -258,11 +259,6 @@ public abstract class MaterialSwappingRecipe implements ITinkerStationRecipe {
     @Override
     public Component getTooltip() {
       return TOOLTIP;
-    }
-
-    @Override
-    public ResourceLocation getRecipeId() {
-      return id;
     }
 
     @Override

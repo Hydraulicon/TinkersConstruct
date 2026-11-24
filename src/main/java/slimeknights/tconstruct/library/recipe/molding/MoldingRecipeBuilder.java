@@ -97,27 +97,4 @@ public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBui
     AdvancementHolder advancementId = buildOptionalAdvancement(consumer, id, "molding");
     consumer.accept(id, new MoldingRecipe(serializer.type(), serializer.serializer(), material, pattern, patternConsumed, output), advancementId);
   }
-
-  private class Finished extends AbstractFinishedRecipe {
-    public Finished(ResourceLocation ID, @Nullable ResourceLocation advancementID) {
-      super(ID, advancementID);
-    }
-
-    @Override
-    public void serializeRecipeData(JsonObject json) {
-      json.add("material", material.toJson());
-      if (pattern != Ingredient.EMPTY) {
-        json.add("pattern", pattern.toJson());
-        if (patternConsumed) {
-          json.addProperty("pattern_consumed", true);
-        }
-      }
-      json.add("result", output.serialize(false));
-    }
-
-    @Override
-    public RecipeSerializer<?> getType() {
-      return serializer;
-    }
-  }
 }

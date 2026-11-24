@@ -125,7 +125,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
   /** Finds the recipe for the given stack */
   @Nullable
   private static AbstractCookingRecipe findRecipe(RecipeType<? extends AbstractCookingRecipe> recipeType, ItemStack stack, Level level, ModifierId modifier) {
-    CONTAINER.setStack(stack);
+    CONTAINER.setItem(stack);
     try {
       // first, try the cached recipe
       if (lastRecipe != null && lastRecipe.matches(CONTAINER, level)) {
@@ -142,7 +142,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
       TConstruct.LOG.error("Error fetching recipe for {} on modifier {}, this usually indicates a broken modifier or a broken recipe", stack, modifier, e);
       return null;
     } finally {
-      CONTAINER.setStack(ItemStack.EMPTY);
+      CONTAINER.setItem(ItemStack.EMPTY);
     }
   }
 
@@ -211,7 +211,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
             // if we have a recipe, time to cook
             if (recipe != null) {
               // attempt to assemble the recipe, use a try/catch in case their assemble logic is bad
-              CONTAINER.setStack(stack);
+              CONTAINER.setItem(stack);
               try {
                 ItemStack result = recipe.assemble(CONTAINER, level.registryAccess());
 
@@ -224,7 +224,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
                   // if not enough space for the combo or its type is wrong, just mark as almost finished and give up
                   if (result.getCount() + currentResult.getCount() > maxStackSize || !currentResult.isEmpty() && !ItemStack.isSameItemSameTags(currentResult, result)) {
                     entry.putInt(TAG_TIME, 1);
-                    CONTAINER.setStack(ItemStack.EMPTY);
+                    CONTAINER.setItem(ItemStack.EMPTY);
                     continue;
                   }
                 }
@@ -268,7 +268,7 @@ public record SmeltingModule(RecipeType<? extends AbstractCookingRecipe> recipeT
               } catch (Exception e) {
                 TConstruct.LOG.error("Error getting result of recipe {} on modifier {}, this usually indicates a broken recipe", recipe.getId(), modifier, e);
               }
-              CONTAINER.setStack(ItemStack.EMPTY);
+              CONTAINER.setItem(ItemStack.EMPTY);
             } else {
               // lost the recipe? stop trying to smelt it
               entry.putInt(TAG_TIME, NO_RECIPE);

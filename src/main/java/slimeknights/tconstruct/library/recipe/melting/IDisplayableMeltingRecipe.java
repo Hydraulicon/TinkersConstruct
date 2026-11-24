@@ -10,8 +10,11 @@ import java.util.List;
 
 /** Interface for melting recipes that are displayable in JEI */
 public interface IDisplayableMeltingRecipe {
-  /** Gets the ID of this recipe, usually just a call to {@link net.minecraft.world.item.crafting.Recipe#getId} */
-  ResourceLocation getRecipeId();
+  /** Gets the ID of this display recipe. If null, the ID comes from the recipe holder or {@link slimeknights.mantle.recipe.NamedRecipe} */
+  @Nullable
+  default ResourceLocation getRecipeId() {
+    return null;
+  }
 
   /** List of input items to melt. Will be focus linked to  */
   List<ItemStack> getInputs();

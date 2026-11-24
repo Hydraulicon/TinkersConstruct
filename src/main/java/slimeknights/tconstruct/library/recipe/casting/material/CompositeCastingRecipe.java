@@ -42,7 +42,7 @@ public class CompositeCastingRecipe extends MaterialCastingRecipe {
   private final MaterialStatsId castingStatConflict;
 
   public CompositeCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, int itemCost, IMaterialItem result, IJsonPredicate<MaterialVariantId> materials, @Nullable MaterialStatsId castingStatConflict) {
-    super(serializer, group, Ingredient.of(result), itemCost, result, materials, true, false);
+    super(type, serializer, group, Ingredient.of(result), itemCost, result, materials, true, false);
     this.castingStatConflict = castingStatConflict;
   }
 
@@ -76,7 +76,7 @@ public class CompositeCastingRecipe extends MaterialCastingRecipe {
   }
 
   @Override
-  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (multiRecipes == null) {
       List<MaterialFluidRecipe> recipes = MaterialCastingLookup.getSortedCompositeFluids();
       List<FluidStack> displayFluids = new ArrayList<>(recipes.size());
@@ -150,7 +150,7 @@ public class CompositeCastingRecipe extends MaterialCastingRecipe {
       if (displayFluids.isEmpty()) {
         multiRecipes = List.of();
       } else {
-        multiRecipes = List.of(DisplayCastingRecipe.from(this)
+        multiRecipes = List.of(DisplayCastingRecipe.from(id, this)
           .casts(List.copyOf(displayInputs)).consumed()
           .fluids(List.copyOf(displayFluids))
           .results(List.copyOf(displayResults))

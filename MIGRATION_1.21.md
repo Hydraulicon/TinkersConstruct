@@ -181,7 +181,26 @@ Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tool
 - **Open: modifier looting.** NeoForge removed `LootingLevelEvent`; looting is an enchantment read by loot functions without the kill context.
   Context-based looting (projectile modifiers, the blamed slot, bleeding kills, armor looting) is disabled until a new hook is designed.
   The logic is kept in `ModifierLootingHandler#getLootingLevel`.
-- **Remaining in phase 2:** recipes (`RecipeInput`, `RecipeHolder`, Mantle's new serializers), the remaining modifier modules,
+- **Recipes (done, `library/recipe` compiles).**
+  - Recipes no longer store IDs; the ID comes from the `RecipeHolder`. Recipe type and serializer are loadable context fields.
+    Builders pair them with `TypedSerializer`.
+  - Containers became recipe inputs: Mantle's `NoItemInput`/`SingleItemInput`, crafting recipes use `CraftingInput`.
+  - Multi recipes are Mantle's `MultiNamedRecipe`. `getDisplayRecipes(id, provider)` builds the unnamed list and `MultiRecipeHelper` names it
+    from the parent ID (`/<index>` suffixes when there are several). Display recipes keep the parent ID; `getRecipeId()` on base recipes is gone,
+    JEI takes the ID from the holder or `NamedRecipe` (phase 7).
+  - Custom ingredients are NeoForge `ICustomIngredient` records with Mantle loadables. Their factories return vanilla `Ingredient`s;
+    `instanceof` checks go through `Ingredient#getCustomIngredient()`. Nested ingredients (`no_container`, `material`) always use the `match` key,
+    so the 1.20 flattened JSON form is no longer read. JSON uses NeoForge's `neoforge:ingredient_type` key.
+  - Sized item and fluid ingredients are NeoForge's (`SizedIngredients`/`FluidIngredients` helpers keep the old factories).
+    Compound fluid ingredients need equal amounts.
+  - The shaped and shapeless material crafting recipes use codec serializers mirroring vanilla's, plus `parts` and `extra_materials`.
+    `ShapedRecipePattern.data` is opened by the AT so `parts` can be written back out.
+  - Container filling recipes take an item at datagen; the `ResourceLocation` overloads that spoofed unloaded items are gone.
+  - Casting containers expose fluid components (`getFluidComponents`, `getFluidPotion`) instead of fluid NBT.
+    Potion casting copies the fluid's component patch onto the result.
+  - Datagen output wrappers (`MaterialsConsumerBuilder`, `ShapedMaterialConsumerBuilder`) wrap `RecipeOutput` and convert the vanilla recipe.
+  - Mantle's removed `RecipeHelper` lookups are in `TinkerRecipeHelper`.
+- **Remaining in phase 2:** the remaining modifier modules,
   `library/json` (loot functions and entries with `MapCodec`), `library/data` (datagen providers) and `library/client`.
 
 ### Phase 3: Content modules

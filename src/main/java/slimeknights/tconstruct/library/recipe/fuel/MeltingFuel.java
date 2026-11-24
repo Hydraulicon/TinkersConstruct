@@ -66,7 +66,7 @@ public class MeltingFuel implements ICustomOutputRecipe<IFluidContainer> {
    * @return  True if matches
    */
   public boolean matches(Fluid fluid) {
-    return input.test(fluid);
+    return FluidIngredients.test(input, fluid);
   }
 
   /**
@@ -92,7 +92,7 @@ public class MeltingFuel implements ICustomOutputRecipe<IFluidContainer> {
    * @return  Input fluids
    */
   public List<FluidStack> getInputs() {
-    return input.getFluids();
+    return FluidIngredients.getFluids(input);
   }
 
   /* Recipe type methods */

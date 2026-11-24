@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import net.minecraft.core.HolderLookup;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -23,11 +23,11 @@ public class RetexturedCastingRecipe extends ItemCastingRecipe {
     RetexturedCastingRecipe::new);
 
   public RetexturedCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, SizedFluidIngredient fluid, ItemOutput result, int coolingTime, boolean consumed, boolean switchSlots) {
-    super(serializer, group, cast, fluid, result, coolingTime, consumed, switchSlots);
+    super(type, serializer, group, cast, fluid, result, coolingTime, consumed, switchSlots);
   }
 
   @Override
-  public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
+  public ItemStack assemble(ICastingContainer inv, HolderLookup.Provider access) {
     ItemStack result = getResultItem(access).copy();
     if (inv.getItem().getItem() instanceof BlockItem blockItem ) {
       return RetexturedHelper.setTexture(result, blockItem.getBlock());

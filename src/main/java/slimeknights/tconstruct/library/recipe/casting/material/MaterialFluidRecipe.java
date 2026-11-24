@@ -37,7 +37,7 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
     BooleanLoadable.INSTANCE.defaultField("hide_in_book", false, false, r -> r.hideInBook),
     MaterialFluidRecipe::new);
   /** Empty recipe instance, used as a fallback */
-  public static final MaterialFluidRecipe EMPTY = new MaterialFluidRecipe(TConstruct.getResource("missingno"), FluidIngredients.EMPTY, 0, null, MaterialId.UNKNOWN);
+  public static final MaterialFluidRecipe EMPTY = new MaterialFluidRecipe(FluidIngredients.EMPTY, 0, null, MaterialId.UNKNOWN);
 
   private final SizedFluidIngredient fluid;
   @Getter
@@ -68,7 +68,7 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
 
   /** Checks if this recipe is valid for the given fluid and material */
   public boolean matches(Fluid fluid) {
-    return !output.isUnknown() && this.fluid.test(fluid);
+    return !output.isUnknown() && FluidIngredients.test(this.fluid, fluid);
   }
 
   /** Checks if this recipe is valid for the given fluid and material */
@@ -85,7 +85,7 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
   /** Gets a list of fluids for display */
   @Override
   public List<FluidStack> getFluids() {
-    return fluid.getFluids();
+    return FluidIngredients.getFluids(fluid);
   }
 
   @Override
@@ -113,10 +113,6 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
 
   /* JEI */
 
-  @Override
-  public ResourceLocation getRecipeId() {
-    return getId();
-  }
 
   /** Alias for {@link #getOutput()} for the sake of implementing {@link IDisplayMaterialRecipe} */
   @Override

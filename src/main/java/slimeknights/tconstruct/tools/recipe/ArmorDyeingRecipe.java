@@ -5,7 +5,6 @@ import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import lombok.Getter;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -66,7 +65,7 @@ public class ArmorDyeingRecipe implements ITinkerStationRecipe, MultiNamedRecipe
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable().copy();
 
     ModDataNBT persistentData = tool.getPersistentData();
@@ -141,7 +140,7 @@ public class ArmorDyeingRecipe implements ITinkerStationRecipe, MultiNamedRecipe
   private List<IDisplayModifierRecipe> displayRecipes;
 
   /** Gets the display recipes before naming */
-  public List<IDisplayModifierRecipe> getDisplayRecipes(HolderLookup.Provider access) {
+  public List<IDisplayModifierRecipe> getDisplayRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<ItemStack> toolInputs = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, TinkerTags.Items.DYEABLE)
         .map(item -> {
@@ -152,7 +151,7 @@ public class ArmorDyeingRecipe implements ITinkerStationRecipe, MultiNamedRecipe
           return stack;
         }).toList();
       if (!toolInputs.isEmpty()) {
-        ResourceLocation id = getId();
+        ResourceLocation id = id;
         displayRecipes = Arrays.stream(DyeColor.values()).map(dye -> new DisplayRecipe(id, toolInputs, dye)).collect(Collectors.toList());
       } else {
         displayRecipes = List.of();
@@ -261,13 +260,13 @@ public class ArmorDyeingRecipe implements ITinkerStationRecipe, MultiNamedRecipe
     }
   }
 
-  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  /** Named display recipes, cached from {@link #getDisplayRecipes(ResourceLocation, HolderLookup.Provider)} */
   private List<NamedRecipe<IDisplayModifierRecipe>> namedRecipes = null;
 
   @Override
   public List<NamedRecipe<IDisplayModifierRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
     if (namedRecipes == null) {
-      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(id, access));
     }
     return namedRecipes;
   }

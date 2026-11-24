@@ -57,10 +57,10 @@ public class MeltingFuelBuilder extends AbstractRecipeBuilder<MeltingFuelBuilder
 
   @Override
   public void save(RecipeOutput consumer) {
-    if (input.getFluids().isEmpty()) {
+    if (FluidIngredients.getFluids(input).isEmpty()) {
       throw new IllegalStateException("Must have at least one fluid for dynamic input");
     }
-    save(consumer, Loadables.FLUID.getKey(input.getFluids().get(0).getFluid()));
+    save(consumer, Loadables.FLUID.getKey(FluidIngredients.getFluids(input).get(0).getFluid()));
   }
 
   @Override

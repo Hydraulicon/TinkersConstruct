@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeHelper;
 import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -552,7 +553,7 @@ public abstract class CastingBlockEntity extends TableBlockEntity implements Wor
     FluidStack fluid = tank.getFluid();
     if(!fluid.isEmpty()) {
       // fetch recipe by name
-      RecipeHelper.getRecipe(level.getRecipeManager(), name, ICastingRecipe.class).ifPresent(recipe -> {
+      TinkerRecipeHelper.getRecipe(level.getRecipeManager(), name, ICastingRecipe.class).ifPresent(recipe -> {
         this.currentRecipe = recipe;
         castingInventory.setFluid(fluid);
         tank.setCapacity(recipe.getFluidAmount(castingInventory));

@@ -1,9 +1,9 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation;
 
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -20,15 +20,8 @@ import java.util.List;
  */
 public interface IDisplayCraftingTinkering extends IDisplayToolTinkering, CraftingRecipe {
   /** Gets the ID for the crafting table tab. */
-  @Override
   ResourceLocation getId();
 
-  /** Gets the ID for the tinker station tab. */
-  @Nullable
-  @Override
-  default ResourceLocation getRecipeId() {
-    return getId();
-  }
 
   /** Gets the tooltip for the information icon in the crafting table tab. By default, calls {@link #getTitle()} and {@link #getTooltip()}, but can be overridden to return separate strings. */
   default List<Component> getInformation() {
@@ -58,17 +51,17 @@ public interface IDisplayCraftingTinkering extends IDisplayToolTinkering, Crafti
   }
 
   @Override
-  default boolean matches(CraftingContainer container, Level pLevel) {
+  default boolean matches(CraftingInput container, Level pLevel) {
     return false;
   }
 
   @Override
-  default ItemStack getResultItem(RegistryAccess access) {
+  default ItemStack getResultItem(HolderLookup.Provider access) {
     return ItemStack.EMPTY;
   }
 
   @Override
-  default ItemStack assemble(CraftingContainer container, RegistryAccess access) {
+  default ItemStack assemble(CraftingInput container, HolderLookup.Provider access) {
     return ItemStack.EMPTY;
   }
 

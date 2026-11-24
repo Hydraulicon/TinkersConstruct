@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.netty.handler.codec.DecoderException;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import slimeknights.mantle.recipe.helper.ItemOutput;
@@ -65,7 +65,7 @@ public abstract class RandomItem {
   public abstract JsonElement serialize();
 
   /** Writes this object to the packet buffer */
-  public abstract void write(FriendlyByteBuf buffer);
+  public abstract void write(RegistryFriendlyByteBuf buffer);
 
   /**
    * Reads a random item from JSON
@@ -82,7 +82,7 @@ public abstract class RandomItem {
       }
     }
 
-    ItemOutput result = ItemOutput.Loadable.REQUIRED_STACK.convert(element, name);
+    ItemOutput result = ItemOutput.REQUIRED_STACK_LOADABLE.convert(element, name);
     // primitive is just an item name, so constant
     if (element.isJsonPrimitive()) {
       return constant(result);
@@ -105,8 +105,8 @@ public abstract class RandomItem {
   }
 
   /** Reads the object from the packet buffer */
-  public static RandomItem read(FriendlyByteBuf buffer) {
-    ItemOutput result = ItemOutput.read(buffer);
+  public static RandomItem read(RegistryFriendlyByteBuf buffer) {
+    ItemOutput result = ItemOutput.REQUIRED_STREAM_CODEC.decode(buffer);
     RandomType type = buffer.readEnum(RandomType.class);
     switch (type) {
       case RANGE -> {
@@ -145,7 +145,7 @@ public abstract class RandomItem {
 
     @Override
     public JsonElement serialize() {
-      JsonElement resultElement = this.result.serialize(true);
+      JsonElement resultElement = ItemOutput.REQUIRED_STACK_LOADABLE.serialize(this.result);
       JsonObject object;
       // if a primitive, that means its just an item name, so build an object around it
       if (resultElement.isJsonPrimitive()) {
@@ -161,8 +161,8 @@ public abstract class RandomItem {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-      result.write(buffer);
+    public void write(RegistryFriendlyByteBuf buffer) {
+      ItemOutput.REQUIRED_STREAM_CODEC.encode(buffer, result);
       buffer.writeEnum(RandomType.RANGE);
       buffer.writeVarInt(minCount);
     }
@@ -186,7 +186,7 @@ public abstract class RandomItem {
 
     @Override
     public JsonElement serialize() {
-      JsonElement resultElement = this.result.serialize(true);
+      JsonElement resultElement = ItemOutput.REQUIRED_STACK_LOADABLE.serialize(this.result);
       // no chance means raw item object is enough
       if (chance >= 1.0f) {
         return resultElement;
@@ -204,8 +204,8 @@ public abstract class RandomItem {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-      result.write(buffer);
+    public void write(RegistryFriendlyByteBuf buffer) {
+      ItemOutput.REQUIRED_STREAM_CODEC.encode(buffer, result);
       buffer.writeEnum(RandomType.CHANCE);
       buffer.writeFloat(chance);
     }

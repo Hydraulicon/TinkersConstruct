@@ -1,8 +1,8 @@
 package slimeknights.tconstruct.tables.recipe;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.mantle.data.loadable.Loadables;
 import lombok.Getter;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -64,7 +64,7 @@ public class TinkerStationDamagingRecipe implements ITinkerStationRecipe, IDispl
   }
 
   @Override
-  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, RegistryAccess access) {
+  public RecipeResult<LazyToolStack> getValidatedResult(ITinkerStationContainer inv, HolderLookup.Provider access) {
     ToolStack tool = inv.getTinkerable();
     if (tool.isBroken()) {
       return BROKEN;
@@ -100,10 +100,6 @@ public class TinkerStationDamagingRecipe implements ITinkerStationRecipe, IDispl
   /** Tools for display in JEI */
   private List<ItemStack> toolWithoutModifier, toolWithModifier;
 
-  @Override
-  public ResourceLocation getRecipeId() {
-    return getId();
-  }
 
   @Override
   public Component getTitle() {

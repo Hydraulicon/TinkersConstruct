@@ -752,9 +752,9 @@ public final class TinkerModifiers extends TinkerModule {
   public static final DeferredRecipeSerializer<OverslimeModifierRecipe> overslimeSerializer = RECIPE_SERIALIZERS.registerLoadable("overslime_modifier", OverslimeModifierRecipe.LOADER);
   public static final DeferredRecipeSerializer<OverslimeCraftingTableRecipe> craftingOverslimeSerializer = RECIPE_SERIALIZERS.registerLoadable("crafting_overslime_modifier", OverslimeCraftingTableRecipe.LOADER);
   public static final DeferredRecipeSerializer<ModifierSalvage> modifierSalvageSerializer = RECIPE_SERIALIZERS.registerLoadable("modifier_salvage", ModifierSalvage.LOADER);
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ArmorDyeingRecipe>> armorDyeingSerializer = RECIPE_SERIALIZERS.register("armor_dyeing_modifier", () -> new SimpleRecipeSerializer<>(ArmorDyeingRecipe::new));
+  public static final DeferredRecipeSerializer<ArmorDyeingRecipe> armorDyeingSerializer = RECIPE_SERIALIZERS.registerNoArguments("armor_dyeing_modifier", ArmorDyeingRecipe::new);
   public static final DeferredRecipeSerializer<BannerModifierRecipe> bannerModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("banner_modifier", BannerModifierRecipe.LOADER);
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ArmorTrimRecipe>> armorTrimSerializer = RECIPE_SERIALIZERS.register("armor_trim_modifier", () -> new SimpleRecipeSerializer<>(ArmorTrimRecipe::new));
+  public static final DeferredRecipeSerializer<ArmorTrimRecipe> armorTrimSerializer = RECIPE_SERIALIZERS.registerNoArguments("armor_trim_modifier", ArmorTrimRecipe::new);
   public static final DeferredRecipeSerializer<TippedToolTransformRecipe> tippedToolTransformRecipeSerializer = RECIPE_SERIALIZERS.registerLoadable("tipped_tool_transform", TippedToolTransformRecipe.LOADER);
   // modifiers
   public static final DeferredRecipeSerializer<ModifierRepairTinkerStationRecipe> modifierRepair = RECIPE_SERIALIZERS.registerLoadable("modifier_repair", ModifierRepairTinkerStationRecipe.LOADER);

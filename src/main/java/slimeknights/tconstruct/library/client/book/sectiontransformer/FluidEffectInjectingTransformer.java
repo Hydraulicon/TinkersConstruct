@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.client.book.sectiontransformer;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -60,7 +61,7 @@ public class FluidEffectInjectingTransformer extends BookTransformer {
           continue;
         }
         // skip effects with no fluids - usually means empty tag for compat
-        List<FluidStack> fluids = effect.ingredient().getFluids();
+        List<FluidStack> fluids = FluidIngredients.getFluids(effect.ingredient());
         if (fluids.isEmpty()) {
           return;
         }
