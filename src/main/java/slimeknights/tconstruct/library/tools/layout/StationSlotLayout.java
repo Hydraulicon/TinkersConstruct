@@ -112,7 +112,7 @@ public class StationSlotLayout {
   }
 
   /** Writes a slot to the packet buffer */
-  public void write(FriendlyByteBuf buffer) {
+  public void write(RegistryFriendlyByteBuf buffer) {
     buffer.writeResourceLocation(name);
     buffer.writeUtf(getTranslationKey());
     icon.write(buffer);

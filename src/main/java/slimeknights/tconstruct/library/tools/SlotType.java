@@ -184,7 +184,7 @@ public final class SlotType {
       }
 
       @Override
-      public JsonElement serialize(SlotCount slots) {
+      public JsonElement serialize(SlotCount slots, TypedMap context) {
         JsonObject json = new JsonObject();
         json.addProperty(slots.type.getName(), slots.count);
         return json;

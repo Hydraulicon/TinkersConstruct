@@ -142,7 +142,7 @@ Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tool
 - Attribute modifiers: UUIDs → `ResourceLocation` ids.
 - Enchantment-related modifiers and hooks: adapt to data-driven `Holder<Enchantment>`.
 
-- **Progress so far** (errors 17,014 → 4,145). Porting notes and helper scripts are in `project_files/port_1.21/MANTLE_API.md`.
+- **Progress so far** (errors 17,014 → 3,926). Porting notes and helper scripts are in `project_files/port_1.21/MANTLE_API.md`.
   - **Build unblocked for Lombok.** javac skips annotation processing after certain early errors, which hid every Lombok member.
     Fixed with `-XDshould-stop.ifError=FLOW` (temporary) and by stubbing unresolvable imports with `// TODO 1.21 import:` markers.
   - **Typed IDs:** `ResourceLocation` is final in 1.21. The AT removes `final` and widens its constructor, so `MaterialId`, `ModifierId`,
@@ -174,9 +174,15 @@ Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tool
 - **Tooltips:** vanilla now displays enchantments, as tooltip hide flags were removed; they appear above the modifier list instead of below it.
   Vanilla attribute lines are still hidden while holding shift/ctrl, through the attribute component.
 - Fixed while porting: `RarityModule` could index past the end of the rarity values.
-- **Remaining in phase 2:** armor (armor materials are registry entries), launchers (charged projectile components), `ToolAttackUtil`,
-  material parts (planned typed `tconstruct:material` component), loot functions and entries (`MapCodec`), `CustomExplosion`,
-  recipes (`RecipeInput`, `RecipeHolder`, Mantle's new serializers), and the remaining modifier modules.
+- **Armor:** vanilla armor materials are registry entries; each `DummyArmorMaterial` registers a zero-stat vanilla material for its
+  equip sound. Armor uses vanilla's per-slot modifier IDs.
+- **Material parts:** typed `tconstruct:material` component holding the `MaterialVariantId`. Part rarity is set as a component from the material.
+- **Station layout icons:** JSON uses `components` instead of `nbt`.
+- **Open: modifier looting.** NeoForge removed `LootingLevelEvent`; looting is an enchantment read by loot functions without the kill context.
+  Context-based looting (projectile modifiers, the blamed slot, bleeding kills, armor looting) is disabled until a new hook is designed.
+  The logic is kept in `ModifierLootingHandler#getLootingLevel`.
+- **Remaining in phase 2:** recipes (`RecipeInput`, `RecipeHolder`, Mantle's new serializers), the remaining modifier modules,
+  `library/json` (loot functions and entries with `MapCodec`), `library/data` (datagen providers) and `library/client`.
 
 ### Phase 3: Content modules
 `common` → `shared` → `fluids` → `smeltery` → `tables` → `gadgets` → `world` → `tools`.

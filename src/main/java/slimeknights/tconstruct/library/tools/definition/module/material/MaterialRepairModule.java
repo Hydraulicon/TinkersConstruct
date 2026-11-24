@@ -1,14 +1,17 @@
 package slimeknights.tconstruct.library.tools.definition.module.material;
 
+import com.google.gson.JsonObject;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import slimeknights.mantle.util.typed.TypedMap;
+import slimeknights.mantle.data.loadable.Streamable;
+import slimeknights.mantle.data.loadable.mapping.DispatchLoadable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.IAmLoadable;
 import slimeknights.mantle.data.loadable.field.LoadableField;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.mapping.EitherLoadable;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.tconstruct.TConstruct;
@@ -30,12 +33,40 @@ import java.util.Set;
 
 /** Module for repairing a tool using a non-tool part material */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule, IAmLoadable.Record {
+public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule {
   private static final List<ModuleHook<?>> DEFAULT_HOOKS = HookProvider.<MaterialRepairModule>defaultHooks(ToolHooks.MATERIAL_REPAIR);
   private static final LoadableField<MaterialId,MaterialRepairModule> MATERIAL_FIELD = MaterialId.PARSER.requiredField("material", m -> m.material);
   private static final RecordLoadable<MaterialRepairModule> CONSTANT = RecordLoadable.create(MATERIAL_FIELD, IntLoadable.FROM_ONE.requiredField("durability", MaterialRepairModule::getRepairAmount), MaterialRepairModule::new);
   private static final RecordLoadable<StatType> STAT_TYPE = RecordLoadable.create(MATERIAL_FIELD, MaterialStatsId.PARSER.requiredField("stat_type", m -> m.statType), MaterialRepairModule::of);
-  public static final RecordLoadable<MaterialRepairModule> LOADER = EitherLoadable.<MaterialRepairModule>record().key("durability", CONSTANT).key("stat_type", STAT_TYPE).build(CONSTANT);
+  /** Network codec, writes which variant follows as the JSON key is not available */
+  private static final Streamable<MaterialRepairModule> NETWORK = new Streamable<>() {
+    @Override
+    public MaterialRepairModule decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
+      return buffer.readBoolean() ? STAT_TYPE.decode(buffer, context) : CONSTANT.decode(buffer, context);
+    }
+
+    @Override
+    public void encode(RegistryFriendlyByteBuf buffer, MaterialRepairModule value, TypedMap context) {
+      if (value instanceof StatType statType) {
+        buffer.writeBoolean(true);
+        STAT_TYPE.encode(buffer, statType, context);
+      } else {
+        buffer.writeBoolean(false);
+        CONSTANT.encode(buffer, value, context);
+      }
+    }
+  };
+  public static final RecordLoadable<MaterialRepairModule> LOADER = DispatchLoadable.<MaterialRepairModule>builder()
+    .network(NETWORK)
+    .direct(CONSTANT, "durability")
+    .direct(STAT_TYPE, "stat_type")
+    .build(MaterialRepairModule::serialize);
+
+  /** Serializes the module using the loadable for its variant */
+  @SuppressWarnings("unchecked")
+  private static void serialize(MaterialRepairModule module, JsonObject json, TypedMap context) {
+    ((RecordLoadable<MaterialRepairModule>) module.loadable()).serializeInto(module, json, context);
+  }
 
   /** Material used for repairing */
   protected final MaterialId material;
@@ -63,7 +94,7 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
     return new ArmorBuilder(material);
   }
 
-  @Override
+  /** Gets the loadable for this variant */
   public RecordLoadable<? extends MaterialRepairModule> loadable() {
     return CONSTANT;
   }
@@ -104,7 +135,6 @@ public class MaterialRepairModule implements MaterialRepairToolHook, ToolModule,
       this.statType = statType;
     }
 
-    @Override
     public RecordLoadable<StatType> loadable() {
       return STAT_TYPE;
     }

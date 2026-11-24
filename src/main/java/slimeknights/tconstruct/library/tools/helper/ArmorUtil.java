@@ -1,10 +1,11 @@
 package slimeknights.tconstruct.library.tools.helper;
 
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 
-import static net.minecraft.world.damagesource.CombatRules.getDamageAfterAbsorb;
 
 /**
  * Utinet.minecraft.world.damagesource.CombatRulesation logic
@@ -40,6 +41,16 @@ public class ArmorUtil {
    */
   public static float getDamageAfterMagicAbsorb(float damage, float enchantModifiers) {
     return getDamageAfterMagicAbsorb(damage, enchantModifiers, 20f);
+  }
+
+  /**
+   * Armor absorption formula from {@link net.minecraft.world.damagesource.CombatRules#getDamageAfterAbsorb(LivingEntity, float, DamageSource, float, float)},
+   * without the 1.21 adjustment for weapon enchantments. Paired with {@link #getDamageBeforeArmorAbsorb(float, float, float)}, which is its exact inverse.
+   */
+  public static float getDamageAfterAbsorb(float damage, float armor, float toughness) {
+    float toughnessFactor = 2.0F + toughness / 4.0F;
+    float effectiveArmor = Mth.clamp(armor - damage / toughnessFactor, armor * 0.2F, 20.0F);
+    return damage * (1.0F - effectiveArmor / 25.0F);
   }
 
   /**

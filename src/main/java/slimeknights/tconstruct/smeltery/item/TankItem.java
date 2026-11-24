@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.item;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -77,7 +78,7 @@ public class TankItem extends BlockTooltipItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext worldIn, List<Component> tooltip, TooltipFlag flag) {
     if (stack.hasTag()) {
       FluidTank tank = getTank(stack, 1);
       if (tank.getFluidAmount() > 0) {

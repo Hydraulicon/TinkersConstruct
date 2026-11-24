@@ -8,7 +8,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.NeoForge;
-// TODO 1.21 import: net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.neoforged.bus.api.EventPriority;
 import slimeknights.tconstruct.common.TinkerDamageTypes;
@@ -45,8 +44,8 @@ public class ModifierLootingHandler {
       return;
     }
     init = true;
-    // we overwrite looting values from vanilla in a couple cases, but mod effects that globally boost looting should still boost us
-    NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, ModifierLootingHandler::onLooting);
+    // TODO 1.21: NeoForge removed LootingLevelEvent; looting is now an enchantment read by loot functions without the kill context.
+    // The context based looting below (projectile modifiers, blamed slot, bleeding kills, armor looting) needs a new hook, see MIGRATION_1.21.md
     NeoForge.EVENT_BUS.addListener(ModifierLootingHandler::onLeaveServer);
   }
 
@@ -68,26 +67,24 @@ public class ModifierLootingHandler {
     return entity != null ? LOOTING_OFFHAND.getOrDefault(entity.getUUID(), EquipmentSlot.MAINHAND) : EquipmentSlot.MAINHAND;
   }
 
-  /** Applies the looting bonus for modifiers */
-  private static void onLooting(LootingLevelEvent event) {
-    // must be an attacker with our tool
-    DamageSource damageSource = event.getDamageSource();
-    if (damageSource == null) {
-      return;
-    }
-    LivingEntity target = event.getEntity();
+  /**
+   * Gets the looting level for modifiers, previously applied in the removed looting event.
+   * @param damageSource  Source of the killing blow
+   * @param target        Entity killed
+   * @param level         Looting level before modifiers
+   * @return  Looting level after modifiers
+   */
+  public static int getLootingLevel(DamageSource damageSource, LivingEntity target, int level) {
 
     // bleeding kills use the level of the effect for looting
     if (damageSource.is(TinkerDamageTypes.BLEEDING)) {
-      event.setLootingLevel(Math.max(0, TinkerEffect.getAmplifier(target, TinkerEffects.bleeding.get())));
-      return;
+      return Math.max(0, TinkerEffect.getAmplifier(target, TinkerEffects.bleeding.get()));
     }
 
     // otherwise, use the proper tool
     Entity source = damageSource.getEntity();
     if (source instanceof LivingEntity holder) {
       Entity direct = damageSource.getDirectEntity();
-      int level = event.getLootingLevel();
 
       // determine who is in charge of the looting
       LootingContext context;
@@ -120,8 +117,9 @@ public class ModifierLootingHandler {
       // boost looting with armor regardless, hopefully you did not switch your pants mid arrow firing
       level = ArmorLootingModifierHook.getLooting(tool, context, level);
       // we allow the hook to return negatives to cancel out looting, so ensure its at least 0
-      event.setLootingLevel(Math.max(level, 0));
+      return Math.max(level, 0);
     }
+    return level;
   }
 
   /** Called when a player leaves the server to clear the face */

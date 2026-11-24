@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.layout;
 
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonDeserializationContext;
@@ -13,10 +14,8 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.handler.codec.DecoderException;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.util.JsonHelper;
 import slimeknights.tconstruct.library.recipe.partbuilder.Pattern;
@@ -37,7 +36,7 @@ public abstract class LayoutIcon {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
       buffer.writeEnum(Type.EMPTY);
     }
 
@@ -79,7 +78,7 @@ public abstract class LayoutIcon {
   }
 
   /** Writes this to the packet buffer */
-  public abstract void write(FriendlyByteBuf buffer);
+  public abstract void write(RegistryFriendlyByteBuf buffer);
 
   /** Writes this object to json */
   public abstract JsonObject toJson();
@@ -108,9 +107,9 @@ public abstract class LayoutIcon {
     public JsonObject toJson() {
       JsonObject json = new JsonObject();
       json.add("item", Loadables.ITEM.serialize(stack.getItem()));
-      CompoundTag tag = stack.getTag();
-      if (tag != null) {
-        json.addProperty("nbt", tag.toString());
+      DataComponentPatch components = stack.getComponentsPatch();
+      if (!components.isEmpty()) {
+        json.add("components", JsonHelper.serialize(DataComponentPatch.CODEC, components));
       }
       return json;
     }
@@ -131,7 +130,7 @@ public abstract class LayoutIcon {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
       buffer.writeEnum(Type.PATTERN);
       buffer.writeResourceLocation(pattern);
     }
@@ -161,7 +160,11 @@ public abstract class LayoutIcon {
         return new PatternIcon(pattern);
       }
       if (object.has("item")) {
-        ItemStack stack = CraftingHelper.getItemStack(object, true);
+        // as of 1.21, the stack NBT was replaced by components
+        ItemStack stack = new ItemStack(Loadables.ITEM.getIfPresent(object, "item"));
+        if (object.has("components")) {
+          stack.applyComponents(JsonHelper.parse(DataComponentPatch.CODEC, object.get("components")));
+        }
         return new ItemStackIcon(stack);
       }
       // not sure why this would be needed, but might as well

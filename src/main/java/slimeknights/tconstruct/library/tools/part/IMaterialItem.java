@@ -39,6 +39,7 @@ public interface IMaterialItem extends ItemLike, IMaterialUser {
   default ItemStack setMaterialForced(ItemStack stack, MaterialVariantId material) {
     // FIXME: it is odd that we assume the storage format in this method but not in getMaterial, should be consistent in the implementation location
     stack.set(TinkerCommons.material, material);
+    MaterialItem.updateRarity(stack);
     return stack;
   }
 

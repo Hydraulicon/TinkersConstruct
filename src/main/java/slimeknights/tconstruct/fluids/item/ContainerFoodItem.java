@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.fluids.item;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +25,7 @@ public class ContainerFoodItem extends slimeknights.mantle.item.ContainerFoodIte
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext worldIn, List<Component> tooltip, TooltipFlag flagIn) {
     FoodProperties food = stack.getFoodProperties(null);
     if (food != null) {
       addEffectTooltip(food, tooltip);

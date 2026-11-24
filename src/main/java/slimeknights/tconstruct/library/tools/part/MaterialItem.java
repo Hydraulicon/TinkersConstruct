@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.part;
 
+import net.minecraft.core.component.DataComponents;
 import slimeknights.tconstruct.shared.TinkerCommons;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -111,11 +112,6 @@ public class MaterialItem extends Item implements IMaterialItem {
   }
 
   @Override
-  public Rarity getRarity(ItemStack stack) {
-    return MaterialRegistry.getMaterial(getMaterial(stack).getId()).getRarity();
-  }
-
-  @Override
   public boolean isFoil(ItemStack stack) {
     return MaterialRegistry.getInstance().isInTag(getMaterial(stack).getId(), TinkerTags.Materials.SHINY);
   }
@@ -131,7 +127,7 @@ public class MaterialItem extends Item implements IMaterialItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, Item.TooltipContext worldIn, List<Component> tooltip, TooltipFlag flag) {
     appendHoverText(this, stack, tooltip, flag);
   }
 
@@ -169,6 +165,16 @@ public class MaterialItem extends Item implements IMaterialItem {
     }
   }
 
+  /** Sets the rarity component from the stack's material, as rarity is a component as of 1.21 */
+  public static void updateRarity(ItemStack stack) {
+    if (MaterialRegistry.isFullyLoaded()) {
+      MaterialVariantId id = getMaterialId(stack);
+      if (!id.equals(MaterialId.UNKNOWN)) {
+        stack.set(DataComponents.RARITY, MaterialRegistry.getMaterial(id.getId()).getRarity());
+      }
+    }
+  }
+
   /** Resolves material redirects on the given stack */
   public static void verifyStack(ItemStack stack) {
     // if the material exists and was changed, update it
@@ -180,6 +186,7 @@ public class MaterialItem extends Item implements IMaterialItem {
         stack.set(TinkerCommons.material, MaterialVariantId.create(resolved, id.getVariant()));
       }
     }
+    updateRarity(stack);
   }
 
   /** Resolves material redirects on the given block entity NBT */

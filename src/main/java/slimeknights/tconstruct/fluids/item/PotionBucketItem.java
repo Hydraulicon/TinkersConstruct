@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.fluids.item;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -106,7 +107,7 @@ public class PotionBucketItem extends PotionItem {
   }
 
   @Override
-  public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+  public void appendHoverText(ItemStack pStack, Item.TooltipContext pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
     PotionUtils.addPotionTooltip(pStack, pTooltip, 2.5f);
   }
 
