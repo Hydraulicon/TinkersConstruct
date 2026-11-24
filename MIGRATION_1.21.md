@@ -142,7 +142,7 @@ Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tool
 - Attribute modifiers: UUIDs → `ResourceLocation` ids.
 - Enchantment-related modifiers and hooks: adapt to data-driven `Holder<Enchantment>`.
 
-- **Progress so far** (errors 17,014 → 4,380). Porting notes and helper scripts are in `project_files/port_1.21/MANTLE_API.md`.
+- **Progress so far** (errors 17,014 → 4,145). Porting notes and helper scripts are in `project_files/port_1.21/MANTLE_API.md`.
   - **Build unblocked for Lombok.** javac skips annotation processing after certain early errors, which hid every Lombok member.
     Fixed with `-XDshould-stop.ifError=FLOW` (temporary) and by stubbing unresolvable imports with `// TODO 1.21 import:` markers.
   - **Typed IDs:** `ResourceLocation` is final in 1.21. The AT removes `final` and widens its constructor, so `MaterialId`, `ModifierId`,
@@ -158,8 +158,25 @@ Order: `library/utils`, `json`, `data` → `materials` → `modifiers` → `tool
     so block entities from 1.20 worlds still load their multiblock state.
   - `TinkerToolEvent` has its own `Result` enum, because NeoForge removed event results.
   - Fixed while porting: `JsonRedirect` parsed its whole object as the condition instead of the nested `condition` field.
-- **Remaining in phase 2:** loot functions and entries (`MapCodec`), harvest tiers (`TierSortingRegistry` removed in 1.21), `CustomExplosion`,
-  the tool data component, recipes (`RecipeInput`, `RecipeHolder`, Mantle's new serializers), and modifier hooks (enchantment holders, attribute ids).
+- **Tool data, step 1 done:** tool NBT lives in the `tconstruct:tool_data` component (`ToolNBT`). `ToolStack` stays linked to its stack.
+  Reads share the stored tag, the first modification copies it, and each change is written back as a new immutable component.
+  This keeps the 1.20 shared-NBT behaviour that ~150 `ToolStack.from(stack)` call sites rely on. The durability stat and rarity are mirrored
+  to vanilla's `MAX_DAMAGE`/`DAMAGE`/`RARITY` components. Use `ToolNBT.read(stack)` and `ToolNBT.update(stack, …)` for raw access.
+- **Entity data:** persistent data, entity modifiers and tinker data are data attachments. `LazyOptional` holders became `Optional`.
+- **Item capabilities:** registered per capability for all modifiable items in `RegisterCapabilitiesEvent` (`ToolCapabilityProvider`).
+  Providers must be registered before that event. `BlockItemProviderCapability` is an `ItemCapability`.
+- **Hook API changes (addon facing):** `EnchantmentModifierHook` takes enchantment holders, and single-enchantment hooks use `ResourceKey`s.
+  `AttributesModifierHook` takes attribute holders and needs per-slot modifier IDs (`AttributesModifierHook.slotId`).
+- **Block breaking:** the `onBlockStartBreak` item hook is gone, so `ToolHarvestLogic` handles a lowest-priority `BreakEvent`.
+  XP now drops through vanilla's block drops instead of being popped by Tinkers.
+- **Harvest tiers:** `TierSortingRegistry` is gone, so `HarvestTiers` keeps the tier order (vanilla seeded, same names).
+  Other mods' tiers must now be registered with `HarvestTiers.register`; Forge used to sort them automatically.
+- **Tooltips:** vanilla now displays enchantments, as tooltip hide flags were removed; they appear above the modifier list instead of below it.
+  Vanilla attribute lines are still hidden while holding shift/ctrl, through the attribute component.
+- Fixed while porting: `RarityModule` could index past the end of the rarity values.
+- **Remaining in phase 2:** armor (armor materials are registry entries), launchers (charged projectile components), `ToolAttackUtil`,
+  material parts (planned typed `tconstruct:material` component), loot functions and entries (`MapCodec`), `CustomExplosion`,
+  recipes (`RecipeInput`, `RecipeHolder`, Mantle's new serializers), and the remaining modifier modules.
 
 ### Phase 3: Content modules
 `common` → `shared` → `fluids` → `smeltery` → `tables` → `gadgets` → `world` → `tools`.

@@ -76,3 +76,19 @@ Compile with `./gradlew compileJava > log 2>&1`, then run the fixers on the log.
 - `new ResourceLocation(ns, path)` → `ResourceLocation.fromNamespaceAndPath`; `new ResourceLocation(s)` → `ResourceLocation.parse`.
 - `AttributeModifier.Operation`: `ADDITION`/`MULTIPLY_BASE`/`MULTIPLY_TOTAL` → `ADD_VALUE`/`ADD_MULTIPLIED_BASE`/`ADD_MULTIPLIED_TOTAL`.
 - `FrameType` → `AdvancementType`.
+
+## Tools and items (phase 2)
+
+- Tool NBT: `ToolNBT.read(stack)` (read only, never null) and `ToolNBT.update(stack, tag -> …)`. Inside tools use `ToolStack`, which handles copy-on-write.
+- Stacks and fluids stored in NBT need registry access in 1.21: `ItemStack.parseOptional(provider, tag)`, `stack.save(provider, tag)`,
+  `FluidStack.parseOptional`/`saveOptional`. Without a level at hand, use `RegistryAccessHelper.get()`.
+- Capabilities: `stack.getCapability(Capabilities.ItemHandler.ITEM)` returns the handler or null. `LazyOptional` and `orElseNull` are gone.
+- `ItemHandlerHelper.copyStackWithSize(s, n)` → `s.copyWithCount(n)`.
+- `entity.broadcastBreakEvent(slot)` → `entity.onEquippedItemBroken(item, slot)`; for hands use `LivingEntity.getSlotForHand(hand)`.
+- Item overrides: `appendHoverText(stack, TooltipContext, …)`, `getUseDuration(stack, entity)`, `verifyComponentsAfterLoad(stack)`,
+  `onDestroyed(ItemEntity, DamageSource)`, `getDefaultAttributeModifiers(stack)` returning `ItemAttributeModifiers`,
+  `supportsEnchantment`/`isPrimaryItemFor` instead of `canApplyAtEnchantingTable`. `getRarity`, `getDefaultTooltipHideFlags`
+  and `onBlockStartBreak` are gone.
+- `AttributeModifier` is a record with a `ResourceLocation` id: `amount()`, `operation()`, `id()`. `Operation.toValue()` → `id()`.
+  Vanilla base IDs are `Item.BASE_ATTACK_DAMAGE_ID`/`BASE_ATTACK_SPEED_ID`; the number format is `ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT`.
+- `TierSortingRegistry` → `HarvestTiers` (`byName`, `getId`, `getSortedTiers`, `isCorrectTierForDrops`).
