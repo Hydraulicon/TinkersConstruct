@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import lombok.Getter;
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.RegistryAccess;
@@ -15,7 +19,6 @@ import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.armortrim.TrimPatterns;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.util.RegistryHelper;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
@@ -39,7 +42,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisplayModifierRecipe> {
+public class ArmorTrimRecipe implements ITinkerStationRecipe, MultiNamedRecipe<IDisplayModifierRecipe> {
   protected static final String KEY_INVALID_MATERIAL = TConstruct.makeTranslationKey("recipe", "modifier.armor_trim.invalid_material");
   protected static final String KEY_INVALID_PATTERN = TConstruct.makeTranslationKey("recipe", "modifier.armor_trim.invalid_pattern");
 
@@ -141,8 +144,8 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
   private List<IDisplayModifierRecipe> displayRecipes = null;
 
   @SuppressWarnings("deprecation")
-  @Override
-  public List<IDisplayModifierRecipe> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayModifierRecipe> getDisplayRecipes(HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<ItemStack> trims = RegistryHelper.getTagValueStream(BuiltInRegistries.ITEM, ItemTags.TRIM_TEMPLATES)
                                             .map(ItemStack::new).toList();
@@ -251,5 +254,16 @@ public class ArmorTrimRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisp
     public boolean shouldDisplayValidate() {
       return false;
     }
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayModifierRecipe>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayModifierRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

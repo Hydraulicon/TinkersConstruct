@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import net.minecraft.core.HolderLookup;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -50,7 +51,7 @@ public class TipClearingCastingRecipe extends ModifierPotionCastingRecipe {
 
   /* JEI */
   @Override
-  public List<IDisplayableCastingRecipe> getRecipes(RegistryAccess access) {
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
     if (displayRecipes == null) {
       List<FluidStack> fluids = fluid.getFluids();
       List<String> potions = getPotionIds();

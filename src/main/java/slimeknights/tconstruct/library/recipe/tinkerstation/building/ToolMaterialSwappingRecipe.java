@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -11,7 +15,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.materials.IMaterialRegistry;
 import slimeknights.tconstruct.library.materials.MaterialRegistry;
@@ -46,7 +49,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /** Recipe swapping a tool material using another tool as input */
-public class ToolMaterialSwappingRecipe extends MaterialSwappingRecipe implements IMultiRecipe<IDisplayToolTinkering> {
+public class ToolMaterialSwappingRecipe extends MaterialSwappingRecipe implements MultiNamedRecipe<IDisplayToolTinkering> {
   protected static final RecipeResult<LazyToolStack> NO_MODIFIERS = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "part_swapping.no_modifiers"));
   public static final RecordLoadable<ToolMaterialSwappingRecipe> LOADER = RecordLoadable.create(TOOLS_FIELD, EXTRA_REQUIREMENTS_FIELD, ToolMaterialSwappingRecipe::new);
 
@@ -145,8 +148,8 @@ public class ToolMaterialSwappingRecipe extends MaterialSwappingRecipe implement
   /* JEI */
   private List<IDisplayToolTinkering> multiRecipes;
 
-  @Override
-  public List<IDisplayToolTinkering> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayToolTinkering> getDisplayRecipes(HolderLookup.Provider access) {
     if (multiRecipes == null) {
       IMaterialRegistry registry = MaterialRegistry.getInstance();
       Collection<IMaterial> materials = registry.getVisibleMaterials();
@@ -304,5 +307,16 @@ public class ToolMaterialSwappingRecipe extends MaterialSwappingRecipe implement
       // only show on inputs without modifiers
       return !output && !ModifierUtil.hasUpgrades(focus);
     }
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayToolTinkering>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayToolTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.data.loadable.Loadables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.IntMath;
 import net.minecraft.core.RegistryAccess;
@@ -10,7 +11,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.Lazy;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 /** Modifier that incrementally fills the entry, allowing partial application. */
 public class IncrementalModifierRecipe extends AbstractModifierRecipe {
-  protected static final LoadableField<Ingredient,IncrementalModifierRecipe> INPUT_FIELD = IngredientLoadable.DISALLOW_EMPTY.requiredField("input", r -> r.input);
+  protected static final LoadableField<Ingredient,IncrementalModifierRecipe> INPUT_FIELD = Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("input", r -> r.input);
   protected static final LoadableField<Integer,IncrementalModifierRecipe> AMOUNT_FIELD = IntLoadable.FROM_ONE.defaultField("amount_per_item", 1, true, r -> r.amountPerInput);
   protected static final LoadableField<Integer,IncrementalModifierRecipe> NEEDED_FIELD = IntLoadable.FROM_ONE.requiredField("needed_per_level", r -> r.neededPerLevel);
   protected static final LoadableField<ItemOutput,IncrementalModifierRecipe> LEFTOVER_FIELD = ItemOutput.Loadable.OPTIONAL_STACK.emptyField("leftover", r -> r.leftover);

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared;
 
+import slimeknights.mantle.registration.holder.DeferredIngredient;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 import slimeknights.tconstruct.library.tools.nbt.ToolNBT;
 import slimeknights.mantle.registration.holder.DeferredDataComponent;
@@ -165,6 +166,11 @@ public final class TinkerCommons extends TinkerModule {
   /** Tool NBT for all modifiable items, see {@link ToolNBT} */
   public static final DeferredDataComponent<ToolNBT> toolData = DATA_COMPONENTS.registerPersistent("tool_data", ToolNBT.CODEC, ToolNBT.STREAM_CODEC);
   /** Material for tool parts and other material items, see {@link slimeknights.tconstruct.library.tools.part.IMaterialItem} */
+  /* Ingredients */
+  public static final DeferredIngredient<NoContainerIngredient> noContainerIngredient = INGREDIENTS.register("no_container", NoContainerIngredient.LOADER);
+  public static final DeferredIngredient<BlockTagIngredient> blockTagIngredient = INGREDIENTS.register("block_tag", BlockTagIngredient.LOADER);
+  public static final DeferredIngredient<InstrumentIngredient> instrumentIngredient = INGREDIENTS.register("instrument", InstrumentIngredient.LOADER);
+
   public static final DeferredDataComponent<MaterialVariantId> material = DATA_COMPONENTS.registerPersistent("material", MaterialVariantId.CODEC, MaterialVariantId.STREAM_CODEC);
 
   public static final DeferredHolder<ParticleType<?>, ParticleType<FluidParticleData>> fluidParticle = PARTICLE_TYPES.register("fluid", FluidParticleData.Type::new);
@@ -197,9 +203,6 @@ public final class TinkerCommons extends TinkerModule {
   @SubscribeEvent
   void registerRecipeSerializers(RegisterEvent event) {
     if (event.getRegistryKey() == Registries.RECIPE_SERIALIZER) {
-      CraftingHelper.register(NoContainerIngredient.ID, NoContainerIngredient.Serializer.INSTANCE);
-      CraftingHelper.register(BlockTagIngredient.Serializer.ID, BlockTagIngredient.Serializer.INSTANCE);
-      CraftingHelper.register(InstrumentIngredient.ID, InstrumentIngredient.SERIALIZER);
       CriteriaTriggers.register(CONTAINER_OPENED_TRIGGER);
 
       // mantle

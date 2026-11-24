@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.tables.recipe;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus.Internal;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.library.materials.definition.MaterialId;
@@ -58,7 +61,7 @@ import java.util.stream.IntStream;
  * @see slimeknights.mantle.recipe.helper.SimpleFinishedRecipe
  */
 @RequiredArgsConstructor
-public class TinkerStationRepairRecipe implements ITinkerStationRecipe, IMultiRecipe<IDisplayCraftingTinkering> {
+public class TinkerStationRepairRecipe implements ITinkerStationRecipe, MultiNamedRecipe<IDisplayCraftingTinkering> {
   public static final Component TITLE = TConstruct.makeTranslation("recipe", "tool_repair");
   private static final Component TOOLTIP = TConstruct.makeTranslation("recipe", "tool_repair.tooltip");
   private static final List<Component> INFORMATION = List.of(TITLE, TConstruct.makeTranslation("recipe", "tool_repair.crafting_table").withStyle(ChatFormatting.GRAY));
@@ -256,8 +259,8 @@ public class TinkerStationRepairRecipe implements ITinkerStationRecipe, IMultiRe
 
   private List<IDisplayCraftingTinkering> displayRecipes;
 
-  @Override
-  public List<IDisplayCraftingTinkering> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayCraftingTinkering> getDisplayRecipes(HolderLookup.Provider access) {
     if (displayRecipes == null) {
       CompoundTag stats = StatsNBT.builder().set(ToolStats.DURABILITY, 1000).build().serializeToNBT();
       MaterialNBT displayMaterials = new MaterialNBT(IntStream.range(0, 5).mapToObj(i -> MaterialVariant.of(ToolBuildHandler.getRenderMaterial(i))).toList());
@@ -485,5 +488,16 @@ public class TinkerStationRepairRecipe implements ITinkerStationRecipe, IMultiRe
       // only show if it has a repair material - display stacks may bring us here otherwise
       return !output && isTool(focus) && !MaterialRepairToolHook.getRepairMaterials(ToolStack.from(focus)).isEmpty();
     }
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayCraftingTinkering>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayCraftingTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.core.RegistryAccess;
@@ -12,7 +16,6 @@ import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 import slimeknights.tconstruct.library.json.TinkerLoadables;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
@@ -31,7 +34,7 @@ import java.util.List;
 /**
  * Casting recipe that takes an arbitrary fluid of a given amount and set the material on the output based on that fluid
  */
-public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe implements IMultiRecipe<IDisplayableCastingRecipe> {
+public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe implements MultiNamedRecipe<IDisplayableCastingRecipe> {
   protected static final LoadableField<IMaterialItem,MaterialCastingRecipe> RESULT_FIELD = TinkerLoadables.MATERIAL_ITEM.requiredField("result", r -> r.result);
   public static final RecordLoadable<MaterialCastingRecipe> LOADER = RecordLoadable.create(
     LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(),
@@ -72,8 +75,8 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
   /* JEI */
   protected List<IDisplayableCastingRecipe> multiRecipes;
 
-  @Override
-  public List<IDisplayableCastingRecipe> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
     if (multiRecipes == null) {
       List<MaterialFluidRecipe> recipes = MaterialCastingLookup.getSortedCastingFluids();
       List<FluidStack> fluids = new ArrayList<>(recipes.size());
@@ -113,5 +116,16 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
       }
     }
     return multiRecipes;
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayableCastingRecipe>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayableCastingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

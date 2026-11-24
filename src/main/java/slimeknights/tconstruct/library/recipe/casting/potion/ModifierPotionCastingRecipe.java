@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.potion;
 
+import slimeknights.mantle.data.loadable.Loadables;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.tconstruct.library.modifiers.ModifierEntry;
 import slimeknights.tconstruct.library.modifiers.ModifierId;
@@ -23,7 +23,7 @@ import java.util.List;
 
 /** Common logic for {@link slimeknights.tconstruct.library.recipe.casting.TippingCastingRecipe} and {@link slimeknights.tconstruct.library.recipe.casting.TipClearingCastingRecipe} */
 public abstract class ModifierPotionCastingRecipe extends PotionCastingRecipe {
-  protected static final LoadableField<Ingredient, ModifierPotionCastingRecipe> TOOL_FIELD = IngredientLoadable.DISALLOW_EMPTY.requiredField("tools", r -> r.bottle);
+  protected static final LoadableField<Ingredient, ModifierPotionCastingRecipe> TOOL_FIELD = Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("tools", r -> r.bottle);
   protected static final LoadableField<ModifierId, ModifierPotionCastingRecipe> MODIFIER_FIELD = ModifierId.PARSER.requiredField("modifier", r -> r.modifier);
 
   protected final ModifierId modifier;

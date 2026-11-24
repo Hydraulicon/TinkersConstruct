@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import com.google.common.collect.Streams;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -8,7 +12,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.tconstruct.library.modifiers.ModifierEntry;
 import slimeknights.tconstruct.library.modifiers.ModifierId;
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /** Combination of {@link MultilevelModifierRecipe} into {@link IncrementalModifierRecipe}. */
-public class MultilevelIncrementalModifierRecipe extends IncrementalModifierRecipe implements IMultiRecipe<IDisplayModifierRecipe> {
+public class MultilevelIncrementalModifierRecipe extends IncrementalModifierRecipe implements MultiNamedRecipe<IDisplayModifierRecipe> {
   public static final RecordLoadable<MultilevelIncrementalModifierRecipe> LOADER = RecordLoadable.create(
     INPUT_FIELD, AMOUNT_FIELD, NEEDED_FIELD,
     TOOLS_FIELD, MAX_TOOL_SIZE_FIELD, RESULT_FIELD, LEFTOVER_FIELD, ALLOW_CRYSTAL_FIELD,
@@ -104,8 +107,8 @@ public class MultilevelIncrementalModifierRecipe extends IncrementalModifierReci
 
   private List<IDisplayModifierRecipe> displayRecipes = null;
 
-  @Override
-  public List<IDisplayModifierRecipe> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayModifierRecipe> getDisplayRecipes(HolderLookup.Provider access) {
     if (displayRecipes == null) {
       // this instance is a proper display recipe for the first level entry, for the rest build display instances with unique requirements keys
       DisplayModifierRecipe.Builder builder = DisplayModifierRecipe.builder()
@@ -119,5 +122,16 @@ public class MultilevelIncrementalModifierRecipe extends IncrementalModifierReci
       ).toList();
     }
     return displayRecipes;
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayModifierRecipe>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayModifierRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

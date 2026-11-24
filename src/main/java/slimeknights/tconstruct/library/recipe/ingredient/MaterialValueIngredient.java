@@ -1,39 +1,39 @@
 package slimeknights.tconstruct.library.recipe.ingredient;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-// TODO 1.21 import: net.minecraftforge.common.crafting.AbstractIngredient;
-// TODO 1.21 import: net.minecraftforge.common.crafting.IIngredientSerializer;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import slimeknights.mantle.data.loadable.field.LoadableField;
+import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
-import slimeknights.tconstruct.TConstruct;
+import slimeknights.mantle.util.typed.TypedMap;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicateField;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 import slimeknights.tconstruct.library.recipe.material.MaterialRecipe;
 import slimeknights.tconstruct.library.recipe.material.MaterialRecipeCache;
+import slimeknights.tconstruct.shared.TinkerMaterials;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Ingredient matching material items with the given value. Typically, matches ingots or blocks
+ * @param material  Material filter
+ * @param minValue  Minimum material value, inclusive
+ * @param maxValue  Maximum material value, inclusive
  */
-@Getter
-@RequiredArgsConstructor
-public class MaterialValueIngredient extends AbstractIngredient {
-  private final IJsonPredicate<MaterialVariantId> material;
-  private final float minValue;
-  private final float maxValue;
-  private ItemStack[] items;
+public record MaterialValueIngredient(IJsonPredicate<MaterialVariantId> material, float minValue, float maxValue) implements ICustomIngredient {
+  public static final RecordLoadable<MaterialValueIngredient> LOADER = RecordLoadable.create(
+    new MaterialPredicateField<>("material", MaterialValueIngredient::material),
+    ValueField.INSTANCE,
+    (material, range) -> new MaterialValueIngredient(material, range[0], range[1]));
 
   /** Creates an ingredient matching a range of values */
   public static MaterialValueIngredient of(IJsonPredicate<MaterialVariantId> materials, float minValue, float maxValue) {
@@ -45,6 +45,11 @@ public class MaterialValueIngredient extends AbstractIngredient {
     return of(materials, value, value);
   }
 
+  /** Gets this ingredient as a vanilla ingredient */
+  public static Ingredient ingredient(IJsonPredicate<MaterialVariantId> materials, float value) {
+    return of(materials, value).toVanilla();
+  }
+
   /** Checks the given material recipe against our filters */
   public boolean test(MaterialRecipe material) {
     float value = material.getValue() / (float) material.getNeeded();
@@ -52,8 +57,8 @@ public class MaterialValueIngredient extends AbstractIngredient {
   }
 
   @Override
-  public boolean test(@Nullable ItemStack stack) {
-    if (stack == null) {
+  public boolean test(ItemStack stack) {
+    if (stack.isEmpty()) {
       return false;
     }
     MaterialRecipe recipe = MaterialRecipeCache.findRecipe(stack);
@@ -61,25 +66,21 @@ public class MaterialValueIngredient extends AbstractIngredient {
   }
 
   @Override
-  public ItemStack[] getItems() {
-    if (items == null) {
-      items = MaterialRecipeCache.getSortedRecipes().stream()
-        .filter(this::test)
-        .flatMap(material -> Arrays.stream(material.getIngredient().getItems()))
-        .toArray(ItemStack[]::new);
-    }
-    return items;
-  }
-
-  @Override
-  protected void invalidate() {
-    super.invalidate();
-    this.items = null;
+  public Stream<ItemStack> getItems() {
+    return MaterialRecipeCache.getSortedRecipes().stream()
+      .filter(this::test)
+      .flatMap(material -> Arrays.stream(material.getIngredient().getItems()));
   }
 
   @Override
   public boolean isSimple() {
-    return true;
+    // depends on the material recipe cache, which syncs to the client
+    return false;
+  }
+
+  @Override
+  public IngredientType<?> getType() {
+    return TinkerMaterials.materialValueIngredient.get();
   }
 
 
@@ -93,7 +94,6 @@ public class MaterialValueIngredient extends AbstractIngredient {
   /** Creates an ingredient that matches anything either of the two ingredients matches */
   public MaterialValueIngredient merge(MaterialValueIngredient other) {
     if (this == other) return this;
-
     // if we have the same predicate, we can possibly skip creating a new instance
     IJsonPredicate<MaterialVariantId> predicate = this.material;
     if (this.material.equals(other.material)) {
@@ -116,69 +116,54 @@ public class MaterialValueIngredient extends AbstractIngredient {
     return recipe != MaterialRecipe.EMPTY && test(recipe) ? recipe.getMaterial().getVariant() : null;
   }
 
-
-  /* JSON */
-
-  @Override
-  public JsonElement toJson() {
-    JsonObject json = new JsonObject();
-    json.addProperty("type", Serializer.ID.toString());
-    Serializer.MATERIAL_FIELD.serialize(this, json);
-    if (minValue == maxValue) {
-      json.addProperty("value", minValue);
-    } else {
-      JsonObject value = new JsonObject();
-      if (minValue > 0) {
-        value.addProperty("min", minValue);
-      }
-      if (Float.isFinite(maxValue)) {
-        value.addProperty("max", maxValue);
-      }
-      json.add("value", value);
-    }
-    return json;
-  }
-
-  @Override
-  public IIngredientSerializer<? extends Ingredient> getSerializer() {
-    return Serializer.INSTANCE;
-  }
-
-
-  /** Serializer instance */
-  public enum Serializer implements IIngredientSerializer<MaterialValueIngredient> {
+  /** Field for the value range, either a single number or an object with min and max */
+  private enum ValueField implements LoadableField<float[],MaterialValueIngredient> {
     INSTANCE;
-    public static final ResourceLocation ID = TConstruct.getResource("material_value");
-    private static final LoadableField<IJsonPredicate<MaterialVariantId>, MaterialValueIngredient> MATERIAL_FIELD = new MaterialPredicateField<>("material", i -> i.material);
 
     @Override
-    public MaterialValueIngredient parse(JsonObject json) {
-      float minValue, maxValue;
-      JsonElement value = json.get("value");
+    public String key() {
+      return "value";
+    }
+
+    @Override
+    public float[] get(JsonObject json, String key, TypedMap context) {
+      JsonElement value = GsonHelper.getNonNull(json, key);
       if (value.isJsonPrimitive()) {
-        minValue = maxValue = value.getAsJsonPrimitive().getAsFloat();
-      } else {
-        JsonObject object = GsonHelper.convertToJsonObject(value, "value");
-        minValue = GsonHelper.getAsFloat(object, "min", 0);
-        maxValue = GsonHelper.getAsFloat(object, "max", Float.POSITIVE_INFINITY);
+        float exact = GsonHelper.convertToFloat(value, key);
+        return new float[] { exact, exact };
       }
-      return new MaterialValueIngredient(MATERIAL_FIELD.get(json), minValue, maxValue);
+      JsonObject object = GsonHelper.convertToJsonObject(value, key);
+      return new float[] {
+        GsonHelper.getAsFloat(object, "min", 0),
+        GsonHelper.getAsFloat(object, "max", Float.POSITIVE_INFINITY)
+      };
     }
 
     @Override
-    public MaterialValueIngredient parse(RegistryFriendlyByteBuf buffer) {
-      return new MaterialValueIngredient(
-        MATERIAL_FIELD.decode(buffer),
-        buffer.readFloat(),
-        buffer.readFloat()
-      );
+    public void serializeInto(MaterialValueIngredient parent, JsonObject json, TypedMap context) {
+      if (parent.minValue == parent.maxValue) {
+        json.addProperty(key(), parent.minValue);
+      } else {
+        JsonObject value = new JsonObject();
+        if (parent.minValue > 0) {
+          value.addProperty("min", parent.minValue);
+        }
+        if (Float.isFinite(parent.maxValue)) {
+          value.addProperty("max", parent.maxValue);
+        }
+        json.add(key(), value);
+      }
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer, MaterialValueIngredient ingredient) {
-      MATERIAL_FIELD.encode(buffer, ingredient);
-      buffer.writeFloat(ingredient.minValue);
-      buffer.writeFloat(ingredient.maxValue);
+    public float[] decode(RegistryFriendlyByteBuf buffer, TypedMap context) {
+      return new float[] { buffer.readFloat(), buffer.readFloat() };
+    }
+
+    @Override
+    public void encode(RegistryFriendlyByteBuf buffer, MaterialValueIngredient parent, TypedMap context) {
+      buffer.writeFloat(parent.minValue);
+      buffer.writeFloat(parent.maxValue);
     }
   }
 }

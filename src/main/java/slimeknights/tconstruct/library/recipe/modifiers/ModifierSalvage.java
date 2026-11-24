@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.modifiers;
 
+import slimeknights.mantle.data.loadable.Loadables;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
@@ -28,7 +28,7 @@ import slimeknights.tconstruct.tools.TinkerModifiers;
  */
 public class ModifierSalvage implements ICustomOutputRecipe<Container> {
   public static final RecordLoadable<ModifierSalvage> LOADER = RecordLoadable.create(
-    IngredientLoadable.DISALLOW_EMPTY.requiredField("tools", r -> r.toolIngredient),
+    Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("tools", r -> r.toolIngredient),
     IntLoadable.FROM_ONE.defaultField("max_tool_size", ITinkerStationRecipe.DEFAULT_TOOL_STACK_SIZE, r -> r.maxToolSize), // TODO 1.20: max tool size is unused, remove it
     ModifierId.PARSER.requiredField("modifier", r -> r.modifier),
     ModifierEntry.VALID_LEVEL.defaultField("level", r -> r.level),

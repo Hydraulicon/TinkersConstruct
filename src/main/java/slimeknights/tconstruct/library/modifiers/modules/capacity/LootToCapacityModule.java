@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.modules.capacity;
 
+import slimeknights.mantle.data.loadable.Loadables;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.storage.loot.LootContext;
 import org.jetbrains.annotations.ApiStatus.Internal;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.tconstruct.TConstruct;
@@ -32,7 +32,7 @@ import java.util.List;
 public record LootToCapacityModule(Ingredient consume, int amount, LevelingValue chance, @Nullable ModifierId owner, ModifierCondition<IToolStackView> condition) implements ModifierModule, ProcessLootModifierHook, CapacitySourceModule, ConditionalModule<IToolStackView> {
   private static final List<ModuleHook<?>> DEFAULT_HOOKS = HookProvider.<LootToCapacityModule>defaultHooks(ModifierHooks.PROCESS_LOOT);
   public static final RecordLoadable<LootToCapacityModule> LOADER = RecordLoadable.create(
-    IngredientLoadable.DISALLOW_EMPTY.requiredField("consume", LootToCapacityModule::consume),
+    Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("consume", LootToCapacityModule::consume),
     IntLoadable.FROM_ONE.requiredField("amount", LootToCapacityModule::amount),
     LevelingValue.LOADABLE.requiredField("chance", LootToCapacityModule::chance),
     OWNER_FIELD, ModifierCondition.TOOL_FIELD,

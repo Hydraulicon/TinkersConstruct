@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import slimeknights.mantle.data.loadable.Loadables;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 // TODO 1.21 import: net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
@@ -32,7 +32,7 @@ public class TippedToolTransformRecipe extends ToolBuildingRecipe {
   /** Loader instance */
   public static final RecordLoadable<TippedToolTransformRecipe> LOADER = RecordLoadable.create(
     LoadableRecipeSerializer.RECIPE_GROUP, RESULT_FIELD, LAYOUT_FIELD,
-    IngredientLoadable.DISALLOW_EMPTY.requiredField("input", r -> r.ingredients.get(0)),
+    Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("input", r -> r.ingredients.get(0)),
     MaterialVariantId.LOADABLE.list(0).defaultField("materials", List.of(), false, r -> r.materials),
     ModifierId.PARSER.requiredField("modifier", r -> r.modifier),
     TippedToolTransformRecipe::new);

@@ -6,6 +6,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import com.mojang.serialization.MapCodec;
 import slimeknights.mantle.registration.deferred.RecipeSerializerDeferredRegister;
+import slimeknights.mantle.registration.deferred.IngredientDeferredRegister;
 import slimeknights.mantle.registration.deferred.LootConditionDeferredRegister;
 import slimeknights.mantle.registration.deferred.LootFunctionDeferredRegister;
 import slimeknights.mantle.registration.deferred.LootEntryDeferredRegister;
@@ -79,6 +80,7 @@ public abstract class TinkerModule {
   protected static final EntityTypeDeferredRegister ENTITIES = new EntityTypeDeferredRegister(TConstruct.MOD_ID);
   protected static final MenuTypeDeferredRegister MENUS = new MenuTypeDeferredRegister(TConstruct.MOD_ID);
   // datapacks
+  protected static final IngredientDeferredRegister INGREDIENTS = new IngredientDeferredRegister(TConstruct.MOD_ID);
   protected static final RecipeSerializerDeferredRegister RECIPE_SERIALIZERS = new RecipeSerializerDeferredRegister(TConstruct.MOD_ID);
   protected static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIERS = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, TConstruct.MOD_ID);
   protected static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS = DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, TConstruct.MOD_ID);
@@ -111,6 +113,7 @@ public abstract class TinkerModule {
     MENUS.register(bus);
     // datapacks
     RECIPE_SERIALIZERS.register(bus);
+    INGREDIENTS.register(bus);
     GLOBAL_LOOT_MODIFIERS.register(bus);
     CONDITION_CODECS.register(bus);
     LOOT_CONDITIONS.register(bus);

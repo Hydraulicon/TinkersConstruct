@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import lombok.Getter;
@@ -18,12 +22,10 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.data.loadable.Loadables;
-// TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 
 import java.util.ArrayList;
@@ -34,12 +36,12 @@ import java.util.List;
  * Recipe for casting a fluid onto an item, copying the fluid NBT to the item.
  * TODO 1.21: move to {@link slimeknights.tconstruct.library.recipe.casting.potion}
  */
-public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDisplayableCastingRecipe> {
+public class PotionCastingRecipe implements ICastingRecipe, MultiNamedRecipe<IDisplayableCastingRecipe> {
   protected static final LoadableField<SizedFluidIngredient, PotionCastingRecipe> FLUID_FIELD = Loadables.SIZED_FLUID_INGREDIENT.requiredField("fluid", r -> r.fluid);
   protected static final LoadableField<Integer, PotionCastingRecipe> COOLING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooling_time", 5, r -> r.coolingTime);
   public static final RecordLoadable<PotionCastingRecipe> LOADER = RecordLoadable.create(
     LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP,
-    IngredientLoadable.DISALLOW_EMPTY.requiredField("bottle", r -> r.bottle),
+    Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("bottle", r -> r.bottle),
     FLUID_FIELD,
     Loadables.ITEM.requiredField("result", r -> r.result),
     COOLING_TIME_FIELD,
@@ -110,8 +112,8 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
   // TODO 1.21: consider making this a display recipe instead of a multirecipe
   protected List<IDisplayableCastingRecipe> displayRecipes = null;
 
-  @Override
-  public List<IDisplayableCastingRecipe> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayableCastingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
     if (displayRecipes == null) {
       Collection<Potion> potions = BuiltInRegistries.POTION.stream().toList();
       List<ItemStack> results = new ArrayList<>(potions.size());
@@ -168,5 +170,16 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
       .filter(holder -> !holder.is(Potions.EMPTY_ID))
       .map(holder -> holder.key().location().toString())
       .toList();
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayableCastingRecipe>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayableCastingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.melting;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
@@ -14,7 +18,6 @@ import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.FluidOutput;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariant;
@@ -29,7 +32,7 @@ import java.util.List;
 /**
  * Recipe to melt all castable tool parts of a given material
  */
-public class MaterialMeltingRecipe implements IMeltingRecipe, IMultiRecipe<IDisplayableMeltingRecipe> {
+public class MaterialMeltingRecipe implements IMeltingRecipe, MultiNamedRecipe<IDisplayableMeltingRecipe> {
   public static final RecordLoadable<MaterialMeltingRecipe> LOADER = RecordLoadable.create(
     MaterialVariantId.LOADABLE.requiredField("input", r -> r.input.getVariant()),
     IntLoadable.FROM_ONE.requiredField("temperature", r -> r.temperature),
@@ -103,8 +106,8 @@ public class MaterialMeltingRecipe implements IMeltingRecipe, IMultiRecipe<IDisp
   /* JEI display */
   private List<IDisplayableMeltingRecipe> multiRecipes = null;
 
-  @Override
-  public List<IDisplayableMeltingRecipe> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayableMeltingRecipe> getDisplayRecipes(HolderLookup.Provider access) {
     if (multiRecipes == null) {
       if (input.get().isHidden()) {
         multiRecipes = List.of();
@@ -138,5 +141,16 @@ public class MaterialMeltingRecipe implements IMeltingRecipe, IMultiRecipe<IDisp
       }
     }
     return multiRecipes;
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayableMeltingRecipe>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayableMeltingRecipe>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }

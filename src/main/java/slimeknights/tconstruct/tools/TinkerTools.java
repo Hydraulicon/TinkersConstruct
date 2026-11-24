@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools;
 
+import slimeknights.mantle.registration.holder.DeferredIngredient;
 import slimeknights.tconstruct.library.tools.item.armor.DummyArmorMaterial;
 import slimeknights.tconstruct.library.tools.helper.ToolHarvestLogic;
 import slimeknights.tconstruct.library.tools.capability.BlockItemProviderCapability;
@@ -328,11 +329,12 @@ public final class TinkerTools extends TinkerModule {
     ToolHooks.init();
   }
 
+  public static final DeferredIngredient<ToolHookIngredient> toolHookIngredient = INGREDIENTS.register("tool_hook", ToolHookIngredient.LOADER);
+
   @SubscribeEvent
   void registerRecipeSerializers(RegisterEvent event) {
     if (event.getRegistryKey() == Registries.RECIPE_SERIALIZER) {
       ItemPredicate.register(ToolStackItemPredicate.ID, ToolStackItemPredicate::deserialize);
-      CraftingHelper.register(ToolHookIngredient.Serializer.ID, ToolHookIngredient.Serializer.INSTANCE);
 
       // register tool stats that are not defined directly in the class; safer than static init registration
       ToolStats.register(OverslimeModule.OVERSLIME_STAT);

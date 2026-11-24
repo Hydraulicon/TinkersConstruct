@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared;
 
+import slimeknights.mantle.registration.holder.DeferredIngredient;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters;
@@ -74,11 +75,12 @@ public final class TinkerMaterials extends TinkerModule {
   /*
    * Serializers
    */
+  public static final DeferredIngredient<MaterialIngredient> materialIngredient = INGREDIENTS.register("material", MaterialIngredient.LOADER);
+  public static final DeferredIngredient<MaterialValueIngredient> materialValueIngredient = INGREDIENTS.register("material_value", MaterialValueIngredient.LOADER);
+
   @SubscribeEvent
   void registerSerializers(RegisterEvent event) {
     if (event.getRegistryKey() == Registries.RECIPE_SERIALIZER) {
-      CraftingHelper.register(MaterialIngredient.Serializer.ID, MaterialIngredient.Serializer.INSTANCE);
-      CraftingHelper.register(MaterialValueIngredient.Serializer.ID, MaterialValueIngredient.Serializer.INSTANCE);
 
       MaterialPredicate.LOADER.register(getResource("variant"), MaterialVariantPredicate.LOADER);
       MaterialPredicate.LOADER.register(getResource("id"), MaterialIdPredicate.LOADER);

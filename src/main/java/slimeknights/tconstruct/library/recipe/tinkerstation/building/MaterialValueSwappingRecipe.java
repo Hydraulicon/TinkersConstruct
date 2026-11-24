@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.tconstruct.library.recipe.MultiRecipeHelper;
+import net.minecraft.core.HolderLookup;
+import slimeknights.mantle.recipe.NamedRecipe;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -11,7 +15,6 @@ import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
-// TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariant;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
@@ -33,7 +36,7 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 
 /** Recipe for swapping materials on a tool based on material items. For best results, there needs to not be a repairable part that supports the same materials. */
-public class MaterialValueSwappingRecipe extends MaterialIndexSwappingRecipe implements IMultiRecipe<IDisplayToolTinkering> {
+public class MaterialValueSwappingRecipe extends MaterialIndexSwappingRecipe implements MultiNamedRecipe<IDisplayToolTinkering> {
   public static final RecordLoadable<MaterialValueSwappingRecipe> LOADER = RecordLoadable.create(
     TOOLS_FIELD, STACK_SIZE_FIELD,
     MaterialPredicate.LOADER.requiredField("material", r -> r.material),
@@ -92,8 +95,8 @@ public class MaterialValueSwappingRecipe extends MaterialIndexSwappingRecipe imp
   /* JEI */
   private List<IDisplayToolTinkering> multiRecipes;
 
-  @Override
-  public List<IDisplayToolTinkering> getRecipes(RegistryAccess access) {
+  /** Gets the display recipes before naming */
+  public List<IDisplayToolTinkering> getDisplayRecipes(HolderLookup.Provider access) {
     if (multiRecipes == null) {
       // since each tool may have its own valid materials, we may need to filter this list again
       // however, we can avoid duplicating the stacks more than once since the cost is constant, along with apply the common filter
@@ -193,5 +196,16 @@ public class MaterialValueSwappingRecipe extends MaterialIndexSwappingRecipe imp
       }
       return toolWithModifier;
     }
+  }
+
+  /** Named display recipes, cached from {@link #getDisplayRecipes(HolderLookup.Provider)} */
+  private List<NamedRecipe<IDisplayToolTinkering>> namedRecipes = null;
+
+  @Override
+  public List<NamedRecipe<IDisplayToolTinkering>> getRecipes(ResourceLocation id, HolderLookup.Provider access) {
+    if (namedRecipes == null) {
+      namedRecipes = MultiRecipeHelper.name(id, getDisplayRecipes(access));
+    }
+    return namedRecipes;
   }
 }
