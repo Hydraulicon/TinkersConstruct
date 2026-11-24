@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,7 +17,6 @@ import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 // TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 import slimeknights.mantle.registration.object.FluidObject;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
@@ -32,7 +33,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
   private final ItemOutput result;
   private final TypeAwareRecipeSerializer<? extends ItemCastingRecipe> recipeSerializer;
   private Ingredient cast = Ingredient.EMPTY;
-  private FluidIngredient fluid = FluidIngredient.EMPTY;
+  private SizedFluidIngredient fluid = FluidIngredients.EMPTY;
   @Setter @Accessors(chain = true)
   private int coolingTime = -1;
   private boolean consumed = false;
@@ -136,7 +137,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public ItemCastingRecipeBuilder setFluid(Fluid fluid, int amount) {
-    return this.setFluid(FluidIngredient.of(fluid, amount));
+    return this.setFluid(FluidIngredients.of(fluid, amount));
   }
 
   /**
@@ -146,7 +147,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public ItemCastingRecipeBuilder setFluid(TagKey<Fluid> tagIn, int amount) {
-    return this.setFluid(FluidIngredient.of(tagIn, amount));
+    return this.setFluid(FluidIngredients.of(tagIn, amount));
   }
 
   /**
@@ -154,7 +155,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @param fluid  Fluid ingredient instance
    * @return  Builder instance
    */
-  public ItemCastingRecipeBuilder setFluid(FluidIngredient fluid) {
+  public ItemCastingRecipeBuilder setFluid(SizedFluidIngredient fluid) {
     this.fluid = fluid;
     return this;
   }
@@ -174,7 +175,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public ItemCastingRecipeBuilder setFluidAndTime(FluidStack fluidStack) {
-    this.fluid = FluidIngredient.of(fluidStack);
+    this.fluid = FluidIngredients.of(fluidStack);
     if (this.coolingTime == -1) {
       this.coolingTime = ICastingRecipe.calcCoolingTime(fluidStack);
     }
@@ -247,7 +248,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
 
   @Override
   public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
-    if (this.fluid == FluidIngredient.EMPTY) {
+    if (this.fluid == FluidIngredients.EMPTY) {
       throw new IllegalStateException("Casting recipes require a fluid input");
     }
     if (this.coolingTime < 0) {

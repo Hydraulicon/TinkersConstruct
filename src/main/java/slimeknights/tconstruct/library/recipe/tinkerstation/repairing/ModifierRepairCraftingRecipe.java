@@ -37,7 +37,7 @@ import java.util.function.Predicate;
  * @see slimeknights.tconstruct.library.modifiers.modules.behavior.MaterialRepairModule
  */
 public class ModifierRepairCraftingRecipe extends CustomRecipe implements IModifierRepairRecipe, VanillaFilteredRecipe<IDisplayCraftingTinkering> {
-  public static final RecordLoadable<ModifierRepairCraftingRecipe> LOADER = RecordLoadable.create(ContextKey.ID.requiredField(), MODIFIER_FIELD, INGREDIENT_FIELD, REPAIR_AMOUNT_FIELD, ModifierRepairCraftingRecipe::new);
+  public static final RecordLoadable<ModifierRepairCraftingRecipe> LOADER = RecordLoadable.create(MODIFIER_FIELD, INGREDIENT_FIELD, REPAIR_AMOUNT_FIELD, ModifierRepairCraftingRecipe::new);
   private static final Predicate<ItemStack> TOOLS = stack -> stack.is(TinkerTags.Items.DURABILITY);
 
   @Getter

@@ -101,7 +101,7 @@ public enum SmashingModule implements ModifierModule, FluidModifierHook, Project
   /** Gets the capacity for the given fluid */
   private static int getAmount(Fluid fluid) {
     FluidEffects effects = FluidEffectManager.INSTANCE.find(fluid);
-    return effects.hasEffects() ? effects.ingredient().getAmount(fluid) : 0;
+    return effects.hasEffects() ? FluidIngredients.getAmount(effects.ingredient(), fluid) : 0;
   }
 
   /** Gets the capacity for the given fluid */

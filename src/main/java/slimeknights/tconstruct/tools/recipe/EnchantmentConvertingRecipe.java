@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.core.registries.BuiltInRegistries;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,6 @@ import slimeknights.mantle.data.loadable.primitive.BooleanLoadable;
 import slimeknights.mantle.data.loadable.primitive.StringLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.json.predicate.modifier.ModifierPredicate;
 import slimeknights.tconstruct.library.modifiers.Modifier;
@@ -50,7 +50,6 @@ public class EnchantmentConvertingRecipe extends AbstractWorktableRecipe {
   private static final RecipeResult<LazyToolStack> TOO_FEW = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "enchantment_converting.too_few"));
   /** Loader instance */
   public static final RecordLoadable<EnchantmentConvertingRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     StringLoadable.DEFAULT.requiredField("name", r -> r.name),
     INPUTS_FIELD,
     BooleanLoadable.INSTANCE.requiredField("match_book", r -> r.matchBook),
@@ -73,8 +72,8 @@ public class EnchantmentConvertingRecipe extends AbstractWorktableRecipe {
 
   private List<ModifierEntry> displayModifiers;
 
-  public EnchantmentConvertingRecipe(ResourceLocation id, String name, List<SizedIngredient> inputs, boolean matchBook, boolean returnInput, IJsonPredicate<ModifierId> modifierPredicate) {
-    super(id, inputs);
+  public EnchantmentConvertingRecipe(String name, List<SizedIngredient> inputs, boolean matchBook, boolean returnInput, IJsonPredicate<ModifierId> modifierPredicate) {
+    super(inputs);
     this.name = name;
     this.title = Component.translatable(ExtractModifierRecipe.BASE_KEY + "." + name);
     this.matchBook = matchBook;
@@ -165,7 +164,7 @@ public class EnchantmentConvertingRecipe extends AbstractWorktableRecipe {
         for (int i = 0; i < inv.getInputCount(); i++) {
           if (i != used) {
             ItemStack stack = inv.getInput(i);
-            if (!stack.isEmpty() && ingredient.getAmountNeeded() * level <= stack.getCount() && ingredient.test(stack)) {
+            if (!stack.isEmpty() && ingredient.count() * level <= stack.getCount() && ingredient.test(stack)) {
               used = i;
               continue inputLoop;
             }

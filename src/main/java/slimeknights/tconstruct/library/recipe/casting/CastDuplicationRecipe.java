@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -10,22 +13,20 @@ import slimeknights.mantle.data.loadable.record.RecordLoadable;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 
 import java.util.List;
 
 /** Recipe which duplicates the input cast using a fluid */
 public class CastDuplicationRecipe extends ItemCastingRecipe implements IMultiRecipe<IDisplayableCastingRecipe> {
   public static final RecordLoadable<CastDuplicationRecipe> LOADER = RecordLoadable.create(
-    LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(), ContextKey.ID.requiredField(),
+    LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(),
     LoadableRecipeSerializer.RECIPE_GROUP,
     IngredientLoadable.DISALLOW_EMPTY.requiredField("cast", CastDuplicationRecipe::getCast),
     FLUID_FIELD, COOLING_TIME_FIELD,
     CastDuplicationRecipe::new);
 
-  public CastDuplicationRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, FluidIngredient fluid, int coolingTime) {
-    super(serializer, id, group, cast, fluid, ItemOutput.EMPTY, coolingTime, false, false);
+  public CastDuplicationRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, SizedFluidIngredient fluid, int coolingTime) {
+    super(serializer, group, cast, fluid, ItemOutput.EMPTY, coolingTime, false, false);
   }
 
   @Override

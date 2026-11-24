@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.mantle.data.loadable.Loadables;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,6 @@ import net.minecraft.world.level.ItemLike;
 // TODO 1.21 import: slimeknights.mantle.data.loadable.common.IngredientLoadable;
 import slimeknights.mantle.data.loadable.field.RecordField;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.materials.IMaterialUser;
 import slimeknights.tconstruct.library.materials.MaterialRegistry;
@@ -51,14 +52,12 @@ import java.util.stream.IntStream;
 public abstract class MaterialSwappingRecipe implements ITinkerStationRecipe {
   protected static final RecordField<Ingredient, MaterialSwappingRecipe> TOOLS_FIELD = IngredientLoadable.DISALLOW_EMPTY.requiredField("tools", r -> r.tools);
   protected static final RecordField<Integer, MaterialSwappingRecipe> STACK_SIZE_FIELD = IntLoadable.FROM_ONE.defaultField("max_stack_size", ITinkerStationRecipe.DEFAULT_TOOL_STACK_SIZE, true, r -> r.maxStackSize);
-  protected static final RecordField<List<SizedIngredient>, MaterialSwappingRecipe> EXTRA_REQUIREMENTS_FIELD = SizedIngredient.LOADABLE.list(0).defaultField("extra_requirements", List.of(), r -> r.extraRequirements);
+  protected static final RecordField<List<SizedIngredient>, MaterialSwappingRecipe> EXTRA_REQUIREMENTS_FIELD = Loadables.SIZED_ITEM_INGREDIENT.list(0).defaultField("extra_requirements", List.of(), r -> r.extraRequirements);
   protected static final RecipeResult<LazyToolStack> TOO_FEW_INPUTS = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "part_swapping.too_few_inputs"));
   protected static final RecipeResult<LazyToolStack> TOO_FEW_PARTS = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "part_swapping.too_few_parts"));
   protected static final RecipeResult<LazyToolStack> TOO_MANY_PARTS = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "part_swapping.too_many_parts"));
   protected static final RecipeResult<LazyToolStack> INVALID_MATERIAL = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "part_swapping.invalid_material"));
 
-  @Getter
-  protected final ResourceLocation id;
   /** Tools that may use this recipe */
   protected final Ingredient tools;
   /** Max stack size that can be swapped at once */
@@ -299,7 +298,7 @@ public abstract class MaterialSwappingRecipe implements ITinkerStationRecipe {
         slot--;
       }
       if (slot < extraRequirements.size()) {
-        return extraRequirements.get(slot).getMatchingStacks();
+        return SizedIngredients.getMatchingStacks(extraRequirements.get(slot));
       }
       return List.of();
     }

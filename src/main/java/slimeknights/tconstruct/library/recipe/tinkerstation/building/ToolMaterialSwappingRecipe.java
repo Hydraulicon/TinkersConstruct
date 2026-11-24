@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,6 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.materials.IMaterialRegistry;
 import slimeknights.tconstruct.library.materials.MaterialRegistry;
@@ -48,12 +48,12 @@ import java.util.stream.Stream;
 /** Recipe swapping a tool material using another tool as input */
 public class ToolMaterialSwappingRecipe extends MaterialSwappingRecipe implements IMultiRecipe<IDisplayToolTinkering> {
   protected static final RecipeResult<LazyToolStack> NO_MODIFIERS = RecipeResult.failure(TConstruct.makeTranslationKey("recipe", "part_swapping.no_modifiers"));
-  public static final RecordLoadable<ToolMaterialSwappingRecipe> LOADER = RecordLoadable.create(ContextKey.ID.requiredField(), TOOLS_FIELD, EXTRA_REQUIREMENTS_FIELD, ToolMaterialSwappingRecipe::new);
+  public static final RecordLoadable<ToolMaterialSwappingRecipe> LOADER = RecordLoadable.create(TOOLS_FIELD, EXTRA_REQUIREMENTS_FIELD, ToolMaterialSwappingRecipe::new);
 
   /** @apiNote Internal usage. To create see {@link slimeknights.tconstruct.tables.recipe.TinkerStationPartSwappingBuilder} */
   @Internal
-  public ToolMaterialSwappingRecipe(ResourceLocation id, Ingredient tools, List<SizedIngredient> extraRequirements) {
-    super(id, tools, 1, extraRequirements);
+  public ToolMaterialSwappingRecipe(Ingredient tools, List<SizedIngredient> extraRequirements) {
+    super(tools, 1, extraRequirements);
   }
 
   @Override

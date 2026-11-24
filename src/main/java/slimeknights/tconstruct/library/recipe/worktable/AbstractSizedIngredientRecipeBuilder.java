@@ -1,11 +1,12 @@
 package slimeknights.tconstruct.library.recipe.worktable;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public abstract class AbstractSizedIngredientRecipeBuilder<T extends AbstractSiz
    * @return  Builder instance
    */
   public T addInput(Ingredient ingredient) {
-    return addInput(SizedIngredient.of(ingredient));
+    return addInput(SizedIngredients.of(ingredient));
   }
 
   /**
@@ -44,7 +45,7 @@ public abstract class AbstractSizedIngredientRecipeBuilder<T extends AbstractSiz
    * @return  Builder instance
    */
   public T addInput(ItemLike item, int amount) {
-    return addInput(SizedIngredient.fromItems(amount, item));
+    return addInput(SizedIngredients.fromItems(amount, item));
   }
 
   /**
@@ -63,7 +64,7 @@ public abstract class AbstractSizedIngredientRecipeBuilder<T extends AbstractSiz
    * @return  Builder instance
    */
   public T addInput(TagKey<Item> tag, int amount) {
-    return addInput(SizedIngredient.fromTag(tag, amount));
+    return addInput(SizedIngredients.fromTag(tag, amount));
   }
 
   /**

@@ -289,3 +289,56 @@ def fluidstack_copy(errs):
 
 if __name__ == '__main__' and sys.argv[2] == 'fluidstack-copy':
     fluidstack_copy(parse(sys.argv[1]))
+
+
+def receiver_start(s, dot):
+    """Finds the start of the receiver expression ending right before s[dot] == '.'"""
+    i = dot - 1
+    while i >= 0:
+        ch = s[i]
+        if ch == ')':
+            depth = 0
+            while i >= 0:
+                if s[i] == ')': depth += 1
+                elif s[i] == '(':
+                    depth -= 1
+                    if depth == 0: break
+                i -= 1
+            i -= 1
+        elif ch.isalnum() or ch in '_.':
+            i -= 1
+        else:
+            break
+    return i + 1
+
+
+def to_static(errs, method, helper, loc_re):
+    """Rewrites receiver.method(args) into helper.method(receiver, args) where javac cannot find the method on a type matching loc_re"""
+    edits = collections.defaultdict(set)
+    for e in errs:
+        if e['msg'] == 'cannot find symbol' and re.match(r'method ' + re.escape(method) + r'\(', e['symbol']) \
+                and re.search(loc_re, location_type(e['location'])) and e['col'] is not None:
+            edits[e['file']].add((e['line'], e['col']))
+    n = 0
+    for f, pos in edits.items():
+        src = open(f, encoding='utf-8').read().split('\n')
+        for line, col in sorted(pos, key=lambda p: (p[0], -p[1])):
+            s = src[line - 1]
+            dot = s.rfind('.' + method + '(', 0, col + 2)
+            if dot < 0 or dot < col - 1: dot = s.find('.' + method + '(', col)
+            if dot < 0: continue
+            start = receiver_start(s, dot)
+            receiver = s[start:dot]
+            open_paren = dot + len(method) + 1
+            args, end = split_call_args(s, open_paren)
+            if args is None: continue
+            rest = ', '.join(a.strip() for a in args if a.strip())
+            new = f'{helper}.{method}({receiver}' + (', ' + rest if rest else '') + ')'
+            src[line - 1] = s[:start] + new + s[end:]
+            n += 1
+        open(f, 'w', encoding='utf-8').write('\n'.join(src))
+    print(f'{n} calls to {method} rewritten to {helper}')
+
+
+if __name__ == '__main__' and sys.argv[2] == 'to-static':
+    to_static(parse(sys.argv[1]), sys.argv[3], sys.argv[4], sys.argv[5])

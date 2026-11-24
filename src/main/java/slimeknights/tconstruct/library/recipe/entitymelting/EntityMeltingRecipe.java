@@ -27,14 +27,11 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class EntityMeltingRecipe implements ICustomOutputRecipe<IEmptyContainer> {
   public static final RecordLoadable<EntityMeltingRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     EntityIngredient.LOADABLE.requiredField("entity", r -> r.ingredient),
     FluidOutput.Loadable.REQUIRED.requiredField("result", r -> r.output),
     IntLoadable.FROM_ONE.defaultField("damage", 2, true, r -> r.damage),
     EntityMeltingRecipe::new);
 
-  @Getter
-  private final ResourceLocation id;
   @Getter
   private final EntityIngredient ingredient;
   private final FluidOutput output;

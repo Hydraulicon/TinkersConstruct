@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.RegistryAccess;
@@ -16,7 +18,6 @@ import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.json.TinkerLoadables;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
@@ -45,8 +46,8 @@ import java.util.stream.IntStream;
 /** Recipe for casting a tool using molten metal on either a tool part or a non-tool part (2 materials or 1) */
 public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRecipe<IDisplayableCastingRecipe> {
   public static final RecordLoadable<ToolCastingRecipe> LOADER = RecordLoadable.create(
-    LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(),
-    ContextKey.ID.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP, CAST_FIELD, ITEM_COST_FIELD,
+    LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(),
+    LoadableRecipeSerializer.RECIPE_GROUP, CAST_FIELD, ITEM_COST_FIELD,
     new EnumLoadable<>(CastPurpose.class).defaultField("cast_purpose", CastPurpose.MAYBE_MATERIAL, true, r -> r.castPurpose),
     TinkerLoadables.MODIFIABLE_ITEM.requiredField("result", r -> r.result),
     MATERIALS_FIELD,
@@ -61,8 +62,8 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
   /** If true, this recipe's information will be used to also add a fluid part swapping recipe. Mainly useful to disable if there are multiple copies of this recipe (like slimeskulls) */
   private final boolean fluidSwapping;
 
-  protected ToolCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, int itemCost, CastPurpose castPurpose, IModifiable result, IJsonPredicate<MaterialVariantId> allowedMaterials, List<MaterialVariantId> extraMaterials, boolean fluidSwapping) {
-    super(serializer, id, group, cast, itemCost, castPurpose.fluidIndex, allowedMaterials);
+  protected ToolCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, CastPurpose castPurpose, IModifiable result, IJsonPredicate<MaterialVariantId> allowedMaterials, List<MaterialVariantId> extraMaterials, boolean fluidSwapping) {
+    super(serializer, group, cast, itemCost, castPurpose.fluidIndex, allowedMaterials);
     this.result = result;
     this.extraMaterials = extraMaterials;
     CastingRecipeLookup.registerCastable(result);
@@ -77,14 +78,14 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
 
   /** @deprecated use {@link #ToolCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, CastPurpose, IModifiable, IJsonPredicate, List, boolean)} */
   @Deprecated(forRemoval = true)
-  protected ToolCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, int itemCost, CastPurpose castPurpose, IModifiable result, IJsonPredicate<MaterialVariantId> allowedMaterials, List<MaterialVariantId> extraMaterials) {
-    this(serializer, id, group, cast, itemCost, castPurpose, result, allowedMaterials, extraMaterials, true);
+  protected ToolCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, CastPurpose castPurpose, IModifiable result, IJsonPredicate<MaterialVariantId> allowedMaterials, List<MaterialVariantId> extraMaterials) {
+    this(serializer, group, cast, itemCost, castPurpose, result, allowedMaterials, extraMaterials, true);
   }
 
   /** @deprecated use {@link #ToolCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, CastPurpose, IModifiable, IJsonPredicate, List, boolean)} */
   @Deprecated(forRemoval = true)
-  public ToolCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, int itemCost, IModifiable result) {
-    this(serializer, id, group, cast, itemCost, CastPurpose.MAYBE_MATERIAL, result, MaterialPredicate.ANY, List.of());
+  public ToolCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, IModifiable result) {
+    this(serializer, group, cast, itemCost, CastPurpose.MAYBE_MATERIAL, result, MaterialPredicate.ANY, List.of());
   }
 
   @Override

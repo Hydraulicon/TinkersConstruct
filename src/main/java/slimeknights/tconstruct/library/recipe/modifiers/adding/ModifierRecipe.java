@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
+import slimeknights.mantle.data.loadable.Loadables;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,7 +12,6 @@ import net.minecraft.world.level.Level;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.json.IntRange;
 import slimeknights.tconstruct.library.modifiers.ModifierId;
@@ -32,8 +33,8 @@ import java.util.List;
  * Standard recipe to add a modifier
  */
 public class ModifierRecipe extends AbstractModifierRecipe {
-  protected static final LoadableField<List<SizedIngredient>,ModifierRecipe> INPUTS_FIELD = SizedIngredient.LOADABLE.list(1).requiredField("inputs", r -> r.inputs);
-  public static final RecordLoadable<ModifierRecipe> LOADER = RecordLoadable.create(ContextKey.ID.requiredField(), INPUTS_FIELD, TOOLS_FIELD, MAX_TOOL_SIZE_FIELD, RESULT_FIELD, LEVEL_FIELD, SLOTS_FIELD, ALLOW_CRYSTAL_FIELD, CHECK_TRAIT_LEVEL_FIELD, ModifierRecipe::new);
+  protected static final LoadableField<List<SizedIngredient>,ModifierRecipe> INPUTS_FIELD = Loadables.SIZED_ITEM_INGREDIENT.list(1).requiredField("inputs", r -> r.inputs);
+  public static final RecordLoadable<ModifierRecipe> LOADER = RecordLoadable.create(INPUTS_FIELD, TOOLS_FIELD, MAX_TOOL_SIZE_FIELD, RESULT_FIELD, LEVEL_FIELD, SLOTS_FIELD, ALLOW_CRYSTAL_FIELD, CHECK_TRAIT_LEVEL_FIELD, ModifierRecipe::new);
 
   /**
    * List of input ingredients.
@@ -42,8 +43,8 @@ public class ModifierRecipe extends AbstractModifierRecipe {
    */
   protected final List<SizedIngredient> inputs;
 
-  public ModifierRecipe(ResourceLocation id, List<SizedIngredient> inputs, Ingredient toolRequirement, int maxToolSize, ModifierId result, IntRange level, @Nullable SlotCount slots, boolean allowCrystal, boolean checkTraitLevel) {
-    super(id, toolRequirement, maxToolSize, result, level, slots, allowCrystal, checkTraitLevel);
+  public ModifierRecipe(List<SizedIngredient> inputs, Ingredient toolRequirement, int maxToolSize, ModifierId result, IntRange level, @Nullable SlotCount slots, boolean allowCrystal, boolean checkTraitLevel) {
+    super(toolRequirement, maxToolSize, result, level, slots, allowCrystal, checkTraitLevel);
     this.inputs = inputs;
   }
 
@@ -179,7 +180,7 @@ public class ModifierRecipe extends AbstractModifierRecipe {
       // care about size, if too small just skip the recipe
       int index = findMatch(ingredient, inv, used);
       if (index != -1) {
-        inv.shrinkInput(index, ingredient.getAmountNeeded());
+        inv.shrinkInput(index, ingredient.count());
       } else {
         TConstruct.LOG.warn("Missing ingredient in modifier recipe input consume");
       }
@@ -212,7 +213,7 @@ public class ModifierRecipe extends AbstractModifierRecipe {
   @Override
   public List<ItemStack> getDisplayItems(int slot) {
     if (slot >= 0 && slot < inputs.size()) {
-      return inputs.get(slot).getMatchingStacks();
+      return SizedIngredients.getMatchingStacks(inputs.get(slot));
     }
     return List.of();
   }

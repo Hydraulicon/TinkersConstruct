@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.mantle.data.loadable.Loadables;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -14,7 +16,6 @@ import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.library.client.materials.MaterialTooltipCache;
 import slimeknights.tconstruct.library.materials.MaterialRegistry;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariant;
@@ -40,8 +41,8 @@ import java.util.List;
 /** Recipe for swapping a single material on a tool given a specific input ingredient. */
 public class FixedMaterialSwappingRecipe extends MaterialSwappingRecipe implements IMultiRecipe<IDisplayToolTinkering> {
   public static final RecordLoadable<FixedMaterialSwappingRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(), TOOLS_FIELD, STACK_SIZE_FIELD,
-    SizedIngredient.LOADABLE.requiredField("ingredient", r -> r.ingredient),
+    TOOLS_FIELD, STACK_SIZE_FIELD,
+    Loadables.SIZED_ITEM_INGREDIENT.requiredField("ingredient", r -> r.ingredient),
     MaterialVariantId.LOADABLE.requiredField("material", r -> r.material),
     new IntArrayLoadable(IntLoadable.FROM_ZERO, ArrayLoadable.COMPACT, 10).requiredField("index", r -> r.indices),
     IntLoadable.FROM_ZERO.defaultField("repair_value", 0, false, r -> r.repairValue),
@@ -57,8 +58,8 @@ public class FixedMaterialSwappingRecipe extends MaterialSwappingRecipe implemen
   /** Amount this swapping repairs the tool */
   private final int repairValue;
 
-  protected FixedMaterialSwappingRecipe(ResourceLocation id, Ingredient tools, int maxStackSize, SizedIngredient ingredient, MaterialVariantId material, int[] indices, int repairValue, List<SizedIngredient> extraRequirements) {
-    super(id, tools, maxStackSize, extraRequirements);
+  protected FixedMaterialSwappingRecipe(Ingredient tools, int maxStackSize, SizedIngredient ingredient, MaterialVariantId material, int[] indices, int repairValue, List<SizedIngredient> extraRequirements) {
+    super(tools, maxStackSize, extraRequirements);
     this.ingredient = ingredient;
     this.material = material;
     this.indices = indices;
@@ -131,7 +132,7 @@ public class FixedMaterialSwappingRecipe extends MaterialSwappingRecipe implemen
   @Override
   protected boolean shrinkPart(IMutableTinkerStationContainer inv, int index, ItemStack stack) {
     if (ingredient.test(stack)) {
-      inv.shrinkInput(index, ingredient.getAmountNeeded());
+      inv.shrinkInput(index, ingredient.count());
       return true;
     }
     return false;
@@ -152,7 +153,7 @@ public class FixedMaterialSwappingRecipe extends MaterialSwappingRecipe implemen
     if (multiRecipes == null) {
       ItemStack[] tools = this.tools.getItems();
       MaterialVariant material = MaterialVariant.of(this.material);
-      List<ItemStack> inputs = ingredient.getMatchingStacks();
+      List<ItemStack> inputs = SizedIngredients.getMatchingStacks(ingredient);
       Component variantText = MaterialTooltipCache.getDisplayName(this.material);
       // need 1 recipe per index we can swap into
       multiRecipes = Arrays.stream(indices).filter(VALID_SLOT).<IDisplayToolTinkering>mapToObj(i -> {

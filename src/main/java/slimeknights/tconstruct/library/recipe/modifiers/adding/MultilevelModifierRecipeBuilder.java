@@ -1,12 +1,13 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
 // TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.library.modifiers.ModifierId;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class MultilevelModifierRecipeBuilder extends AbstractMultilevelModifierR
    * @return  Builder instance
    */
   public MultilevelModifierRecipeBuilder addInput(Ingredient ingredient) {
-    return addInput(SizedIngredient.of(ingredient));
+    return addInput(SizedIngredients.of(ingredient));
   }
 
   /**
@@ -58,7 +59,7 @@ public class MultilevelModifierRecipeBuilder extends AbstractMultilevelModifierR
    * @return  Builder instance
    */
   public MultilevelModifierRecipeBuilder addInput(ItemLike item, int amount) {
-    return addInput(SizedIngredient.fromItems(amount, item));
+    return addInput(SizedIngredients.fromItems(amount, item));
   }
 
   /**
@@ -77,7 +78,7 @@ public class MultilevelModifierRecipeBuilder extends AbstractMultilevelModifierR
    * @return  Builder instance
    */
   public MultilevelModifierRecipeBuilder addInput(TagKey<Item> tag, int amount) {
-    return addInput(SizedIngredient.fromTag(tag, amount));
+    return addInput(SizedIngredients.fromTag(tag, amount));
   }
 
   /**

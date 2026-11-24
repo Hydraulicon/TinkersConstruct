@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,7 +14,6 @@ import net.minecraft.world.level.ItemLike;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.materials.definition.MaterialId;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
@@ -41,7 +42,7 @@ public class MaterialSwappingRecipeBuilder extends AbstractRecipeBuilder<Materia
   private IToolPart part = null;
 
   /** Ingredient for the input part, used by fixed */
-  private SizedIngredient ingredient = SizedIngredient.EMPTY;
+  private SizedIngredient ingredient = SizedIngredients.EMPTY;
   /** Material to swap to, used by fixed */
   private MaterialVariantId material = MaterialId.UNKNOWN;
   /** Repair value on swapping, used by fixed and material value */
@@ -76,7 +77,7 @@ public class MaterialSwappingRecipeBuilder extends AbstractRecipeBuilder<Materia
 
   /** Sets the material for this builder */
   public MaterialSwappingRecipeBuilder material(MaterialVariantId material, ItemLike item) {
-    return material(material, SizedIngredient.fromItems(item));
+    return material(material, SizedIngredients.fromItems(item));
   }
 
   /** Sets the materials for this builder */
@@ -94,12 +95,12 @@ public class MaterialSwappingRecipeBuilder extends AbstractRecipeBuilder<Materia
 
   /** Adds an extra ingredient requirement */
   public MaterialSwappingRecipeBuilder addExtraRequirement(Ingredient ingredient) {
-    return addExtraRequirement(SizedIngredient.of(ingredient));
+    return addExtraRequirement(SizedIngredients.of(ingredient));
   }
 
   /** Adds an extra ingredient requirement */
   public MaterialSwappingRecipeBuilder addExtraRequirement(ItemLike... items) {
-    return addExtraRequirement(SizedIngredient.fromItems(items));
+    return addExtraRequirement(SizedIngredients.fromItems(items));
   }
 
   @Override
@@ -114,7 +115,7 @@ public class MaterialSwappingRecipeBuilder extends AbstractRecipeBuilder<Materia
       throw new IllegalStateException("Must set index");
     }
     if (part != null) {
-      if (ingredient != SizedIngredient.EMPTY) {
+      if (ingredient != SizedIngredients.EMPTY) {
         throw new IllegalStateException("Cannot set both part and ingredient");
       }
       consumer.accept(new LoadableFinishedRecipe<>(new PartSwappingOverrideRecipe(id, tools, maxStackSize, part, indices, extraRequirements), PartSwappingOverrideRecipe.LOADER, null));

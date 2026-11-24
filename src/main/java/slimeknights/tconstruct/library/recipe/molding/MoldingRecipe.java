@@ -16,13 +16,11 @@ import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.ICommonRecipe;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 
 /** Recipe to combine two items on the top of a casting table, changing the first */
 public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
   public static final RecordLoadable<MoldingRecipe> LOADER = RecordLoadable.create(
-    LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(),
-    ContextKey.ID.requiredField(),
+    LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(),
     IngredientLoadable.DISALLOW_EMPTY.requiredField("material", MoldingRecipe::getMaterial),
     IngredientLoadable.ALLOW_EMPTY.defaultField("pattern", Ingredient.EMPTY, MoldingRecipe::getPattern),
     BooleanLoadable.INSTANCE.defaultField("pattern_consumed", false, false, MoldingRecipe::isPatternConsumed),
@@ -34,8 +32,6 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
   @Getter
   private final RecipeSerializer<?> serializer;
   @Getter
-  private final ResourceLocation id;
-  @Getter
   private final Ingredient material;
   @Getter
   private final Ingredient pattern;
@@ -43,10 +39,9 @@ public class MoldingRecipe implements ICommonRecipe<IMoldingContainer> {
   private final boolean patternConsumed;
   private final ItemOutput recipeOutput;
 
-  public MoldingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, Ingredient material, Ingredient pattern, boolean patternConsumed, ItemOutput recipeOutput) {
-    this.type = serializer.getType();
+  public MoldingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, Ingredient material, Ingredient pattern, boolean patternConsumed, ItemOutput recipeOutput) {
+    this.type = type;
     this.serializer = serializer;
-    this.id = id;
     this.material = material;
     this.pattern = pattern;
     this.patternConsumed = pattern != Ingredient.EMPTY && patternConsumed;

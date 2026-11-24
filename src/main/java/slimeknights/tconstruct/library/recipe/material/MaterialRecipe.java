@@ -32,7 +32,6 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   @SuppressWarnings("removal")
   public static final MaterialRecipe EMPTY = new MaterialRecipe(ResourceLocation.parse("missingno"), "", Ingredient.EMPTY, 0, 0, MaterialId.UNKNOWN, ItemOutput.EMPTY);
   public static final RecordLoadable<MaterialRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     LoadableRecipeSerializer.RECIPE_GROUP,
     IngredientLoadable.DISALLOW_EMPTY.requiredField("ingredient", MaterialRecipe::getIngredient),
     IMaterialValue.VALUE_FIELD,
@@ -44,8 +43,6 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   /** Vanilla requires 4 ingots for full repair, we drop it down to 3 to mesh better with nuggets and blocks and to fit small head costs better */
   public static final float INGOTS_PER_REPAIR = 3f;
 
-  @Getter
-  protected final ResourceLocation id;
   @Getter
   protected final String group;
   @Getter
@@ -66,8 +63,7 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
    * Creates a new material recipe
    */
   @SuppressWarnings("WeakerAccess")
-  public MaterialRecipe(ResourceLocation id, String group, Ingredient ingredient, int value, int needed, MaterialVariantId materialId, ItemOutput leftover) {
-    this.id = id;
+  public MaterialRecipe(String group, Ingredient ingredient, int value, int needed, MaterialVariantId materialId, ItemOutput leftover) {
     this.group = group;
     this.ingredient = ingredient;
     this.value = value;

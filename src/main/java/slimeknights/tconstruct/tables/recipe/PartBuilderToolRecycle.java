@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.tables.recipe;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import slimeknights.mantle.data.loadable.Loadables;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -21,7 +24,6 @@ import net.minecraft.world.level.Level;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.library.json.TinkerLoadables;
@@ -69,26 +71,23 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
   /** Error for trying to recycle a tool that cannot be */
   public static final List<Component> NO_MODIFIERS = Collections.singletonList(TConstruct.makeTranslation("recipe", "tool_recycling.no_modifiers").withStyle(ChatFormatting.RED));
   /** Default tool field */
-  public static final SizedIngredient DEFAULT_TOOLS = SizedIngredient.fromTag(TinkerTags.Items.MULTIPART_TOOL);
+  public static final SizedIngredient DEFAULT_TOOLS = SizedIngredients.fromTag(TinkerTags.Items.MULTIPART_TOOL);
 
   /** Loader instance */
   public static final RecordLoadable<PartBuilderToolRecycle> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
-    SizedIngredient.LOADABLE.defaultField("tools", DEFAULT_TOOLS, true, r -> r.toolRequirement),
+    Loadables.SIZED_ITEM_INGREDIENT.defaultField("tools", DEFAULT_TOOLS, true, r -> r.toolRequirement),
     IngredientLoadable.DISALLOW_EMPTY.requiredField("pattern", r -> r.pattern),
     TinkerLoadables.OPTIONAL_MATERIAL_ITEM.list(0).defaultField("parts", List.of(), r -> r.parts),
     PartBuilderToolRecycle::new);
 
-  @Getter
-  private final ResourceLocation id;
   private final SizedIngredient toolRequirement;
   private final Ingredient pattern;
   private final List<IMaterialItem> parts;
 
   /** @deprecated use {@link FinishedRecipe} */
   @Deprecated(forRemoval = true)
-  public PartBuilderToolRecycle(ResourceLocation id, SizedIngredient toolRequirement, Ingredient pattern) {
-    this(id, toolRequirement, pattern, List.of());
+  public PartBuilderToolRecycle(SizedIngredient toolRequirement, Ingredient pattern) {
+    this(toolRequirement, pattern, List.of());
   }
 
   @Override
@@ -119,7 +118,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
 
   @Override
   public int getItemsUsed(IPartBuilderContainer inv) {
-    return toolRequirement.getAmountNeeded();
+    return toolRequirement.count();
   }
 
   @Override
@@ -250,7 +249,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
       // if we have a parts override, might as well only compute this map once
       Object2IntMap<IMaterialItem> partsOverride = parts.isEmpty() ? Object2IntMaps.emptyMap() : getDisplayParts(parts);
       List<ItemStack> patternItems = List.of(this.pattern.getItems());
-      displayRecipes = toolRequirement.getMatchingStacks().stream()
+      displayRecipes = SizedIngredients.getMatchingStacks(toolRequirement).stream()
         .<IDisplayPartBuilderRecipe>flatMap(stack -> {
           // if we have a parts override, use that instead of the tool parts
           Object2IntMap<IMaterialItem> parts = !partsOverride.isEmpty() ? partsOverride : getDisplayParts(ToolPartsHook.parts(IModifiable.getToolDefinition(stack.getItem())));
@@ -301,10 +300,6 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
       return patterns.get(0);
     }
 
-    @Override
-    public ResourceLocation getId() {
-      return id;
-    }
 
     @Override
     public int getCost() {
@@ -363,7 +358,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
   public record Finished(ResourceLocation getId, SizedIngredient tools, Ingredient pattern) implements FinishedRecipe {
     @Override
     public void serializeRecipeData(JsonObject json) {
-      json.add("tools", SizedIngredient.LOADABLE.serialize(tools));
+      json.add("tools", Loadables.SIZED_ITEM_INGREDIENT.serialize(tools));
       json.add("pattern", pattern.toJson());
     }
 

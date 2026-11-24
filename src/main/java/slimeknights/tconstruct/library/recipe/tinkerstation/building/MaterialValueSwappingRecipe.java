@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.tinkerstation.building;
 
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,6 @@ import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariant;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
 /** Recipe for swapping materials on a tool based on material items. For best results, there needs to not be a repairable part that supports the same materials. */
 public class MaterialValueSwappingRecipe extends MaterialIndexSwappingRecipe implements IMultiRecipe<IDisplayToolTinkering> {
   public static final RecordLoadable<MaterialValueSwappingRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(), TOOLS_FIELD, STACK_SIZE_FIELD,
+    TOOLS_FIELD, STACK_SIZE_FIELD,
     MaterialPredicate.LOADER.requiredField("material", r -> r.material),
     IntLoadable.FROM_ONE.requiredField("cost", r -> r.cost),
     INDICES_FIELD, EXTRA_REQUIREMENTS_FIELD,
@@ -46,8 +46,8 @@ public class MaterialValueSwappingRecipe extends MaterialIndexSwappingRecipe imp
   /** Amount of material needed to swap the part */
   private final int cost;
 
-  protected MaterialValueSwappingRecipe(ResourceLocation id, Ingredient tools, int maxStackSize, IJsonPredicate<MaterialVariantId> material, int cost, int[] indices, List<SizedIngredient> extraRequirements) {
-    super(id, tools, maxStackSize, indices, extraRequirements);
+  protected MaterialValueSwappingRecipe(Ingredient tools, int maxStackSize, IJsonPredicate<MaterialVariantId> material, int cost, int[] indices, List<SizedIngredient> extraRequirements) {
+    super(tools, maxStackSize, indices, extraRequirements);
     this.material = material;
     this.cost = cost;
   }

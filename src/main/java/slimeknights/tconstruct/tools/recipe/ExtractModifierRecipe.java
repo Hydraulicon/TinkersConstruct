@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.recipe;
 
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -7,7 +8,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.modifiers.ModifierEntry;
 import slimeknights.tconstruct.library.modifiers.ModifierId;
@@ -28,10 +28,10 @@ public class ExtractModifierRecipe extends ModifierRemovalRecipe {
   private static final Component NO_MODIFIERS = TConstruct.makeTranslation("recipe", "extract_modifier.no_modifiers");
 
   /** Recipe loadable */
-  public static final RecordLoadable<ExtractModifierRecipe> LOADER = RecordLoadable.create(ContextKey.ID.requiredField(), NAME_FIELD, TOOLS_FIELD, INPUTS_FIELD, LEFTOVERS_FIELD, MODIFIER_PREDICATE_FIELD, ExtractModifierRecipe::new);
+  public static final RecordLoadable<ExtractModifierRecipe> LOADER = RecordLoadable.create(NAME_FIELD, TOOLS_FIELD, INPUTS_FIELD, LEFTOVERS_FIELD, MODIFIER_PREDICATE_FIELD, ExtractModifierRecipe::new);
 
-  public ExtractModifierRecipe(ResourceLocation id, String name, SizedIngredient toolRequirements, List<SizedIngredient> inputs, List<ItemStack> leftovers, IJsonPredicate<ModifierId> modifierPredicate) {
-    super(id, name, toolRequirements, inputs, leftovers, modifierPredicate);
+  public ExtractModifierRecipe(String name, SizedIngredient toolRequirements, List<SizedIngredient> inputs, List<ItemStack> leftovers, IJsonPredicate<ModifierId> modifierPredicate) {
+    super(name, toolRequirements, inputs, leftovers, modifierPredicate);
   }
 
   /** Gets the base key for the title translation */

@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.tools.data;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.data.PackOutput;
 // TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -26,8 +30,6 @@ import slimeknights.mantle.recipe.helper.ItemOutput;
 // TODO 1.21 import: slimeknights.mantle.recipe.helper.SimpleFinishedRecipe;
 import slimeknights.mantle.recipe.ingredient.EntityIngredient;
 import slimeknights.mantle.recipe.ingredient.item.FluidContainerIngredient;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.mantle.registration.object.WoodBlockObject;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
@@ -124,7 +126,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                             .setCast(TinkerTables.pattern, true)
                             .save(consumer, prefix(TinkerModifiers.ironReinforcement, folder));
     ItemCastingRecipeBuilder.tableRecipe(TinkerModifiers.searedReinforcement)
-                            .setFluid(FluidIngredient.of(TinkerFluids.searedStone.ingredient(FluidValues.BRICK), TinkerFluids.scorchedStone.ingredient(FluidValues.BRICK)))
+                            .setFluid(FluidIngredients.of(TinkerFluids.searedStone.ingredient(FluidValues.BRICK), TinkerFluids.scorchedStone.ingredient(FluidValues.BRICK)))
                             .setCoolingTime(getTemperature(TinkerFluids.searedStone), FluidValues.BRICK)
                             .setCast(TinkerTables.pattern, true)
                             .save(consumer, prefix(TinkerModifiers.searedReinforcement, folder));
@@ -837,7 +839,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
       .save(consumer, prefix(ModifierIds.boundless, abilityFolder));
     ModifierRecipeBuilder.modifier(ModifierIds.knockbackResistance)
                          .setTools(TinkerTags.Items.ARMOR)
-                         .addInput(SizedIngredient.fromItems(Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL))
+                         .addInput(SizedIngredients.fromItems(Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL))
                          .setSlots(SlotType.DEFENSE, 1)
                          .setMaxLevel(1)
                          .saveSalvage(consumer, prefix(ModifierIds.knockbackResistance, defenseSalvage))
@@ -1238,7 +1240,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
     ModifierRecipeBuilder.modifier(ModifierIds.luck)
                          .setTools(luckSupporting)
                          .addInput(Tags.Items.INGOTS_COPPER)
-                         .addInput(SizedIngredient.fromItems(Items.CORNFLOWER, Items.BLUE_ORCHID))
+                         .addInput(SizedIngredients.fromItems(Items.CORNFLOWER, Items.BLUE_ORCHID))
                          .addInput(Tags.Items.INGOTS_COPPER)
                          .addInput(Tags.Items.STORAGE_BLOCKS_LAPIS)
                          .addInput(Tags.Items.STORAGE_BLOCKS_LAPIS)
@@ -1349,7 +1351,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                          .setTools(ingredientFromTags(TinkerTags.Items.MELEE, TinkerTags.Items.HARVEST))
                          .saveSalvage(consumer, prefix(TinkerModifiers.melting, abilitySalvage))
                          .save(consumer, prefix(TinkerModifiers.melting, abilityFolder));
-    SizedIngredient faucets = SizedIngredient.fromItems(TinkerSmeltery.searedFaucet, TinkerSmeltery.scorchedFaucet); // no salvage as don't want conversion between seared and scorched
+    SizedIngredient faucets = SizedIngredients.fromItems(TinkerSmeltery.searedFaucet, TinkerSmeltery.scorchedFaucet); // no salvage as don't want conversion between seared and scorched
     ModifierRecipeBuilder.modifier(ModifierIds.bucketing)
                          .addInput(faucets)
                          .addInput(Items.BUCKET)
@@ -1361,7 +1363,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                          .setTools(TinkerTags.Items.INTERACTABLE)
                          .saveSalvage(consumer, prefix(ModifierIds.bucketing, abilitySalvage))
                          .save(consumer, prefix(ModifierIds.bucketing, abilityFolder));
-    SizedIngredient channels = SizedIngredient.fromItems(TinkerSmeltery.searedChannel, TinkerSmeltery.scorchedChannel);
+    SizedIngredient channels = SizedIngredients.fromItems(TinkerSmeltery.searedChannel, TinkerSmeltery.scorchedChannel);
     ModifierRecipeBuilder.modifier(ModifierIds.spilling)
                          .addInput(channels)
                          .addInput(tanks)
@@ -1449,9 +1451,9 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
     // block transformers
     Ingredient interactableWithDurability = IntersectionIngredient.of(Ingredient.of(TinkerTags.Items.DURABILITY), Ingredient.of(TinkerTags.Items.INTERACTABLE));
     Ingredient interactableBootsWithDurability = IntersectionIngredient.of(Ingredient.of(TinkerTags.Items.DURABILITY), ingredientFromTags(TinkerTags.Items.INTERACTABLE, TinkerTags.Items.BOOTS));
-    SizedIngredient roundPlate = SizedIngredient.of(MaterialIngredient.of(TinkerToolParts.adzeHead.get()));
-    SizedIngredient smallBlade = SizedIngredient.of(MaterialIngredient.of(TinkerToolParts.smallBlade.get()));
-    SizedIngredient toolBinding = SizedIngredient.of(MaterialIngredient.of(TinkerToolParts.toolBinding.get()));
+    SizedIngredient roundPlate = SizedIngredients.of(MaterialIngredient.of(TinkerToolParts.adzeHead.get()));
+    SizedIngredient smallBlade = SizedIngredients.of(MaterialIngredient.of(TinkerToolParts.smallBlade.get()));
+    SizedIngredient toolBinding = SizedIngredients.of(MaterialIngredient.of(TinkerToolParts.toolBinding.get()));
     ModifierRecipeBuilder.modifier(ModifierIds.pathing)
                          .setTools(interactableBootsWithDurability)
                          .addInput(roundPlate)
@@ -1463,7 +1465,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                          .save(consumer, prefix(ModifierIds.pathing, abilityFolder));
     ModifierRecipeBuilder.modifier(ModifierIds.stripping)
                          .setTools(interactableWithDurability)
-                         .addInput(SizedIngredient.of(MaterialIngredient.of(TinkerToolParts.smallAxeHead.get())))
+                         .addInput(SizedIngredients.of(MaterialIngredient.of(TinkerToolParts.smallAxeHead.get())))
                          .addInput(TinkerMaterials.steel.getIngotTag())
                          .addInput(toolBinding)
                          .setMaxLevel(1).checkTraitLevel()
@@ -1631,7 +1633,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                          .setMaxLevel(1)
                          .save(consumer, prefix(ModifierIds.harmonious, slotlessFolder));
     Ingredient bonusNoSkull = DifferenceIngredient.of(Ingredient.of(TinkerTags.Items.BONUS_SLOTS), Ingredient.of(TinkerTags.Items.SKULLS));
-    SizedIngredient standardSkulls = SizedIngredient.of(DifferenceIngredient.of(Ingredient.of(Tags.Items.HEADS), Ingredient.of(Items.DRAGON_HEAD)));
+    SizedIngredient standardSkulls = SizedIngredients.of(DifferenceIngredient.of(Ingredient.of(Tags.Items.HEADS), Ingredient.of(Items.DRAGON_HEAD)));
     ModifierRecipeBuilder.modifier(ModifierIds.recapitated)
       .setTools(bonusNoSkull)
       .addInput(standardSkulls)
@@ -1755,7 +1757,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
     IJsonPredicate<ModifierId> extractBlacklist = ModifierPredicate.tag(TinkerTags.Modifiers.EXTRACT_MODIFIER_BLACKLIST).inverted();
     for (boolean dagger : new boolean[]{false, true}) {
       String suffix = dagger ? "_dagger" : "";
-      SizedIngredient tools = dagger ? SizedIngredient.fromItems(2, TinkerTools.dagger) : SizedIngredient.of(DifferenceIngredient.of(Ingredient.of(TinkerTags.Items.MODIFIABLE), Ingredient.of(TinkerTags.Items.UNSALVAGABLE)));
+      SizedIngredient tools = dagger ? SizedIngredients.fromItems(2, TinkerTools.dagger) : SizedIngredients.of(DifferenceIngredient.of(Ingredient.of(TinkerTags.Items.MODIFIABLE), Ingredient.of(TinkerTags.Items.UNSALVAGABLE)));
       ModifierRemovalRecipeBuilder.extract()
                                   .setTools(tools)
                                   .setName("slotless")
@@ -1810,7 +1812,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                                      .save(consumer, location(worktableFolder + "invisible_ink_adding"));
     ModifierSetWorktableRecipeBuilder.setRemoving(hiddenModifiers)
                                      .modifierPredicate(blacklist)
-                                     .addInput(FluidContainerIngredient.fromIngredient(FluidIngredient.of(Fluids.MILK, FluidType.BUCKET_VOLUME), Ingredient.of(Items.MILK_BUCKET)))
+                                     .addInput(FluidContainerIngredient.fromIngredient(FluidIngredients.of(Fluids.MILK, FluidType.BUCKET_VOLUME), Ingredient.of(Items.MILK_BUCKET)))
                                      .save(consumer, location(worktableFolder + "invisible_ink_removing"));
 
     // swapping hands

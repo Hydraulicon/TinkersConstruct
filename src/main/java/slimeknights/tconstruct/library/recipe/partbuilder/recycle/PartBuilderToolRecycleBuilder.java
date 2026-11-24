@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.partbuilder.recycle;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.fluids.TinkerFluids;
 import slimeknights.tconstruct.library.tools.part.IMaterialItem;
@@ -34,7 +35,7 @@ public class PartBuilderToolRecycleBuilder extends AbstractRecipeBuilder<PartBui
 
   /** Creates a builder for the given tool */
   public static PartBuilderToolRecycleBuilder tool(ItemLike tool) {
-    return tools(SizedIngredient.fromItems(tool));
+    return tools(SizedIngredients.fromItems(tool));
   }
 
   /** Adds a part override to the builder. Order matches up to material indices */
@@ -51,7 +52,7 @@ public class PartBuilderToolRecycleBuilder extends AbstractRecipeBuilder<PartBui
   @SuppressWarnings("deprecation")
   @Override
   public void save(Consumer<FinishedRecipe> consumer) {
-    save(consumer, BuiltInRegistries.ITEM.getKey(tools.getMatchingStacks().get(0).getItem()));
+    save(consumer, BuiltInRegistries.ITEM.getKey(SizedIngredients.getMatchingStacks(tools).get(0).getItem()));
   }
 
   @Override

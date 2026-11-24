@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.container;
 
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,6 @@ import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.library.recipe.casting.DisplayCastingRecipe;
 import slimeknights.tconstruct.library.recipe.casting.ICastingContainer;
@@ -37,15 +37,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<IDisplayableCastingRecipe> {
   public static final RecordLoadable<ContainerFillingRecipe> LOADER = RecordLoadable.create(
-    LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(), ContextKey.ID.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP,
+    LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP,
     IntLoadable.FROM_ONE.requiredField("fluid_amount", r -> r.fluidAmount),
     Loadables.ITEM.requiredField("container", r -> r.container),
     ContainerFillingRecipe::new);
 
   @Getter
-  private final TypeAwareRecipeSerializer<?> serializer;
-  @Getter
-  private final ResourceLocation id;
+  private final RecipeSerializer<?> serializer;
   @Getter
   private final String group;
   private final int fluidAmount;
@@ -53,7 +51,7 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<IDis
 
   @Override
   public RecipeType<?> getType() {
-    return serializer.getType();
+    return type;
   }
 
   @Override

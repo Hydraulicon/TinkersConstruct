@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.tools.data;
 
+import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.data.PackOutput;
 // TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -19,7 +21,6 @@ import slimeknights.mantle.data.predicate.IJsonPredicate;
 // TODO 1.21 import: slimeknights.mantle.recipe.data.ItemNameIngredient;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.ingredient.item.PotionDisplayIngredient;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.SizedIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.common.data.BaseRecipeProvider;
@@ -348,15 +349,15 @@ public class ToolsRecipeProvider extends BaseRecipeProvider implements IMaterial
     String folder = "tools/recycling/";
 
     // main recycling recipe - uses tool definition for parts list
-    PartBuilderToolRecycleBuilder.tools(SizedIngredient.of(DifferenceIngredient.of(Ingredient.of(TinkerTags.Items.MULTIPART_TOOL), Ingredient.of(TinkerTags.Items.UNRECYCLABLE))))
+    PartBuilderToolRecycleBuilder.tools(SizedIngredients.of(DifferenceIngredient.of(Ingredient.of(TinkerTags.Items.MULTIPART_TOOL), Ingredient.of(TinkerTags.Items.UNRECYCLABLE))))
         .save(consumer, location(folder + "general"));
     // daggers want to enforce stack size 2 when recycling to prevent dupes
-    PartBuilderToolRecycleBuilder.tools(SizedIngredient.fromItems(2, TinkerTools.dagger))
+    PartBuilderToolRecycleBuilder.tools(SizedIngredients.fromItems(2, TinkerTools.dagger))
       .save(consumer, location(folder + "dagger"));
 
     // travelers gear has a part for the plating, but that would be a dupe in all cases other than boot plating
     // plus, the boots plating won't let you recover travelers gear, so just recycle to repair kit
-    PartBuilderToolRecycleBuilder.tools(SizedIngredient.fromItems(TinkerTools.travelersGear.values().toArray(Item[]::new)))
+    PartBuilderToolRecycleBuilder.tools(SizedIngredients.fromItems(TinkerTools.travelersGear.values().toArray(Item[]::new)))
       // repair kit cost matches exactly
       .part(TinkerToolParts.repairKit)
       // no good alternative to cuirass, so just do repair kit again. Means you can't choose it but you can get it
@@ -446,7 +447,7 @@ public class ToolsRecipeProvider extends BaseRecipeProvider implements IMaterial
       .part(TinkerToolParts.toolHandle)
       .part(TinkerToolParts.bowGrip)
       .save(consumer, location(folder + "swasher"));
-    PartBuilderToolRecycleBuilder.tools(SizedIngredient.of(ItemNameIngredient.from(TinkerTools.minotaurAxe.getId())))
+    PartBuilderToolRecycleBuilder.tools(SizedIngredients.of(ItemNameIngredient.from(TinkerTools.minotaurAxe.getId())))
       .part(TinkerToolParts.smallAxeHead)
       .part(TinkerToolParts.repairKit)
       .part(TinkerToolParts.toolHandle)

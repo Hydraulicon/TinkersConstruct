@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.data.tinkering;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CheckReturnValue;
 import com.google.gson.JsonObject;
@@ -26,7 +28,6 @@ import slimeknights.mantle.data.GenericDataProvider;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
 import slimeknights.mantle.data.predicate.entity.LivingEntityPredicate;
 import slimeknights.mantle.recipe.condition.TagFilledCondition;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 import slimeknights.mantle.registration.object.FluidObject;
 import slimeknights.tconstruct.common.TinkerDamageTypes;
 import slimeknights.tconstruct.common.json.ConfigEnabledCondition;
@@ -76,7 +77,7 @@ public abstract class AbstractFluidEffectProvider extends GenericDataProvider {
   /* Helpers */
 
   /** Creates a new fluid builder for the given location */
-  protected Builder addFluid(ResourceLocation id, FluidIngredient fluid) {
+  protected Builder addFluid(ResourceLocation id, SizedFluidIngredient fluid) {
     Builder newBuilder = new Builder(fluid);
     Builder original = entries.put(id, newBuilder);
     if (original != null) {
@@ -87,23 +88,23 @@ public abstract class AbstractFluidEffectProvider extends GenericDataProvider {
 
   /** Creates a new fluid builder for the given mod ID */
   @SuppressWarnings("removal")
-  protected Builder addFluid(String name, FluidIngredient fluid) {
+  protected Builder addFluid(String name, SizedFluidIngredient fluid) {
     return addFluid(ResourceLocation.fromNamespaceAndPath(modId, name), fluid);
   }
 
   /** Creates a builder for a fluid stack */
   protected Builder addFluid(FluidStack fluid) {
-    return addFluid(BuiltInRegistries.FLUID.getKey(fluid.getFluid()).getPath(), FluidIngredient.of(fluid));
+    return addFluid(BuiltInRegistries.FLUID.getKey(fluid.getFluid()).getPath(), FluidIngredients.of(fluid));
   }
 
   /** Creates a builder for a fluid and amount */
   protected Builder addFluid(Fluid fluid, int amount) {
-    return addFluid(BuiltInRegistries.FLUID.getKey(fluid).getPath(), FluidIngredient.of(fluid, amount));
+    return addFluid(BuiltInRegistries.FLUID.getKey(fluid).getPath(), FluidIngredients.of(fluid, amount));
   }
 
   /** Creates a builder for a tag and amount */
   protected Builder addFluid(String name, TagKey<Fluid> fluid, int amount) {
-    return addFluid(name, FluidIngredient.of(fluid, amount));
+    return addFluid(name, FluidIngredients.of(fluid, amount));
   }
 
   /** Creates a builder for a tag and amount */
@@ -202,7 +203,7 @@ public abstract class AbstractFluidEffectProvider extends GenericDataProvider {
   @CanIgnoreReturnValue
   protected static class Builder {
     private final List<ICondition> conditions = new ArrayList<>();
-    private final FluidIngredient ingredient;
+    private final SizedFluidIngredient ingredient;
     private final List<FluidEffect<? super FluidEffectContext.Block>> blockEffects = new ArrayList<>();
     private final List<FluidEffect<? super FluidEffectContext.Entity>> entityEffects = new ArrayList<>();
     private boolean hidden = false;

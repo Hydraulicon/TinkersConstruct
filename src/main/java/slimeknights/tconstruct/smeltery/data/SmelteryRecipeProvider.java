@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.smeltery.data;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 // TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
@@ -46,7 +48,6 @@ import slimeknights.mantle.recipe.data.ICommonRecipeHelper;
 // TODO 1.21 import: slimeknights.mantle.recipe.data.ItemNameOutput;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.ingredient.EntityIngredient;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 import slimeknights.mantle.recipe.ingredient.item.PotionDisplayIngredient;
 import slimeknights.mantle.registration.deferred.PotionDeferredRegister.PotionType;
 import slimeknights.mantle.registration.object.FluidObject;
@@ -1068,7 +1069,7 @@ public class SmelteryRecipeProvider extends BaseRecipeProvider implements ISmelt
     ContainerFillingRecipeBuilder.tableRecipe(TinkerSmeltery.copperCan, FluidValues.INGOT)
                                  .save(consumer, location(folder + "filling/copper_can"));
     // potion filling
-    FluidIngredient potionBottle = TinkerFluids.potion.ingredient(FluidValues.BOTTLE);
+    SizedFluidIngredient potionBottle = TinkerFluids.potion.ingredient(FluidValues.BOTTLE);
     PotionCastingRecipeBuilder.tableRecipe(Items.POTION)
                               .setBottle(Items.GLASS_BOTTLE)
                               .setFluid(potionBottle)
@@ -1892,7 +1893,7 @@ public class SmelteryRecipeProvider extends BaseRecipeProvider implements ISmelt
     // water being a catalyst makes this friendlier in the nether as we just need 1 bottle instead of collecting a bunch
     // note this is not a progression break, as the same tier lets you make other alloys like amethyst bronze
     AlloyRecipeBuilder.alloy(TinkerFluids.moltenObsidian, FluidValues.GLASS_BLOCK / 10)
-                      .addCatalyst(FluidIngredient.of(Fluids.WATER, FluidValues.BOTTLE))
+                      .addCatalyst(FluidIngredients.of(Fluids.WATER, FluidValues.BOTTLE))
                       .addInput(Fluids.LAVA, FluidType.BUCKET_VOLUME / 10)
                       .save(consumer, prefix(TinkerFluids.moltenObsidian, folder));
 
@@ -2028,14 +2029,14 @@ public class SmelteryRecipeProvider extends BaseRecipeProvider implements ISmelt
     AlloyRecipeBuilder.alloy(TinkerFluids.moltenLumium, FluidValues.INGOT * 4)
                       .addInput(TinkerFluids.moltenTin.ingredient(FluidValues.INGOT * 3))
                       .addInput(TinkerFluids.moltenSilver.ingredient(FluidValues.INGOT))
-                      .addInput(FluidIngredient.of(fluidTag.apply("glowstone"), FluidValues.SLIMEBALL * 2))
+                      .addInput(FluidIngredients.of(fluidTag.apply("glowstone"), FluidValues.SLIMEBALL * 2))
                       .save(wrapped, prefix(TinkerFluids.moltenLumium, folder));
     // signalum
     wrapped = withCondition(consumer, tagCondition("ingots/signalum"), tagCondition("ingots/copper"), tagCondition("ingots/silver"), fluidTagLoaded.apply("redstone"));
     AlloyRecipeBuilder.alloy(TinkerFluids.moltenSignalum, FluidValues.INGOT * 4)
                       .addInput(TinkerFluids.moltenCopper.ingredient(FluidValues.INGOT * 3))
                       .addInput(TinkerFluids.moltenSilver.ingredient(FluidValues.INGOT))
-                      .addInput(FluidIngredient.of(fluidTag.apply("redstone"), 400))
+                      .addInput(FluidIngredients.of(fluidTag.apply("redstone"), 400))
                       .save(wrapped, prefix(TinkerFluids.moltenSignalum, folder));
 
     // refined obsidian, note glowstone is done as a composite

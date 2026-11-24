@@ -42,7 +42,6 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPartBuilderRecipe> {
   public static final RecordLoadable<PartRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     LoadableRecipeSerializer.RECIPE_GROUP,
     Pattern.PARSER.requiredField("pattern", PartRecipe::getPattern),
     IngredientLoadable.DISALLOW_EMPTY.defaultField("pattern_item", DEFAULT_PATTERNS, r -> r.patternItem),
@@ -52,8 +51,6 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
     new MergingField<>(IntLoadable.FROM_ONE.defaultField("count", 1, r -> r.outputCount), "result", MissingMode.CREATE),
     PartRecipe::new);
 
-  @Getter
-  protected final ResourceLocation id;
   @Getter
   protected final String group;
   @Getter
@@ -73,8 +70,8 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
 
   /** @deprecated use {@link #PartRecipe(ResourceLocation, String, Pattern, Ingredient, int, boolean, IMaterialItem, int)} */
   @Deprecated(forRemoval = true)
-  public PartRecipe(ResourceLocation id, String group, Pattern pattern, Ingredient patternItem, int cost, IMaterialItem output, int outputCount) {
-    this(id, group, pattern, patternItem, cost, false, output, outputCount);
+  public PartRecipe(String group, Pattern pattern, Ingredient patternItem, int cost, IMaterialItem output, int outputCount) {
+    this(group, pattern, patternItem, cost, false, output, outputCount);
   }
 
   @Override
@@ -258,10 +255,6 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
     private final List<ItemStack> patternItems;
     private final List<ItemStack> hiddenInputs;
 
-    @Override
-    public ResourceLocation getId() {
-      return id;
-    }
 
     @Override
     public int getCost() {

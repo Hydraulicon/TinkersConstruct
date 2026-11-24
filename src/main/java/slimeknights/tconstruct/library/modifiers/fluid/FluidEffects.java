@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.modifiers.fluid;
 
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -8,16 +9,15 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.loadable.primitive.BooleanLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 import slimeknights.tconstruct.library.modifiers.fluid.FluidEffectContext.Block;
 import slimeknights.tconstruct.library.modifiers.fluid.FluidEffectContext.Entity;
 
 import java.util.List;
 
 /** Data class to connect fluids to fluid effects */
-public record FluidEffects(FluidIngredient ingredient, List<FluidEffect<? super FluidEffectContext.Block>> blockEffects, List<FluidEffect<? super FluidEffectContext.Entity>> entityEffects, boolean hidden) {
+public record FluidEffects(SizedFluidIngredient ingredient, List<FluidEffect<? super FluidEffectContext.Block>> blockEffects, List<FluidEffect<? super FluidEffectContext.Entity>> entityEffects, boolean hidden) {
   public static final RecordLoadable<FluidEffects> LOADABLE = RecordLoadable.create(
-    FluidIngredient.LOADABLE.requiredField("fluid", e -> e.ingredient),
+    Loadables.SIZED_FLUID_INGREDIENT.requiredField("fluid", e -> e.ingredient),
     FluidEffect.BLOCK_EFFECTS.list(0).defaultField("block_effects", List.of(), e -> e.blockEffects),
     FluidEffect.ENTITY_EFFECTS.list(0).defaultField("entity_effects", List.of(), e -> e.entityEffects),
     BooleanLoadable.INSTANCE.defaultField("hidden", false, false, e -> e.hidden),
@@ -41,7 +41,7 @@ public record FluidEffects(FluidIngredient ingredient, List<FluidEffect<? super 
 
   /** Gets the amount of fluid needed for a single level */
   public int getAmount(Fluid fluid) {
-    return ingredient.getAmount(fluid);
+    return FluidIngredients.getAmount(ingredient, fluid);
   }
 
 

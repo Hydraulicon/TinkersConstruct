@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 @Getter
 public class OverslimeCraftingTableRecipe extends CustomRecipe {
   public static final RecordLoadable<OverslimeCraftingTableRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     IngredientLoadable.DISALLOW_EMPTY.defaultField("tools", Ingredient.of(TinkerTags.Items.DURABILITY), r -> r.tools),
     IngredientLoadable.DISALLOW_EMPTY.requiredField("ingredient", r -> r.ingredient),
     IntLoadable.FROM_ONE.requiredField("restore_amount", r -> r.restoreAmount),
@@ -38,8 +37,8 @@ public class OverslimeCraftingTableRecipe extends CustomRecipe {
   private final Ingredient ingredient;
   private final int restoreAmount;
 
-  public OverslimeCraftingTableRecipe(ResourceLocation id, Ingredient tools, Ingredient ingredient, int restoreAmount) {
-    super(id, CraftingBookCategory.EQUIPMENT);
+  public OverslimeCraftingTableRecipe(Ingredient tools, Ingredient ingredient, int restoreAmount) {
+    super(CraftingBookCategory.EQUIPMENT);
     this.tools = tools;
     this.ingredient = ingredient;
     this.restoreAmount = restoreAmount;

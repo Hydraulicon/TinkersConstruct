@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.fuel;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -10,7 +12,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 
 import java.util.function.Consumer;
 
@@ -21,7 +22,7 @@ import static slimeknights.tconstruct.library.recipe.melting.IMeltingRecipe.getT
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MeltingFuelBuilder extends AbstractRecipeBuilder<MeltingFuelBuilder> {
-  private final FluidIngredient input;
+  private final SizedFluidIngredient input;
   private final int duration;
   private final int temperature;
   @Setter
@@ -34,7 +35,7 @@ public class MeltingFuelBuilder extends AbstractRecipeBuilder<MeltingFuelBuilder
    * @param duration  Fluid duration
    * @return  Builder instance
    */
-  public static MeltingFuelBuilder fuel(FluidIngredient fluid, int duration, int temperature) {
+  public static MeltingFuelBuilder fuel(SizedFluidIngredient fluid, int duration, int temperature) {
     return new MeltingFuelBuilder(fluid, duration, temperature, temperature / 100);
   }
 
@@ -45,13 +46,13 @@ public class MeltingFuelBuilder extends AbstractRecipeBuilder<MeltingFuelBuilder
    * @return  Builder instance
    */
   public static MeltingFuelBuilder fuel(FluidStack fluid, int duration) {
-    return fuel(FluidIngredient.of(fluid), duration, getTemperature(fluid));
+    return fuel(FluidIngredients.of(fluid), duration, getTemperature(fluid));
   }
 
   /** Setups the builder for solid fuel */
   @Internal
   public static MeltingFuelBuilder solid(int temperature) {
-    return fuel(FluidIngredient.EMPTY, 0, temperature);
+    return fuel(FluidIngredients.EMPTY, 0, temperature);
   }
 
   @Override

@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import slimeknights.mantle.data.loadable.Loadables;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -12,7 +15,6 @@ import slimeknights.mantle.data.loadable.primitive.BooleanLoadable;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.ICustomOutputRecipe;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.library.materials.definition.MaterialId;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariant;
@@ -28,19 +30,16 @@ import java.util.List;
 /** Recipe defining casting and composite fluids for a given input */
 public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContainer>, IDisplayMaterialRecipe {
   public static final RecordLoadable<MaterialFluidRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
-    FluidIngredient.LOADABLE.requiredField("fluid", r -> r.fluid),
+    Loadables.SIZED_FLUID_INGREDIENT.requiredField("fluid", r -> r.fluid),
     IntLoadable.FROM_ZERO.requiredField("temperature", r -> r.temperature),
     MaterialVariantId.LOADABLE.nullableField("input", r -> r.input != null ? r.input.getVariant() : null),
     MaterialVariantId.LOADABLE.nullableField("output", r -> r.output.getVariant()),
     BooleanLoadable.INSTANCE.defaultField("hide_in_book", false, false, r -> r.hideInBook),
     MaterialFluidRecipe::new);
   /** Empty recipe instance, used as a fallback */
-  public static final MaterialFluidRecipe EMPTY = new MaterialFluidRecipe(TConstruct.getResource("missingno"), FluidIngredient.EMPTY, 0, null, MaterialId.UNKNOWN);
+  public static final MaterialFluidRecipe EMPTY = new MaterialFluidRecipe(TConstruct.getResource("missingno"), FluidIngredients.EMPTY, 0, null, MaterialId.UNKNOWN);
 
-  @Getter
-  private final ResourceLocation id;
-  private final FluidIngredient fluid;
+  private final SizedFluidIngredient fluid;
   @Getter
   private final int temperature;
   /** Material base for composite */
@@ -52,14 +51,13 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
   @Getter
   private final boolean hideInBook;
 
-  /** @deprecated use {@link #MaterialFluidRecipe(ResourceLocation, FluidIngredient, int, MaterialVariantId, MaterialVariantId, boolean)} */
+  /** @deprecated use {@link #MaterialFluidRecipe(ResourceLocation, SizedFluidIngredient, int, MaterialVariantId, MaterialVariantId, boolean)} */
   @Deprecated(forRemoval = true)
-  public MaterialFluidRecipe(ResourceLocation id, FluidIngredient fluid, int temperature, @Nullable MaterialVariantId inputId, MaterialVariantId outputId) {
-    this(id, fluid, temperature, inputId, outputId, false);
+  public MaterialFluidRecipe(SizedFluidIngredient fluid, int temperature, @Nullable MaterialVariantId inputId, MaterialVariantId outputId) {
+    this(fluid, temperature, inputId, outputId, false);
   }
 
-  protected MaterialFluidRecipe(ResourceLocation id, FluidIngredient fluid, int temperature, @Nullable MaterialVariantId inputId, MaterialVariantId outputId, boolean hideInBook) {
-    this.id = id;
+  protected MaterialFluidRecipe(SizedFluidIngredient fluid, int temperature, @Nullable MaterialVariantId inputId, MaterialVariantId outputId, boolean hideInBook) {
     this.fluid = fluid;
     this.temperature = temperature;
     this.input = inputId == null ? null : MaterialVariant.of(inputId);
@@ -81,7 +79,7 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
 
   /** Gets the amount of fluid to cast this recipe */
   public int getFluidAmount(Fluid fluid) {
-    return this.fluid.getAmount(fluid);
+    return FluidIngredients.getAmount(this.fluid, fluid);
   }
 
   /** Gets a list of fluids for display */

@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -23,8 +25,6 @@ import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 // TODO 1.21 import: slimeknights.mantle.recipe.IMultiRecipe;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,10 +35,10 @@ import java.util.List;
  * TODO 1.21: move to {@link slimeknights.tconstruct.library.recipe.casting.potion}
  */
 public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDisplayableCastingRecipe> {
-  protected static final LoadableField<FluidIngredient, PotionCastingRecipe> FLUID_FIELD = FluidIngredient.LOADABLE.requiredField("fluid", r -> r.fluid);
+  protected static final LoadableField<SizedFluidIngredient, PotionCastingRecipe> FLUID_FIELD = Loadables.SIZED_FLUID_INGREDIENT.requiredField("fluid", r -> r.fluid);
   protected static final LoadableField<Integer, PotionCastingRecipe> COOLING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooling_time", 5, r -> r.coolingTime);
   public static final RecordLoadable<PotionCastingRecipe> LOADER = RecordLoadable.create(
-    LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(), ContextKey.ID.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP,
+    LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(), LoadableRecipeSerializer.RECIPE_GROUP,
     IngredientLoadable.DISALLOW_EMPTY.requiredField("bottle", r -> r.bottle),
     FLUID_FIELD,
     Loadables.ITEM.requiredField("result", r -> r.result),
@@ -46,23 +46,20 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
     PotionCastingRecipe::new);
 
   @Getter
-  protected final TypeAwareRecipeSerializer<?> serializer;
-  @Getter
-  protected final ResourceLocation id;
+  protected final RecipeSerializer<?> serializer;
   @Getter
   protected final String group;
   /** Input on the casting table, always consumed */
   protected final Ingredient bottle;
   /** Potion ingredient, typically just the potion tag */
-  protected final FluidIngredient fluid;
+  protected final SizedFluidIngredient fluid;
   /** Potion item result, will be given the proper NBT */
   protected final Item result;
   /** Cooling time for this recipe, used for tipped arrows */
   protected final int coolingTime;
 
-  public PotionCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient bottle, FluidIngredient fluid, Item result, int coolingTime) {
+  public PotionCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient bottle, SizedFluidIngredient fluid, Item result, int coolingTime) {
     this.serializer = serializer;
-    this.id = id;
     this.group = group;
     this.bottle = bottle;
     this.fluid = fluid;
@@ -73,7 +70,7 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
 
   @Override
   public RecipeType<?> getType() {
-    return serializer.getType();
+    return type;
   }
 
   @Override
@@ -83,7 +80,7 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
 
   @Override
   public int getFluidAmount(ICastingContainer inv) {
-    return fluid.getAmount(inv.getFluid());
+    return FluidIngredients.getAmount(fluid, inv.getFluid());
   }
 
   @Override

@@ -46,21 +46,17 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<IDis
 
   /** Loader instance */
   public static final RecordLoadable<PartBuilderRecycle> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     IngredientLoadable.DISALLOW_EMPTY.requiredField("tool", r -> r.tool),
     IngredientLoadable.DISALLOW_EMPTY.requiredField("pattern", r -> r.pattern),
     Pattern.PARSER.mapWithValues(ItemOutput.Loadable.REQUIRED_STACK).requiredField("results", r -> r.results),
     PartBuilderRecycle::new);
 
-  @Getter
-  private final ResourceLocation id;
   private final Ingredient tool;
   private final Ingredient pattern;
   private final Map<Pattern,ItemOutput> results;
   private final int resultCount;
 
-  public PartBuilderRecycle(ResourceLocation id, Ingredient tool, Ingredient pattern, Map<Pattern,ItemOutput> results) {
-    this.id = id;
+  public PartBuilderRecycle(Ingredient tool, Ingredient pattern, Map<Pattern,ItemOutput> results) {
     this.tool = tool;
     this.pattern = pattern;
     this.results = results;

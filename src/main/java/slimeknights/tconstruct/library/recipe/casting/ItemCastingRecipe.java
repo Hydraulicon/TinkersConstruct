@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.mantle.data.loadable.Loadables;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -13,8 +17,6 @@ import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,21 +25,21 @@ import java.util.List;
 @Getter
 public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplayableCastingRecipe {
   /* Shared fields */
-  protected static final LoadableField<FluidIngredient,ItemCastingRecipe> FLUID_FIELD = FluidIngredient.LOADABLE.requiredField("fluid", ItemCastingRecipe::getFluid);
+  protected static final LoadableField<SizedFluidIngredient,ItemCastingRecipe> FLUID_FIELD = Loadables.SIZED_FLUID_INGREDIENT.requiredField("fluid", ItemCastingRecipe::getFluid);
   protected static final LoadableField<ItemOutput,ItemCastingRecipe> RESULT_FIELD = ItemOutput.Loadable.REQUIRED_ITEM.requiredField("result", r -> r.result);
   protected static final LoadableField<Integer,ItemCastingRecipe> COOLING_TIME_FIELD = IntLoadable.FROM_ONE.requiredField("cooling_time", ItemCastingRecipe::getCoolingTime);
   /** Loader instance */
   public static final RecordLoadable<ItemCastingRecipe> LOADER = RecordLoadable.create(
-    LoadableRecipeSerializer.TYPED_SERIALIZER.requiredField(), ContextKey.ID.requiredField(),
+    LoadableRecipeSerializer.TYPE.requiredField(), LoadableRecipeSerializer.SERIALIZER.requiredField(),
     LoadableRecipeSerializer.RECIPE_GROUP, CAST_FIELD, FLUID_FIELD, RESULT_FIELD, COOLING_TIME_FIELD, CAST_CONSUMED_FIELD, SWITCH_SLOTS_FIELD,
     ItemCastingRecipe::new);
 
-  private final TypeAwareRecipeSerializer<?> serializer;
-  protected final FluidIngredient fluid;
+  private final RecipeSerializer<?> serializer;
+  protected final SizedFluidIngredient fluid;
   protected final ItemOutput result;
   protected final int coolingTime;
-  public ItemCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, FluidIngredient fluid, ItemOutput result, int coolingTime, boolean consumed, boolean switchSlots) {
-    super(serializer.getType(), id, group, cast, consumed, switchSlots);
+  public ItemCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, SizedFluidIngredient fluid, ItemOutput result, int coolingTime, boolean consumed, boolean switchSlots) {
+    super(type, group, cast, consumed, switchSlots);
     this.serializer = serializer;
     this.fluid = fluid;
     this.result = result;
@@ -47,7 +49,7 @@ public class ItemCastingRecipe extends AbstractCastingRecipe implements IDisplay
 
   @Override
   public int getFluidAmount(ICastingContainer inv) {
-    return this.fluid.getAmount(inv.getFluid());
+    return FluidIngredients.getAmount(this.fluid, inv.getFluid());
   }
 
   @Override

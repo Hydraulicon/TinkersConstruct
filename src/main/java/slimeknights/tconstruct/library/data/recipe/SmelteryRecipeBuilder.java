@@ -1,5 +1,7 @@
 package slimeknights.tconstruct.library.data.recipe;
 
+import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.CheckReturnValue;
 import lombok.AccessLevel;
@@ -29,7 +31,6 @@ import slimeknights.mantle.recipe.condition.TagFilledCondition;
 // TODO 1.21 import: slimeknights.mantle.recipe.data.ItemNameIngredient;
 import slimeknights.mantle.recipe.helper.FluidOutput;
 import slimeknights.mantle.recipe.helper.ItemOutput;
-// TODO 1.21 import: slimeknights.mantle.recipe.ingredient.FluidIngredient;
 import slimeknights.mantle.registration.object.FluidObject;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.common.registration.CastItemObject;
@@ -184,15 +185,15 @@ public class SmelteryRecipeBuilder {
 
   /** Creates an ingredient input for casting */
   @CheckReturnValue
-  private FluidIngredient ingredient(int amount) {
+  private SizedFluidIngredient ingredient(int amount) {
     if (fluidObject != null) {
       return fluidObject.ingredient(amount);
     }
     if (fluidTag != null) {
-      return FluidIngredient.of(fluidTag, amount);
+      return FluidIngredients.of(fluidTag, amount);
     }
     assert fluid != null;
-    return FluidIngredient.of(fluid, amount);
+    return FluidIngredients.of(fluid, amount);
   }
 
   /** Adds the given conditions to the given builder */
@@ -355,7 +356,7 @@ public class SmelteryRecipeBuilder {
     Consumer<FinishedRecipe> wrapped = optional || forceOptional ? withCondition(tagCondition(tagName)) : consumer;
     ItemOutput output = ItemOutput.fromTag(itemTag(tagName));
     int amount = (int) (baseUnit * scale);
-    FluidIngredient fluid = ingredient(amount);
+    SizedFluidIngredient fluid = ingredient(amount);
     ItemCastingRecipeBuilder.tableRecipe(output)
                             .setFluid(fluid)
                             .setCoolingTime(temperature, amount)
@@ -373,7 +374,7 @@ public class SmelteryRecipeBuilder {
     Consumer<FinishedRecipe> wrapped = optional || forceOptional ? withCondition(tagCondition(tagName)) : consumer;
     ItemOutput output = ItemOutput.fromTag(itemTag(tagName));
     int amount = (int) (baseUnit * scale);
-    FluidIngredient fluid = ingredient(amount);
+    SizedFluidIngredient fluid = ingredient(amount);
     ItemCastingRecipeBuilder.tableRecipe(output)
       .setFluid(fluid)
       .setCoolingTime(temperature, amount)

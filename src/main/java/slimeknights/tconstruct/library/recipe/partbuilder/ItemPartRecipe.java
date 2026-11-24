@@ -32,7 +32,6 @@ import java.util.List;
  */
 public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
   public static final RecordLoadable<ItemPartRecipe> LOADER = RecordLoadable.create(
-    ContextKey.ID.requiredField(),
     MaterialVariantId.LOADABLE.defaultField("material", MaterialId.UNKNOWN, r -> r.material.getVariant()),
     Pattern.PARSER.requiredField("pattern", ItemPartRecipe::getPattern),
     IngredientLoadable.DISALLOW_EMPTY.defaultField("pattern_item", DEFAULT_PATTERNS, r -> r.patternItem),
@@ -46,8 +45,6 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
       return recipe;
     });
 
-  @Getter
-  private final ResourceLocation id;
   @Getter
   private final MaterialVariant material;
   @Getter
@@ -64,8 +61,7 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
 
   /** @apiNote use {@link ItemPartRecipeBuilder} */
   @Internal
-  public ItemPartRecipe(ResourceLocation id, MaterialVariantId material, Pattern pattern, Ingredient patternItem, int cost, ItemOutput result, @Nullable ResourceLocation titleKey) {
-    this.id = id;
+  public ItemPartRecipe(MaterialVariantId material, Pattern pattern, Ingredient patternItem, int cost, ItemOutput result, @Nullable ResourceLocation titleKey) {
     this.material = MaterialVariant.of(material);
     this.pattern = pattern;
     this.patternItem = patternItem;
@@ -84,8 +80,8 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
 
   /** @deprecated use {@link ItemPartRecipeBuilder} */
   @Deprecated(forRemoval = true)
-  public ItemPartRecipe(ResourceLocation id, MaterialVariantId material, Pattern pattern, Ingredient patternItem, int cost, ItemOutput result) {
-    this(id, material, pattern, patternItem, cost, result, null);
+  public ItemPartRecipe(MaterialVariantId material, Pattern pattern, Ingredient patternItem, int cost, ItemOutput result) {
+    this(material, pattern, patternItem, cost, result, null);
   }
 
   @Override
