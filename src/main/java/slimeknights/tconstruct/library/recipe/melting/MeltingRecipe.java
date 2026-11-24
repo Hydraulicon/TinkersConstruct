@@ -73,7 +73,7 @@ public class MeltingRecipe implements IMeltingRecipe, IDisplayableMeltingRecipe 
 
   @Override
   public boolean matches(IMeltingContainer inv, Level world) {
-    return input.test(inv.getStack());
+    return input.test(inv.getItem());
   }
 
   @Override

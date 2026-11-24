@@ -1,20 +1,20 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
+import slimeknights.tconstruct.library.recipe.TypedSerializer;
+import net.minecraft.data.recipes.RecipeOutput;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.minecraft.core.registries.BuiltInRegistries;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
-import java.util.function.Consumer;
 
 /** Builder for {@link PartSwapCastingRecipe} */
 @Accessors(chain = true)
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 public class PartSwapCastingRecipeBuilder extends AbstractRecipeBuilder<PartSwapCastingRecipeBuilder> {
   private final Ingredient tools;
   private final int itemCost;
-  private final TypeAwareRecipeSerializer<PartSwapCastingRecipe> recipeSerializer;
+  private final TypedSerializer<PartSwapCastingRecipe> recipeSerializer;
   @Setter
   @Accessors(fluent = true)
   private int index = 0;
@@ -36,7 +36,7 @@ public class PartSwapCastingRecipeBuilder extends AbstractRecipeBuilder<PartSwap
    * @return  Builder instance
    */
   public static PartSwapCastingRecipeBuilder basinRecipe(Ingredient tools, int itemCost) {
-    return castingRecipe(tools, itemCost, TinkerSmeltery.basinPartSwappingSerializer.get());
+    return castingRecipe(tools, itemCost, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.basinPartSwappingSerializer));
   }
 
   /**
@@ -45,17 +45,17 @@ public class PartSwapCastingRecipeBuilder extends AbstractRecipeBuilder<PartSwap
    * @return  Builder instance
    */
   public static PartSwapCastingRecipeBuilder tableRecipe(Ingredient tools, int itemCost) {
-    return castingRecipe(tools, itemCost, TinkerSmeltery.tablePartSwappingSerializer.get());
+    return castingRecipe(tools, itemCost, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.tablePartSwappingSerializer));
   }
 
   @SuppressWarnings("deprecation")
   @Override
-  public void save(Consumer<FinishedRecipe> consumer) {
+  public void save(RecipeOutput consumer) {
     save(consumer, BuiltInRegistries.ITEM.getKey(tools.getItems()[0].getItem()));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
-    consumer.accept(new LoadableFinishedRecipe<>(new PartSwapCastingRecipe(recipeSerializer, id, group, tools, itemCost, index, allowedMaterials), PartSwapCastingRecipe.LOADER, this.buildOptionalAdvancement(id, "materials")));
+  public void save(RecipeOutput consumer, ResourceLocation id) {
+    consumer.accept(id, new PartSwapCastingRecipe(recipeSerializer.type(), recipeSerializer.serializer(), group, tools, itemCost, index, allowedMaterials), this.buildOptionalAdvancement(id, "materials"));
   }
 }

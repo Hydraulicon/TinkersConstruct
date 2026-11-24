@@ -1,11 +1,11 @@
 package slimeknights.tconstruct.tables.recipe;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -15,7 +15,6 @@ import slimeknights.tconstruct.library.recipe.tinkerstation.building.ToolMateria
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /** Builder for {@link TinkerStationPartSwapping} and {@link ToolMaterialSwappingRecipe} */
 @RequiredArgsConstructor(staticName = "tools")
@@ -51,16 +50,16 @@ public class TinkerStationPartSwappingBuilder extends AbstractRecipeBuilder<Tink
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer) {
+  public void save(RecipeOutput consumer) {
     save(consumer, Loadables.ITEM.getKey(tools.getItems()[0].getItem()));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void save(RecipeOutput consumer, ResourceLocation id) {
     if (fromTool) {
-      consumer.accept(new LoadableFinishedRecipe<>(new ToolMaterialSwappingRecipe(id, tools, extraRequirements), ToolMaterialSwappingRecipe.LOADER, null));
+      consumer.accept(id, new ToolMaterialSwappingRecipe(tools, extraRequirements), null);
     } else {
-      consumer.accept(new LoadableFinishedRecipe<>(new TinkerStationPartSwapping(id, tools, maxStackSize, extraRequirements), TinkerStationPartSwapping.LOADER, null));
+      consumer.accept(id, new TinkerStationPartSwapping(tools, maxStackSize, extraRequirements), null);
     }
   }
 }

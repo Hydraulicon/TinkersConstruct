@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared.command.subcommand;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -14,7 +15,6 @@ import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -66,7 +66,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /** Generates melting recipes based on crafting recipes */
@@ -133,7 +132,7 @@ public class GenerateMeltingRecipesCommand {
     Comparator<MeltingResult> nameComparator = Comparator.<MeltingResult,ResourceLocation>comparing(r -> Loadables.FLUID.getKey(r.fluid.getFluid())).reversed();
     MutableInt successes = new MutableInt(0);
     Path data = pack.resolve(PackType.SERVER_DATA.getDirectory());
-    Consumer<FinishedRecipe> consumer = recipe -> {
+    RecipeOutput consumer = recipe -> {
       ResourceLocation id = recipe.getId();
       Path path = data.resolve(id.getNamespace() + "/recipes/" + id.getPath() + ".json");
       if (GeneratePackHelper.saveJson(recipe.serializeRecipe(), path)) {

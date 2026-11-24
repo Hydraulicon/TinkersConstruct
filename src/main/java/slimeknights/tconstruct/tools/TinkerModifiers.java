@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools;
 
+import slimeknights.mantle.registration.holder.DeferredRecipeSerializer;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -743,21 +744,21 @@ public final class TinkerModifiers extends TinkerModule {
   /*
    * Recipes
    */
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierRecipe>> modifierSerializer = RECIPE_SERIALIZERS.register("modifier", () -> LoadableRecipeSerializer.of(ModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<IncrementalModifierRecipe>> incrementalModifierSerializer = RECIPE_SERIALIZERS.register("incremental_modifier", () -> LoadableRecipeSerializer.of(IncrementalModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SwappableModifierRecipe>> swappableModifierSerializer = RECIPE_SERIALIZERS.register("swappable_modifier", () -> LoadableRecipeSerializer.of(SwappableModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MultilevelModifierRecipe>> multilevelModifierSerializer = RECIPE_SERIALIZERS.register("multilevel_modifier", () -> LoadableRecipeSerializer.of(MultilevelModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MultilevelIncrementalModifierRecipe>> multilevelIncrementalModifierSerializer = RECIPE_SERIALIZERS.register("multilevel_incremental_modifier", () -> LoadableRecipeSerializer.of(MultilevelIncrementalModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<OverslimeModifierRecipe>> overslimeSerializer = RECIPE_SERIALIZERS.register("overslime_modifier", () -> LoadableRecipeSerializer.of(OverslimeModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<OverslimeCraftingTableRecipe>> craftingOverslimeSerializer = RECIPE_SERIALIZERS.register("crafting_overslime_modifier", () -> LoadableRecipeSerializer.of(OverslimeCraftingTableRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierSalvage>> modifierSalvageSerializer = RECIPE_SERIALIZERS.register("modifier_salvage", () -> LoadableRecipeSerializer.of(ModifierSalvage.LOADER));
+  public static final DeferredRecipeSerializer<ModifierRecipe> modifierSerializer = RECIPE_SERIALIZERS.registerLoadable("modifier", ModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<IncrementalModifierRecipe> incrementalModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("incremental_modifier", IncrementalModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<SwappableModifierRecipe> swappableModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("swappable_modifier", SwappableModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<MultilevelModifierRecipe> multilevelModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("multilevel_modifier", MultilevelModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<MultilevelIncrementalModifierRecipe> multilevelIncrementalModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("multilevel_incremental_modifier", MultilevelIncrementalModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<OverslimeModifierRecipe> overslimeSerializer = RECIPE_SERIALIZERS.registerLoadable("overslime_modifier", OverslimeModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<OverslimeCraftingTableRecipe> craftingOverslimeSerializer = RECIPE_SERIALIZERS.registerLoadable("crafting_overslime_modifier", OverslimeCraftingTableRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ModifierSalvage> modifierSalvageSerializer = RECIPE_SERIALIZERS.registerLoadable("modifier_salvage", ModifierSalvage.LOADER);
   public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ArmorDyeingRecipe>> armorDyeingSerializer = RECIPE_SERIALIZERS.register("armor_dyeing_modifier", () -> new SimpleRecipeSerializer<>(ArmorDyeingRecipe::new));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BannerModifierRecipe>> bannerModifierSerializer = RECIPE_SERIALIZERS.register("banner_modifier", () -> LoadableRecipeSerializer.of(BannerModifierRecipe.LOADER));
+  public static final DeferredRecipeSerializer<BannerModifierRecipe> bannerModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("banner_modifier", BannerModifierRecipe.LOADER);
   public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ArmorTrimRecipe>> armorTrimSerializer = RECIPE_SERIALIZERS.register("armor_trim_modifier", () -> new SimpleRecipeSerializer<>(ArmorTrimRecipe::new));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<TippedToolTransformRecipe>> tippedToolTransformRecipeSerializer = RECIPE_SERIALIZERS.register("tipped_tool_transform", () -> LoadableRecipeSerializer.of(TippedToolTransformRecipe.LOADER));
+  public static final DeferredRecipeSerializer<TippedToolTransformRecipe> tippedToolTransformRecipeSerializer = RECIPE_SERIALIZERS.registerLoadable("tipped_tool_transform", TippedToolTransformRecipe.LOADER);
   // modifiers
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierRepairTinkerStationRecipe>> modifierRepair = RECIPE_SERIALIZERS.register("modifier_repair", () -> LoadableRecipeSerializer.of(ModifierRepairTinkerStationRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierRepairCraftingRecipe>> craftingModifierRepair = RECIPE_SERIALIZERS.register("crafting_modifier_repair", () -> LoadableRecipeSerializer.of(ModifierRepairCraftingRecipe.LOADER));
+  public static final DeferredRecipeSerializer<ModifierRepairTinkerStationRecipe> modifierRepair = RECIPE_SERIALIZERS.registerLoadable("modifier_repair", ModifierRepairTinkerStationRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ModifierRepairCraftingRecipe> craftingModifierRepair = RECIPE_SERIALIZERS.registerLoadable("crafting_modifier_repair", ModifierRepairCraftingRecipe.LOADER);
   /** @deprecated use {@link MaterialRepairModule} */
   @SuppressWarnings("removal")
   @Deprecated(forRemoval = true)
@@ -767,21 +768,21 @@ public final class TinkerModifiers extends TinkerModule {
   @Deprecated(forRemoval = true)
   public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierMaterialRepairKitRecipe>> craftingModifierMaterialRepair = RECIPE_SERIALIZERS.register("crafting_modifier_material_repair", () -> LoadableRecipeSerializer.deprecated(ModifierMaterialRepairKitRecipe.LOADER, "use the tconstruct:material_repair modifier module instead"));
   // worktable
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierRemovalRecipe>> removeModifierSerializer = RECIPE_SERIALIZERS.register("remove_modifier", () -> LoadableRecipeSerializer.of(ModifierRemovalRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ExtractModifierRecipe>> extractModifierSerializer = RECIPE_SERIALIZERS.register("extract_modifier", () -> LoadableRecipeSerializer.of(ExtractModifierRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierSortingRecipe>> modifierSortingSerializer = RECIPE_SERIALIZERS.register("modifier_sorting", () -> LoadableRecipeSerializer.of(ModifierSortingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ModifierSetWorktableRecipe>> modifierSetWorktableSerializer = RECIPE_SERIALIZERS.register("modifier_set_worktable", () -> LoadableRecipeSerializer.of(ModifierSetWorktableRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<EnchantmentConvertingRecipe>> enchantmentConvertingSerializer = RECIPE_SERIALIZERS.register("enchantment_converting", () -> LoadableRecipeSerializer.of(EnchantmentConvertingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ToggleInteractionWorktableRecipe>> toggleInteractionSerializer = RECIPE_SERIALIZERS.register("toggle_interaction", () -> LoadableRecipeSerializer.of(ToggleInteractionWorktableRecipe.LOADER));
+  public static final DeferredRecipeSerializer<ModifierRemovalRecipe> removeModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("remove_modifier", ModifierRemovalRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ExtractModifierRecipe> extractModifierSerializer = RECIPE_SERIALIZERS.registerLoadable("extract_modifier", ExtractModifierRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ModifierSortingRecipe> modifierSortingSerializer = RECIPE_SERIALIZERS.registerLoadable("modifier_sorting", ModifierSortingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ModifierSetWorktableRecipe> modifierSetWorktableSerializer = RECIPE_SERIALIZERS.registerLoadable("modifier_set_worktable", ModifierSetWorktableRecipe.LOADER);
+  public static final DeferredRecipeSerializer<EnchantmentConvertingRecipe> enchantmentConvertingSerializer = RECIPE_SERIALIZERS.registerLoadable("enchantment_converting", EnchantmentConvertingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ToggleInteractionWorktableRecipe> toggleInteractionSerializer = RECIPE_SERIALIZERS.registerLoadable("toggle_interaction", ToggleInteractionWorktableRecipe.LOADER);
 
   // severing
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SeveringRecipe>> severingSerializer = RECIPE_SERIALIZERS.register("severing", () -> LoadableRecipeSerializer.of(SeveringRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AgeableSeveringRecipe>> ageableSeveringSerializer = RECIPE_SERIALIZERS.register("ageable_severing", () -> LoadableRecipeSerializer.of(AgeableSeveringRecipe.LOADER));
+  public static final DeferredRecipeSerializer<SeveringRecipe> severingSerializer = RECIPE_SERIALIZERS.registerLoadable("severing", SeveringRecipe.LOADER);
+  public static final DeferredRecipeSerializer<AgeableSeveringRecipe> ageableSeveringSerializer = RECIPE_SERIALIZERS.registerLoadable("ageable_severing", AgeableSeveringRecipe.LOADER);
   // special severing
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PlayerBeheadingRecipe>> playerBeheadingSerializer = RECIPE_SERIALIZERS.register("player_beheading", () -> LoadableRecipeSerializer.of(PlayerBeheadingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SnowGolemBeheadingRecipe>> snowGolemBeheadingSerializer = RECIPE_SERIALIZERS.register("snow_golem_beheading", () -> LoadableRecipeSerializer.of(SnowGolemBeheadingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MooshroomDemushroomingRecipe>> mooshroomDemushroomingSerializer = RECIPE_SERIALIZERS.register("mooshroom_demushrooming", () -> LoadableRecipeSerializer.of(MooshroomDemushroomingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SheepShearingRecipe>> sheepShearing = RECIPE_SERIALIZERS.register("sheep_shearing", () -> LoadableRecipeSerializer.of(SheepShearingRecipe.LOADER));
+  public static final DeferredRecipeSerializer<PlayerBeheadingRecipe> playerBeheadingSerializer = RECIPE_SERIALIZERS.registerLoadable("player_beheading", PlayerBeheadingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<SnowGolemBeheadingRecipe> snowGolemBeheadingSerializer = RECIPE_SERIALIZERS.registerLoadable("snow_golem_beheading", SnowGolemBeheadingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<MooshroomDemushroomingRecipe> mooshroomDemushroomingSerializer = RECIPE_SERIALIZERS.registerLoadable("mooshroom_demushrooming", MooshroomDemushroomingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<SheepShearingRecipe> sheepShearing = RECIPE_SERIALIZERS.registerLoadable("sheep_shearing", SheepShearingRecipe.LOADER);
 
   /**
    * Loot

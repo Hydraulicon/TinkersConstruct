@@ -97,7 +97,7 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
       return false;
     }
     // if there is a material item, it must have a valid material and be craftable
-    if (!inv.getStack().isEmpty()) {
+    if (!inv.getItem().isEmpty()) {
       // no material means we expect no stack in the material slot
       if (material.isEmpty()) {
         return false;
@@ -112,11 +112,11 @@ public class ItemPartRecipe implements IDisplayPartBuilderRecipe {
   @Override
   public boolean matches(IPartBuilderContainer inv, Level worldIn) {
     if (material.isEmpty()) {
-      return inv.getStack().isEmpty();
+      return inv.getItem().isEmpty();
     }
     IMaterialValue materialRecipe = inv.getMaterial();
     return materialRecipe != null && material.matchesVariant(materialRecipe.getMaterial())
-           && inv.getStack().getCount() >= materialRecipe.getItemsUsed(cost);
+           && inv.getItem().getCount() >= materialRecipe.getItemsUsed(cost);
   }
 
   @Override

@@ -103,7 +103,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
   @Override
   public Stream<Pattern> getPatterns(IPartBuilderContainer inv) {
     // use the parts override if set
-    ItemStack tool = inv.getStack();
+    ItemStack tool = inv.getItem();
     List<? extends IMaterialItem> parts = getParts(IModifiable.getToolDefinition(tool.getItem()));
     MaterialIdNBT materials = MaterialIdNBT.from(tool);
     return IntStream.range(0, parts.size()).filter(i -> parts.get(i).canUseMaterial(materials.getMaterial(i).getId()))
@@ -123,17 +123,17 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
 
   @Override
   public boolean partialMatch(IPartBuilderContainer inv) {
-    return pattern.test(inv.getPatternStack()) && toolRequirement.test(inv.getStack());
+    return pattern.test(inv.getPatternStack()) && toolRequirement.test(inv.getItem());
   }
 
   @Override
   public boolean matches(IPartBuilderContainer inv, Level pLevel) {
-    return partialMatch(inv) && ToolStack.from(inv.getStack()).getUpgrades().isEmpty();
+    return partialMatch(inv) && ToolStack.from(inv.getItem()).getUpgrades().isEmpty();
   }
 
   @Override
   public ItemStack assemble(IPartBuilderContainer inv, RegistryAccess access, Pattern pattern) {
-    ToolStack tool = ToolStack.from(inv.getStack());
+    ToolStack tool = ToolStack.from(inv.getItem());
     // find our parts list, either set or override
     ToolDefinition definition = tool.getDefinition();
     List<? extends IMaterialItem> parts = getParts(definition);
@@ -165,7 +165,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
 
   @Override
   public ItemStack getLeftover(IPartBuilderContainer inv, Pattern pattern) {
-    ToolStack tool = ToolStack.from(inv.getStack());
+    ToolStack tool = ToolStack.from(inv.getItem());
 
     // if the tool is damaged, we only have a chance of a second tool part
     int damage = tool.getDamage();
@@ -224,7 +224,7 @@ public class PartBuilderToolRecycle implements IPartBuilderRecipe, IMultiRecipe<
 
   @Override
   public List<Component> getText(IPartBuilderContainer inv) {
-    return ModifierUtil.hasUpgrades(inv.getStack()) ? NO_MODIFIERS : INSTRUCTIONS;
+    return ModifierUtil.hasUpgrades(inv.getItem()) ? NO_MODIFIERS : INSTRUCTIONS;
   }
 
 

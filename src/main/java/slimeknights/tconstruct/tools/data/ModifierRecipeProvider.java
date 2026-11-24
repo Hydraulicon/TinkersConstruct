@@ -1,11 +1,11 @@
 package slimeknights.tconstruct.tools.data;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.data.PackOutput;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -34,7 +34,6 @@ import slimeknights.mantle.registration.object.WoodBlockObject;
 import slimeknights.tconstruct.TConstruct;
 import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.common.data.BaseRecipeProvider;
-import slimeknights.tconstruct.common.recipe.LoadableFinishedRecipe;
 import slimeknights.tconstruct.common.registration.GeodeItemObject.BudSize;
 import slimeknights.tconstruct.fluids.TinkerFluids;
 import slimeknights.tconstruct.gadgets.TinkerGadgets;
@@ -101,14 +100,14 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
   }
 
   @Override
-  protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+  protected void buildRecipes(RecipeOutput consumer) {
     addItemRecipes(consumer);
     addModifierRecipes(consumer);
     addTextureRecipes(consumer);
     addHeadRecipes(consumer);
   }
 
-  private void addItemRecipes(Consumer<FinishedRecipe> consumer) {
+  private void addItemRecipes(RecipeOutput consumer) {
     String folder = "tools/modifiers/";
 
     // durability reinforcements, use obsidian
@@ -163,7 +162,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
   }
 
   @SuppressWarnings("removal")
-  private void addModifierRecipes(Consumer<FinishedRecipe> consumer) {
+  private void addModifierRecipes(RecipeOutput consumer) {
     // modifiers
     String upgradeFolder = "tools/modifiers/upgrade/";
     String abilityFolder = "tools/modifiers/ability/";
@@ -1855,7 +1854,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
     // compatability
     String theOneProbe = "theoneprobe";
     ResourceLocation probe = ResourceLocation.fromNamespaceAndPath(theOneProbe, "probe");
-    Consumer<FinishedRecipe> topConsumer = withCondition(consumer, modLoaded(theOneProbe));
+    RecipeOutput topConsumer = withCondition(consumer, modLoaded(theOneProbe));
     ModifierRecipeBuilder.modifier(ModifierIds.theOneProbe)
                          .setTools(ingredientFromTags(TinkerTags.Items.HELMETS, TinkerTags.Items.HELD))
                          .addInput(ItemNameIngredient.from(probe))
@@ -1863,7 +1862,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                          .setMaxLevel(1).checkTraitLevel()
                          .saveSalvage(topConsumer, prefix(ModifierIds.theOneProbe, compatSalvage))
                          .save(topConsumer, prefix(ModifierIds.theOneProbe, compatFolder));
-    Consumer<FinishedRecipe> headlightConsumer = withCondition(consumer, modLoaded("headlight"));
+    RecipeOutput headlightConsumer = withCondition(consumer, modLoaded("headlight"));
     BiConsumer<Ingredient,String> headlight = (ingredient, light) -> {
       SwappableModifierRecipeBuilder builder = SwappableModifierRecipeBuilder.modifier(ModifierIds.headlight, light);
       builder.variantFormatter(VariantFormatter.PARAMETER)
@@ -1885,7 +1884,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
     headlight.accept(Ingredient.of(ItemTags.CANDLES), "5");
   }
 
-  private void addTextureRecipes(Consumer<FinishedRecipe> consumer) {
+  private void addTextureRecipes(RecipeOutput consumer) {
     String folder = "tools/modifiers/slotless/";
 
     // slime staff
@@ -1920,10 +1919,10 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
     // cosmetics //
     consumer.accept(new SimpleFinishedRecipe(location(folder + "dyeing"), TinkerModifiers.armorDyeingSerializer.get()));
     consumer.accept(new SimpleFinishedRecipe(location(folder + "trim"), TinkerModifiers.armorTrimSerializer.get()));
-    LoadableFinishedRecipe.save(consumer, BannerModifierRecipe.LOADER, new BannerModifierRecipe(location(folder + "banner"), Ingredient.of(TinkerFluids.slimeBottle.get(SlimeType.SKY))));
+    consumer.accept(location(folder + "banner"), new BannerModifierRecipe(Ingredient.of(TinkerFluids.slimeBottle.get(SlimeType.SKY))), null);
 
     // slimesuit //
-    Consumer<FinishedRecipe> slimeEmbellishmentConsumer = withCondition(consumer, new TagFilledCondition<>(TinkerTags.Items.EMBELLISHMENT_SLIME));
+    RecipeOutput slimeEmbellishmentConsumer = withCondition(consumer, new TagFilledCondition<>(TinkerTags.Items.EMBELLISHMENT_SLIME));
     // basic slime
     slimeTexture(slimeEmbellishmentConsumer, MaterialIds.earthslime, SlimeType.EARTH, folder);
     slimeTexture(slimeEmbellishmentConsumer, MaterialIds.skyslime,   SlimeType.SKY, folder);
@@ -1952,7 +1951,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
                                   .save(slimeEmbellishmentConsumer, wrap(TinkerModifiers.embellishment, folder, "/slime/honey"));
   }
 
-  private void addHeadRecipes(Consumer<FinishedRecipe> consumer) {
+  private void addHeadRecipes(RecipeOutput consumer) {
     String folder = "tools/severing/";
     // first, beheading
     SeveringRecipeBuilder.severing(EntityIngredient.of(EntityType.ZOMBIE), Items.ZOMBIE_HEAD)
@@ -2036,7 +2035,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
   }
 
   /** Adds recipes for a plate armor texture with a custom tag */
-  private void woodTexture(Consumer<FinishedRecipe> consumer, MaterialVariantId material, ItemLike planks, String folder) {
+  private void woodTexture(RecipeOutput consumer, MaterialVariantId material, ItemLike planks, String folder) {
     SwappableModifierRecipeBuilder.modifier(TinkerModifiers.embellishment, material.toString())
                                   .variantFormatter(VariantFormatter.MATERIAL)
                                   .setTools(TinkerTags.Items.EMBELLISHMENT_WOOD)
@@ -2045,7 +2044,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
   }
 
   /** Adds recipes for a slime armor texture */
-  private void slimeTexture(Consumer<FinishedRecipe> consumer, MaterialId material, SlimeType slime, String folder) {
+  private void slimeTexture(RecipeOutput consumer, MaterialId material, SlimeType slime, String folder) {
     ItemLike congealed = TinkerWorld.congealedSlime.get(slime);
     SwappableModifierRecipeBuilder.modifier(TinkerModifiers.embellishment, material.toString())
                                   .variantFormatter(VariantFormatter.MATERIAL)
@@ -2055,7 +2054,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
   }
 
   /** Adds recipes for a slime armor texture */
-  private void slimyWoodTexture(Consumer<FinishedRecipe> consumer, MaterialId material, WoodBlockObject wood, FoliageType foliage, String folder) {
+  private void slimyWoodTexture(RecipeOutput consumer, MaterialId material, WoodBlockObject wood, FoliageType foliage, String folder) {
     ItemLike planks = wood.get();
     SwappableModifierRecipeBuilder.modifier(TinkerModifiers.embellishment, material.toString())
                                   .variantFormatter(VariantFormatter.MATERIAL)
@@ -2065,7 +2064,7 @@ public class ModifierRecipeProvider extends BaseRecipeProvider {
   }
 
   /** Adds haste like recipes using redstone */
-  public void hasteRecipes(Consumer<FinishedRecipe> consumer, ModifierId modifier, Ingredient tools, int maxLevel, @Nullable String recipeFolder, @Nullable String salvageFolder) {
+  public void hasteRecipes(RecipeOutput consumer, ModifierId modifier, Ingredient tools, int maxLevel, @Nullable String recipeFolder, @Nullable String salvageFolder) {
     IncrementalModifierRecipeBuilder builder = IncrementalModifierRecipeBuilder
       .modifier(modifier)
       .setTools(tools)

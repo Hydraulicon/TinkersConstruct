@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables;
 
+import slimeknights.mantle.registration.holder.DeferredRecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.minecraft.data.DataGenerator;
@@ -148,23 +149,23 @@ public final class TinkerTables extends TinkerModule {
   /*
    * Recipes
    */
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MaterialRecipe>> materialRecipeSerializer = RECIPE_SERIALIZERS.register("material", () -> LoadableRecipeSerializer.of(MaterialRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ToolBuildingRecipe>> toolBuildingRecipeSerializer = RECIPE_SERIALIZERS.register("tool_building", () -> LoadableRecipeSerializer.of(ToolBuildingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<TinkerStationPartSwapping>> tinkerStationPartSwappingSerializer = RECIPE_SERIALIZERS.register("tinker_station_part_swapping", () -> LoadableRecipeSerializer.of(TinkerStationPartSwapping.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<TinkerStationDamagingRecipe>> tinkerStationDamagingSerializer = RECIPE_SERIALIZERS.register("tinker_station_damaging", () -> LoadableRecipeSerializer.of(TinkerStationDamagingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FixedMaterialSwappingRecipe>> fixedMaterialSwapping = RECIPE_SERIALIZERS.register("fixed_material_swapping", () -> LoadableRecipeSerializer.of(FixedMaterialSwappingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MaterialValueSwappingRecipe>> materialValueSwapping = RECIPE_SERIALIZERS.register("material_value_swapping", () -> LoadableRecipeSerializer.of(MaterialValueSwappingRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PartSwappingOverrideRecipe>> partSwappingOverride = RECIPE_SERIALIZERS.register("part_swapping_override", () -> LoadableRecipeSerializer.of(PartSwappingOverrideRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ToolMaterialSwappingRecipe>> toolMaterialSwapping = RECIPE_SERIALIZERS.register("tool_material_swapping", () -> LoadableRecipeSerializer.of(ToolMaterialSwappingRecipe.LOADER));
+  public static final DeferredRecipeSerializer<MaterialRecipe> materialRecipeSerializer = RECIPE_SERIALIZERS.registerLoadable("material", MaterialRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ToolBuildingRecipe> toolBuildingRecipeSerializer = RECIPE_SERIALIZERS.registerLoadable("tool_building", ToolBuildingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<TinkerStationPartSwapping> tinkerStationPartSwappingSerializer = RECIPE_SERIALIZERS.registerLoadable("tinker_station_part_swapping", TinkerStationPartSwapping.LOADER);
+  public static final DeferredRecipeSerializer<TinkerStationDamagingRecipe> tinkerStationDamagingSerializer = RECIPE_SERIALIZERS.registerLoadable("tinker_station_damaging", TinkerStationDamagingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<FixedMaterialSwappingRecipe> fixedMaterialSwapping = RECIPE_SERIALIZERS.registerLoadable("fixed_material_swapping", FixedMaterialSwappingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<MaterialValueSwappingRecipe> materialValueSwapping = RECIPE_SERIALIZERS.registerLoadable("material_value_swapping", MaterialValueSwappingRecipe.LOADER);
+  public static final DeferredRecipeSerializer<PartSwappingOverrideRecipe> partSwappingOverride = RECIPE_SERIALIZERS.registerLoadable("part_swapping_override", PartSwappingOverrideRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ToolMaterialSwappingRecipe> toolMaterialSwapping = RECIPE_SERIALIZERS.registerLoadable("tool_material_swapping", ToolMaterialSwappingRecipe.LOADER);
   @Deprecated
   public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ShapedMaterialRecipe>> shapedMaterialRecipeSerializer = RECIPE_SERIALIZERS.register("crafting_shaped_material", ShapedMaterialRecipe.Serializer::new);
   public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ShapedMaterialsRecipe>> shapedMaterialsRecipeSerializer = RECIPE_SERIALIZERS.register("crafting_shaped_materials", ShapedMaterialsRecipe.Serializer::new);
   public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ShapelessMaterialsRecipe>> shapelessMaterialsRecipeSerializer = RECIPE_SERIALIZERS.register("crafting_shapeless_materials", ShapelessMaterialsRecipe.Serializer::new);
   // part builder
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PartRecipe>> partRecipeSerializer = RECIPE_SERIALIZERS.register("part_builder", () -> LoadableRecipeSerializer.of(PartRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ItemPartRecipe>> itemPartBuilderSerializer = RECIPE_SERIALIZERS.register("item_part_builder", () -> LoadableRecipeSerializer.of(ItemPartRecipe.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PartBuilderToolRecycle>> partBuilderToolRecycling = RECIPE_SERIALIZERS.register("part_builder_tool_recycling", () -> LoadableRecipeSerializer.of(PartBuilderToolRecycle.LOADER));
-  public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PartBuilderRecycle>> partBuilderDamageableRecycling = RECIPE_SERIALIZERS.register("part_builder_recycling", () -> LoadableRecipeSerializer.of(PartBuilderRecycle.LOADER));
+  public static final DeferredRecipeSerializer<PartRecipe> partRecipeSerializer = RECIPE_SERIALIZERS.registerLoadable("part_builder", PartRecipe.LOADER);
+  public static final DeferredRecipeSerializer<ItemPartRecipe> itemPartBuilderSerializer = RECIPE_SERIALIZERS.registerLoadable("item_part_builder", ItemPartRecipe.LOADER);
+  public static final DeferredRecipeSerializer<PartBuilderToolRecycle> partBuilderToolRecycling = RECIPE_SERIALIZERS.registerLoadable("part_builder_tool_recycling", PartBuilderToolRecycle.LOADER);
+  public static final DeferredRecipeSerializer<PartBuilderRecycle> partBuilderDamageableRecycling = RECIPE_SERIALIZERS.registerLoadable("part_builder_recycling", PartBuilderRecycle.LOADER);
   // repair - standard
   public static final DeferredHolder<RecipeSerializer<?>, SimpleRecipeSerializer<TinkerStationRepairRecipe>> tinkerStationRepairSerializer = RECIPE_SERIALIZERS.register("tinker_station_repair", () -> new SimpleRecipeSerializer<>(TinkerStationRepairRecipe::new));
   public static final DeferredHolder<RecipeSerializer<?>, SimpleRecipeSerializer<CraftingTableRepairKitRecipe>> craftingTableRepairSerializer = RECIPE_SERIALIZERS.register("crafting_table_repair", () -> new SimpleRecipeSerializer<>(CraftingTableRepairKitRecipe::new));

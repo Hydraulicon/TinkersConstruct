@@ -1,8 +1,8 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 // TODO 1.21 import: slimeknights.mantle.recipe.data.ConsumerWrapperBuilder;
@@ -12,7 +12,6 @@ import slimeknights.tconstruct.tables.TinkerTables;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /** Special variant of {@link ConsumerWrapperBuilder} for {@link ShapedMaterialRecipe} */
 @Deprecated
@@ -27,7 +26,7 @@ public class ShapedMaterialConsumerBuilder {
   }
 
   /** Builds the wrapped consumer */
-  public Consumer<FinishedRecipe> build(Consumer<FinishedRecipe> consumer) {
+  public RecipeOutput build(RecipeOutput consumer) {
     return (recipe) -> consumer.accept(new Wrapped(recipe, materials));
   }
 

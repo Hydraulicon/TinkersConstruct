@@ -1,8 +1,8 @@
 package slimeknights.tconstruct.gadgets.data;
 
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.PackOutput;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
@@ -31,7 +31,6 @@ import slimeknights.tconstruct.tables.TinkerTables;
 import slimeknights.tconstruct.world.TinkerWorld;
 import slimeknights.tconstruct.world.block.FoliageType;
 
-import java.util.function.Consumer;
 
 public class GadgetRecipeProvider extends BaseRecipeProvider {
   public GadgetRecipeProvider(PackOutput packOutput) {
@@ -44,7 +43,7 @@ public class GadgetRecipeProvider extends BaseRecipeProvider {
   }
 
   @Override
-  protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+  protected void buildRecipes(RecipeOutput consumer) {
     // piggybackpack
     String folder = "gadgets/";
     ItemCastingRecipeBuilder.tableRecipe(TinkerGadgets.piggyBackpack)
@@ -174,7 +173,7 @@ public class GadgetRecipeProvider extends BaseRecipeProvider {
    * @param experience  Experience for the recipe
    * @param folder      Folder to store the recipe
    */
-  private void foodCooking(Consumer<FinishedRecipe> consumer, ItemLike input, ItemLike output, float experience, String folder) {
+  private void foodCooking(RecipeOutput consumer, ItemLike input, ItemLike output, float experience, String folder) {
     SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(input), RecipeCategory.FOOD, output, experience, 600)
                               .unlockedBy("has_item", has(input))
                               .save(consumer, wrap(id(output), folder, "_campfire"));
@@ -196,7 +195,7 @@ public class GadgetRecipeProvider extends BaseRecipeProvider {
    * @param edges     Edge item
    * @param type      Frame type
    */
-  private void frameCrafting(Consumer<FinishedRecipe> consumer, TagKey<Item> edges, FrameType type) {
+  private void frameCrafting(RecipeOutput consumer, TagKey<Item> edges, FrameType type) {
     ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TinkerGadgets.itemFrame.get(type))
                        .define('e', edges)
                        .define('M', TinkerCommons.obsidianPane)

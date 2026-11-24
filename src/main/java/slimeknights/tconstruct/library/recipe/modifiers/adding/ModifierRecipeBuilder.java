@@ -1,6 +1,7 @@
 package slimeknights.tconstruct.library.recipe.modifiers.adding;
 
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import slimeknights.tconstruct.library.recipe.ingredient.SizedIngredients;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,6 @@ import slimeknights.tconstruct.library.modifiers.util.LazyModifier;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public class ModifierRecipeBuilder extends AbstractModifierRecipeBuilder<ModifierRecipeBuilder> {
@@ -105,11 +105,11 @@ public class ModifierRecipeBuilder extends AbstractModifierRecipeBuilder<Modifie
   /* Building */
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void save(RecipeOutput consumer, ResourceLocation id) {
     if (inputs.isEmpty() && !allowCrystal) {
       throw new IllegalStateException("Must have at least 1 input");
     }
-    ResourceLocation advancementId = buildOptionalAdvancement(id, "modifiers");
-    consumer.accept(new LoadableFinishedRecipe<>(new ModifierRecipe(id, inputs, tools, maxToolSize, result, ModifierEntry.VALID_LEVEL.range(minLevel, maxLevel), slots, allowCrystal, checkTraitLevel), ModifierRecipe.LOADER, advancementId));
+    AdvancementHolder advancementId = buildOptionalAdvancement(consumer, id, "modifiers");
+    consumer.accept(id, new ModifierRecipe(inputs, tools, maxToolSize, result, ModifierEntry.VALID_LEVEL.range(minLevel, maxLevel), slots, allowCrystal, checkTraitLevel), advancementId);
   }
 }

@@ -57,7 +57,7 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<IDis
   @Override
   public int getFluidAmount(ICastingContainer inv) {
     Fluid fluid = inv.getFluid();
-    return inv.getStack().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
+    return inv.getItem().getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
               .map(handler -> handler.fill(new FluidStack(fluid, this.fluidAmount), FluidAction.SIMULATE))
               .orElse(0);
   }
@@ -79,7 +79,7 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<IDis
 
   @Override
   public boolean matches(ICastingContainer inv, Level worldIn) {
-    ItemStack stack = inv.getStack();
+    ItemStack stack = inv.getItem();
     Fluid fluid = inv.getFluid();
     return stack.getItem() == this.container.asItem()
            && stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
@@ -96,7 +96,7 @@ public class ContainerFillingRecipe implements ICastingRecipe, IMultiRecipe<IDis
 
   @Override
   public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
-    ItemStack stack = inv.getStack().copy();
+    ItemStack stack = inv.getItem().copy();
     return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).map(handler -> {
       handler.fill(new FluidStack(inv.getFluid(), this.fluidAmount, inv.getFluidTag()), FluidAction.EXECUTE);
       return handler.getContainer();

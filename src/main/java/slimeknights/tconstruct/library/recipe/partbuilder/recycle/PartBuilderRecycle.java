@@ -80,7 +80,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<IDis
 
   @Override
   public boolean partialMatch(IPartBuilderContainer inv) {
-    return pattern.test(inv.getPatternStack()) && tool.test(inv.getStack());
+    return pattern.test(inv.getPatternStack()) && tool.test(inv.getItem());
   }
 
   /** Scales the amount based on the tack damage */
@@ -94,13 +94,13 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<IDis
 
   @Override
   public boolean matches(IPartBuilderContainer inv, Level level) {
-    ItemStack stack = inv.getStack();
+    ItemStack stack = inv.getItem();
     return partialMatch(inv) && getAmount(stack, resultCount) > 0 && stack.is(TinkerTags.Items.MODIFIABLE) ? !ModifierUtil.hasUpgrades(stack) : !stack.isEnchanted();
   }
 
   @Override
   public ItemStack assemble(IPartBuilderContainer inv, RegistryAccess access, Pattern pattern) {
-    int maxCount = getAmount(inv.getStack(), resultCount);
+    int maxCount = getAmount(inv.getItem(), resultCount);
     ItemOutput result = results.get(pattern);
     // should never happen
     if (result == null) {
@@ -112,7 +112,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<IDis
   @Override
   public ItemStack getLeftover(IPartBuilderContainer inv, Pattern pattern) {
     // maximum items to return
-    int maxCount = getAmount(inv.getStack(), resultCount);
+    int maxCount = getAmount(inv.getItem(), resultCount);
     ItemOutput result = results.get(pattern);
     if (result != null) {
       maxCount -= result.getCount();
@@ -159,7 +159,7 @@ public class PartBuilderRecycle implements IPartBuilderRecipe, IMultiRecipe<IDis
 
   @Override
   public List<Component> getText(IPartBuilderContainer inv) {
-    ItemStack stack = inv.getStack();
+    ItemStack stack = inv.getItem();
     if (getAmount(stack, resultCount) <= 0) {
       return NOT_ENOUGH_DURABILITY;
     }

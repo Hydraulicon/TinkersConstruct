@@ -1,12 +1,13 @@
 package slimeknights.tconstruct.library.recipe.alloying;
 
+import slimeknights.mantle.recipe.input.NoItemInput;
 import net.neoforged.neoforge.fluids.FluidStack;
-// TODO 1.21 import: slimeknights.mantle.recipe.container.IEmptyContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.NoItemInput;
 
 /**
  * Inventory interface for the sake of alloying
  */
-public interface IAlloyTank extends IEmptyContainer {
+public interface IAlloyTank extends NoItemInput {
   /**
    * Gets the current temperature of this alloy tank
    * @return  Temperature

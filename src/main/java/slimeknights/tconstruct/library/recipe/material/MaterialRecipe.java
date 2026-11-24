@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.material;
 
+import slimeknights.mantle.recipe.input.SingleItemInput;
 import lombok.Getter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +13,7 @@ import net.minecraft.world.level.Level;
 import slimeknights.mantle.data.loadable.field.ContextKey;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
 import slimeknights.mantle.recipe.ICustomOutputRecipe;
-// TODO 1.21 import: slimeknights.mantle.recipe.container.ISingleStackContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.SingleItemInput;
 import slimeknights.mantle.recipe.helper.ItemOutput;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 import slimeknights.tconstruct.library.materials.definition.MaterialId;
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * Recipe to get the material from an ingredient
  */
-public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer>, IMaterialValue, IDisplayMaterialRecipe {
+public class MaterialRecipe implements ICustomOutputRecipe<SingleItemInput>, IMaterialValue, IDisplayMaterialRecipe {
   /** Empty material instance for the cache */
   @SuppressWarnings("removal")
   public static final MaterialRecipe EMPTY = new MaterialRecipe(ResourceLocation.parse("missingno"), "", Ingredient.EMPTY, 0, 0, MaterialId.UNKNOWN, ItemOutput.EMPTY);
@@ -107,8 +108,8 @@ public class MaterialRecipe implements ICustomOutputRecipe<ISingleStackContainer
   /* Material methods */
 
   @Override
-  public boolean matches(ISingleStackContainer inv, Level worldIn) {
-    return !material.isUnknown() && this.ingredient.test(inv.getStack());
+  public boolean matches(SingleItemInput inv, Level worldIn) {
+    return !material.isUnknown() && this.ingredient.test(inv.getItem());
   }
 
   @Override

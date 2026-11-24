@@ -22,7 +22,7 @@ public class CastingContainerWrapper implements ICastingContainer {
   private boolean switchSlots = false;
 
   @Override
-  public ItemStack getStack() {
+  public ItemStack getItem() {
     ItemStack stack = tile.getItem(switchSlots ? CastingBlockEntity.OUTPUT : CastingBlockEntity.INPUT);
     if (stack.is(tile.getEmptyCastTag())) {
       return ItemStack.EMPTY;

@@ -48,15 +48,10 @@ public class MaterialCastingRecipe extends AbstractMaterialCastingRecipe impleme
     MaterialCastingLookup.registerItemCost(result, itemCost);
   }
 
-  /** @deprecated use {@link #MaterialCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, IMaterialItem, IJsonPredicate, boolean, boolean)} */
-  @Deprecated(forRemoval = true)
-  public MaterialCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, IMaterialItem result, boolean consumed, boolean switchSlots) {
-    this(serializer, group, cast, itemCost, result, MaterialPredicate.ANY, consumed, switchSlots);
-  }
 
   @Override
   public boolean matches(ICastingContainer inv, Level worldIn) {
-    if (!this.getCast().test(inv.getStack())) {
+    if (!this.getCast().test(inv.getItem())) {
       return false;
     }
     MaterialFluidRecipe fluid = getFluidRecipe(inv);

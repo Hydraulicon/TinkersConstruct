@@ -1,18 +1,19 @@
 package slimeknights.tconstruct.library.recipe.casting.container;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
+import slimeknights.tconstruct.library.recipe.TypedSerializer;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 /**
  * Builder for a container filling recipe. Takes an arbitrary fluid for a specific amount to fill a Forge {@link net.neoforged.neoforge.fluids.capability.IFluidHandlerItem}
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
 public class ContainerFillingRecipeBuilder extends AbstractRecipeBuilder<ContainerFillingRecipeBuilder> {
   private final ResourceLocation result;
   private final int fluidAmount;
-  private final TypeAwareRecipeSerializer<? extends ContainerFillingRecipe> recipeSerializer;
+  private final TypedSerializer<? extends ContainerFillingRecipe> recipeSerializer;
 
   /**
    * Creates a new builder instance using the given result, amount, and serializer
@@ -31,7 +32,7 @@ public class ContainerFillingRecipeBuilder extends AbstractRecipeBuilder<Contain
    * @param recipeSerializer  Serializer
    * @return  Builder instance
    */
-  public static ContainerFillingRecipeBuilder castingRecipe(ItemLike result, int fluidAmount, TypeAwareRecipeSerializer<? extends ContainerFillingRecipe> recipeSerializer) {
+  public static ContainerFillingRecipeBuilder castingRecipe(ItemLike result, int fluidAmount, TypedSerializer<? extends ContainerFillingRecipe> recipeSerializer) {
     return new ContainerFillingRecipeBuilder(Loadables.ITEM.getKey(result.asItem()), fluidAmount, recipeSerializer);
   }
 
@@ -42,7 +43,7 @@ public class ContainerFillingRecipeBuilder extends AbstractRecipeBuilder<Contain
    * @return  Builder instance
    */
   public static ContainerFillingRecipeBuilder basinRecipe(ResourceLocation result, int fluidAmount) {
-    return castingRecipe(result, fluidAmount, TinkerSmeltery.basinFillingRecipeSerializer.get());
+    return castingRecipe(result, fluidAmount, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.basinFillingRecipeSerializer));
   }
 
   /**
@@ -52,7 +53,7 @@ public class ContainerFillingRecipeBuilder extends AbstractRecipeBuilder<Contain
    * @return  Builder instance
    */
   public static ContainerFillingRecipeBuilder basinRecipe(ItemLike result, int fluidAmount) {
-    return castingRecipe(result, fluidAmount, TinkerSmeltery.basinFillingRecipeSerializer.get());
+    return castingRecipe(result, fluidAmount, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.basinFillingRecipeSerializer));
   }
 
   /**
@@ -62,7 +63,7 @@ public class ContainerFillingRecipeBuilder extends AbstractRecipeBuilder<Contain
    * @return  Builder instance
    */
   public static ContainerFillingRecipeBuilder tableRecipe(ResourceLocation result, int fluidAmount) {
-    return castingRecipe(result, fluidAmount, TinkerSmeltery.tableFillingRecipeSerializer.get());
+    return castingRecipe(result, fluidAmount, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.tableFillingRecipeSerializer));
   }
 
   /**
@@ -72,17 +73,17 @@ public class ContainerFillingRecipeBuilder extends AbstractRecipeBuilder<Contain
    * @return  Builder instance
    */
   public static ContainerFillingRecipeBuilder tableRecipe(ItemLike result, int fluidAmount) {
-    return castingRecipe(result, fluidAmount, TinkerSmeltery.tableFillingRecipeSerializer.get());
+    return castingRecipe(result, fluidAmount, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.tableFillingRecipeSerializer));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer) {
+  public void save(RecipeOutput consumer) {
     this.save(consumer, this.result);
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
-    ResourceLocation advancementId = this.buildOptionalAdvancement(id, "casting");
+  public void save(RecipeOutput consumerIn, ResourceLocation id) {
+    AdvancementHolder advancementId = this.buildOptionalAdvancement(consumerIn, id, "casting");
     consumerIn.accept(new ContainerFillingRecipeBuilder.Result(id, advancementId));
   }
 

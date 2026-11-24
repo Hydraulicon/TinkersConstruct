@@ -68,11 +68,6 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
     this.index = index;
   }
 
-  /** @deprecated use {@link #PartSwapCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, int, IJsonPredicate)} */
-  @Deprecated(forRemoval = true)
-  protected PartSwapCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, int index) {
-    this(serializer, group, cast, itemCost, index, MaterialPredicate.ANY);
-  }
 
   /** Maps negative indices to the end of the parts list */
   protected int getIndex(List<MaterialStatsId> requirements) {
@@ -84,11 +79,11 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
 
   @Override
   protected MaterialFluidRecipe getFluidRecipe(ICastingContainer inv) {
-    return inv.getStack().getItem() instanceof IModifiable modifiable ? getFluidRecipe(inv, modifiable) : MaterialFluidRecipe.EMPTY;
+    return inv.getItem().getItem() instanceof IModifiable modifiable ? getFluidRecipe(inv, modifiable) : MaterialFluidRecipe.EMPTY;
   }
 
   protected MaterialFluidRecipe getFluidRecipe(ICastingContainer inv, IModifiable modifiable) {
-    ItemStack stack = inv.getStack();
+    ItemStack stack = inv.getItem();
     // so we are part swapping, we might have a casting or a composite recipe. We only do composite if the fluid does not match casting
     // start with the cached part swapping, can be either type. No need to check casting stat type here as it would never get cached if invalid
     Fluid fluid = inv.getFluid();
@@ -118,7 +113,7 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
 
   /** Checks if part swapping is possible on this tool */
   protected boolean canPartSwap(ICastingContainer inv) {
-    ItemStack cast = inv.getStack();
+    ItemStack cast = inv.getItem();
     if (!(cast.getItem() instanceof IModifiable modifiable)) {
       return false;
     }
@@ -144,7 +139,7 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
 
   @Override
   public boolean matches(ICastingContainer inv, Level level) {
-    return getCast().test(inv.getStack()) && canPartSwap(inv);
+    return getCast().test(inv.getItem()) && canPartSwap(inv);
   }
 
   @Override
@@ -156,7 +151,7 @@ public class PartSwapCastingRecipe extends AbstractMaterialCastingRecipe impleme
   public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
     MaterialFluidRecipe fluidRecipe = getFluidRecipe(inv);
     MaterialVariant material = fluidRecipe.getOutput();
-    ItemStack cast = inv.getStack();
+    ItemStack cast = inv.getItem();
     ToolStack original = ToolStack.from(cast);
     ToolStack tool = original.copy();
     List<MaterialStatsId> stats = ToolMaterialHook.stats(tool.getDefinition());

@@ -76,22 +76,12 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
     this.fluidSwapping = fluidSwapping;
   }
 
-  /** @deprecated use {@link #ToolCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, CastPurpose, IModifiable, IJsonPredicate, List, boolean)} */
-  @Deprecated(forRemoval = true)
-  protected ToolCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, CastPurpose castPurpose, IModifiable result, IJsonPredicate<MaterialVariantId> allowedMaterials, List<MaterialVariantId> extraMaterials) {
-    this(serializer, group, cast, itemCost, castPurpose, result, allowedMaterials, extraMaterials, true);
-  }
 
-  /** @deprecated use {@link #ToolCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, CastPurpose, IModifiable, IJsonPredicate, List, boolean)} */
-  @Deprecated(forRemoval = true)
-  public ToolCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, IModifiable result) {
-    this(serializer, group, cast, itemCost, CastPurpose.MAYBE_MATERIAL, result, MaterialPredicate.ANY, List.of());
-  }
 
   @Override
   protected MaterialFluidRecipe getFluidRecipe(ICastingContainer inv) {
     // if its not part swapping, original lookup is best
-    if (inv.getStack().getItem() != result.asItem()) {
+    if (inv.getItem().getItem() != result.asItem()) {
       return MaterialCastingLookup.getCastingFluid(inv.getFluid(), materials);
     }
     return super.getFluidRecipe(inv);
@@ -99,7 +89,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
 
   @Override
   public boolean matches(ICastingContainer inv, Level level) {
-    ItemStack cast = inv.getStack();
+    ItemStack cast = inv.getItem();
     // if the tool matches, perform part swapping
     if (fluidSwapping && cast.getItem() == result.asItem()) {
       return canPartSwap(inv);
@@ -157,7 +147,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
   @Override
   public ItemStack assemble(ICastingContainer inv, RegistryAccess access) {
     // if the cast is the result, we are part swapping, replace the last material
-    ItemStack cast = inv.getStack();
+    ItemStack cast = inv.getItem();
     if (fluidSwapping && cast.getItem() == result) {
       return super.assemble(inv, access);
     } else {
@@ -173,7 +163,7 @@ public class ToolCastingRecipe extends PartSwapCastingRecipe implements IMultiRe
   @Override
   public boolean isConsumed(ICastingContainer inv) {
     // if part swapping, always consume the input
-    return isConsumed() || inv.getStack().getItem() == result.asItem();
+    return isConsumed() || inv.getItem().getItem() == result.asItem();
   }
 
 

@@ -91,7 +91,7 @@ public class MaterialFluidRecipe implements ICustomOutputRecipe<ICastingContaine
   @Override
   public final boolean matches(ICastingContainer inv, Level worldIn) {
     // if the input ID is null, can skip fetching the input stack material
-    return matches(inv.getFluid()) && (input == null || input.matchesVariant(inv.getStack()));
+    return matches(inv.getFluid()) && (input == null || input.matchesVariant(inv.getItem()));
   }
 
   @Override

@@ -1,14 +1,16 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
+import slimeknights.tconstruct.library.recipe.TypedSerializer;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 import slimeknights.tconstruct.library.materials.stats.MaterialStatsId;
@@ -16,7 +18,6 @@ import slimeknights.tconstruct.library.tools.part.IMaterialItem;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 /** Builder for a composite part recipe, should exist for each part */
 @Accessors(fluent = true)
@@ -26,26 +27,26 @@ public class CompositeCastingRecipeBuilder extends AbstractRecipeBuilder<Composi
   private final int itemCost;
   @Setter @Nullable
   private MaterialStatsId castingStatConflict = null;
-  private final TypeAwareRecipeSerializer<? extends CompositeCastingRecipe> serializer;
+  private final TypedSerializer<? extends CompositeCastingRecipe> serializer;
   @Setter
   private IJsonPredicate<MaterialVariantId> allowedMaterials = MaterialPredicate.ANY;
 
   public static CompositeCastingRecipeBuilder basin(IMaterialItem result, int itemCost) {
-    return composite(result, itemCost, TinkerSmeltery.basinCompositeSerializer.get());
+    return composite(result, itemCost, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.basinCompositeSerializer));
   }
 
   public static CompositeCastingRecipeBuilder table(IMaterialItem result, int itemCost) {
-    return composite(result, itemCost, TinkerSmeltery.tableCompositeSerializer.get());
+    return composite(result, itemCost, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.tableCompositeSerializer));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer) {
+  public void save(RecipeOutput consumer) {
     save(consumer, Loadables.ITEM.getKey(result.asItem()));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
-    ResourceLocation advancementId = this.buildOptionalAdvancement(id, "casting");
-    consumer.accept(new LoadableFinishedRecipe<>(new CompositeCastingRecipe(serializer, id, group, itemCost, result, allowedMaterials, castingStatConflict), CompositeCastingRecipe.LOADER, advancementId));
+  public void save(RecipeOutput consumer, ResourceLocation id) {
+    AdvancementHolder advancementId = this.buildOptionalAdvancement(consumer, id, "casting");
+    consumer.accept(id, new CompositeCastingRecipe(serializer.type(), serializer.serializer(), group, itemCost, result, allowedMaterials, castingStatConflict), advancementId);
   }
 }

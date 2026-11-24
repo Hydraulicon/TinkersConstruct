@@ -1,10 +1,11 @@
 package slimeknights.tconstruct.library.recipe.melting;
 
+import slimeknights.mantle.recipe.input.SingleItemInput;
 import net.neoforged.neoforge.fluids.FluidStack;
-// TODO 1.21 import: slimeknights.mantle.recipe.container.ISingleStackContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.SingleItemInput;
 
 /** Interface for melting inventories */
-public interface IMeltingContainer extends ISingleStackContainer {
+public interface IMeltingContainer extends SingleItemInput {
   /**
    * Gets the logic to boost an ore with the ore rate
    * @return  Nuggets per ore

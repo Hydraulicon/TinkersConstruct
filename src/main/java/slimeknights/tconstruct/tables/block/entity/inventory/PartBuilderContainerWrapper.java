@@ -29,7 +29,7 @@ public class PartBuilderContainerWrapper implements IPartBuilderContainer {
   }
 
   @Override
-  public ItemStack getStack() {
+  public ItemStack getItem() {
     return builder.getItem(PartBuilderBlockEntity.MATERIAL_SLOT);
   }
 
@@ -54,7 +54,7 @@ public class PartBuilderContainerWrapper implements IPartBuilderContainer {
   public IMaterialValue getMaterial() {
     if (this.materialNeedsUpdate) {
       this.materialNeedsUpdate = false;
-      ItemStack stack = getStack();
+      ItemStack stack = getItem();
       if (stack.isEmpty()) {
         this.material = null;
       } else if (stack.is(TinkerTags.Items.TOOL_PARTS)) {

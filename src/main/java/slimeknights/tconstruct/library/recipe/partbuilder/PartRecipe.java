@@ -86,7 +86,7 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
       return false;
     }
     // if there is a material item, it must have a valid material and be craftable
-    ItemStack stack = inv.getStack();
+    ItemStack stack = inv.getItem();
     if (!stack.isEmpty()) {
       // no sense allowing if there is no change
       if (stack.getItem() == output) {
@@ -117,7 +117,7 @@ public class PartRecipe implements IPartBuilderRecipe, IMultiRecipe<IDisplayPart
       // material must be craftable, usable in the item, and have a cost we can afford
       MaterialVariant material = materialRecipe.getMaterial();
       return (allowUncraftable || material.get().isCraftable()) && output.canUseMaterial(material.getId())
-             && inv.getStack().getCount() >= materialRecipe.getItemsUsed(cost);
+             && inv.getItem().getCount() >= materialRecipe.getItemsUsed(cost);
     }
     return false;
   }

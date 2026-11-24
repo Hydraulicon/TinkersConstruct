@@ -58,7 +58,7 @@ public class DamageableMeltingRecipe extends MeltingRecipe {
   @Override
   public FluidStack getOutput(IMeltingContainer inv) {
     FluidStack output = getOutput();
-    ItemStack input = inv.getStack();
+    ItemStack input = inv.getItem();
     int maxDamage = input.getMaxDamage();
     if (maxDamage <= 0) {
       return output.copy();
@@ -69,7 +69,7 @@ public class DamageableMeltingRecipe extends MeltingRecipe {
 
   @Override
   public void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {
-    ItemStack input = inv.getStack();
+    ItemStack input = inv.getItem();
     int maxDamage = input.getMaxDamage();
     if (maxDamage <= 0) {
       super.handleByproducts(inv, handler);

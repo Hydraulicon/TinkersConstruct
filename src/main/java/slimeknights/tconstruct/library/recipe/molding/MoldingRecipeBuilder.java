@@ -1,8 +1,11 @@
 package slimeknights.tconstruct.library.recipe.molding;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
+import slimeknights.tconstruct.library.recipe.TypedSerializer;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -12,17 +15,15 @@ import net.minecraft.world.level.ItemLike;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
 import slimeknights.mantle.recipe.helper.ItemOutput;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(staticName = "molding")
 public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBuilder> {
   private final ItemOutput output;
-  private final TypeAwareRecipeSerializer<MoldingRecipe> serializer;
+  private final TypedSerializer<MoldingRecipe> serializer;
   private Ingredient material = Ingredient.EMPTY;
   private Ingredient pattern = Ingredient.EMPTY;
   private boolean patternConsumed = false;
@@ -33,7 +34,7 @@ public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBui
    * @return  Recipe
    */
   public static MoldingRecipeBuilder moldingTable(ItemLike item) {
-    return molding(ItemOutput.fromItem(item), TinkerSmeltery.moldingTableSerializer.get());
+    return molding(ItemOutput.fromItem(item), TypedSerializer.of(TinkerRecipeTypes.MOLDING_TABLE, TinkerSmeltery.moldingTableSerializer));
   }
 
   /**
@@ -42,7 +43,7 @@ public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBui
    * @return  Recipe
    */
   public static MoldingRecipeBuilder moldingBasin(ItemLike item) {
-    return molding(ItemOutput.fromItem(item), TinkerSmeltery.moldingBasinSerializer.get());
+    return molding(ItemOutput.fromItem(item), TypedSerializer.of(TinkerRecipeTypes.MOLDING_BASIN, TinkerSmeltery.moldingBasinSerializer));
   }
 
   /* Inputs */
@@ -84,17 +85,17 @@ public class MoldingRecipeBuilder extends AbstractRecipeBuilder<MoldingRecipeBui
   /* Building */
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer) {
+  public void save(RecipeOutput consumer) {
     save(consumer, Loadables.ITEM.getKey(output.get().getItem()));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void save(RecipeOutput consumer, ResourceLocation id) {
     if (material == Ingredient.EMPTY) {
       throw new IllegalStateException("Missing material for molding recipe");
     }
-    ResourceLocation advancementId = buildOptionalAdvancement(id, "molding");
-    consumer.accept(new LoadableFinishedRecipe<>(new MoldingRecipe(serializer, id, material, pattern, patternConsumed, output), MoldingRecipe.LOADER, advancementId));
+    AdvancementHolder advancementId = buildOptionalAdvancement(consumer, id, "molding");
+    consumer.accept(id, new MoldingRecipe(serializer.type(), serializer.serializer(), material, pattern, patternConsumed, output), advancementId);
   }
 
   private class Finished extends AbstractFinishedRecipe {

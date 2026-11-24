@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import net.minecraft.world.item.crafting.RecipeType;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -8,7 +9,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.predicate.IJsonPredicate;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.tconstruct.library.json.predicate.material.MaterialPredicate;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 import slimeknights.tconstruct.library.recipe.casting.AbstractCastingRecipe;
@@ -29,18 +29,13 @@ public abstract class AbstractMaterialCastingRecipe extends AbstractCastingRecip
   protected final int itemCost;
   protected final IJsonPredicate<MaterialVariantId> materials;
 
-  public AbstractMaterialCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, int itemCost, boolean consumed, boolean switchSlots, IJsonPredicate<MaterialVariantId> materials) {
-    super(serializer.getType(), id, group, cast, consumed, switchSlots);
+  public AbstractMaterialCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, Ingredient cast, int itemCost, boolean consumed, boolean switchSlots, IJsonPredicate<MaterialVariantId> materials) {
+    super(type, group, cast, consumed, switchSlots);
     this.serializer = serializer;
     this.itemCost = itemCost;
     this.materials = materials;
   }
 
-  /** @deprecated use {@link #AbstractMaterialCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, Ingredient, int, boolean, boolean, IJsonPredicate)} */
-  @Deprecated(forRemoval = true)
-  public AbstractMaterialCastingRecipe(TypeAwareRecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient cast, int itemCost, boolean consumed, boolean switchSlots) {
-    this(serializer, id, group, cast, itemCost, consumed, switchSlots, MaterialPredicate.ANY);
-  }
 
   /** Gets the material fluid recipe for the given recipe */
   protected MaterialFluidRecipe getFluidRecipe(ICastingContainer inv) {

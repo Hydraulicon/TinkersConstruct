@@ -46,11 +46,6 @@ public class CompositeCastingRecipe extends MaterialCastingRecipe implements IMu
     this.castingStatConflict = castingStatConflict;
   }
 
-  /** @deprecated use {@link #CompositeCastingRecipe(TypeAwareRecipeSerializer, ResourceLocation, String, int, IMaterialItem, IJsonPredicate, MaterialStatsId)} */
-  @Deprecated(forRemoval = true)
-  public CompositeCastingRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, IMaterialItem result, int itemCost, @Nullable MaterialStatsId castingStatConflict) {
-    this(serializer, group, itemCost, result, MaterialPredicate.ANY, castingStatConflict);
-  }
 
   @Override
   protected MaterialFluidRecipe getFluidRecipe(ICastingContainer inv) {
@@ -64,7 +59,7 @@ public class CompositeCastingRecipe extends MaterialCastingRecipe implements IMu
       }
     }
     // find a composite match, requires fetching the material ID but not a huge deal as we already validated the cast (won't be calling this for multiple fluids)
-    return MaterialCastingLookup.getCompositeFluid(fluid, IMaterialItem.getMaterialFromStack(inv.getStack()), materials);
+    return MaterialCastingLookup.getCompositeFluid(fluid, IMaterialItem.getMaterialFromStack(inv.getItem()), materials);
   }
 
   /* JEI */

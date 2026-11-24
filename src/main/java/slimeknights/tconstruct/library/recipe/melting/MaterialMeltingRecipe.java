@@ -60,7 +60,7 @@ public class MaterialMeltingRecipe implements IMeltingRecipe, IMultiRecipe<IDisp
     if (input.isUnknown()) {
       return false;
     }
-    ItemStack stack = inv.getStack();
+    ItemStack stack = inv.getItem();
     if (stack.isEmpty() || MaterialCastingLookup.getItemCost(stack.getItem()) == 0) {
       return false;
     }
@@ -74,20 +74,20 @@ public class MaterialMeltingRecipe implements IMeltingRecipe, IMultiRecipe<IDisp
 
   @Override
   public int getTime(IMeltingContainer inv) {
-    int cost = MaterialCastingLookup.getItemCost(inv.getStack().getItem());
+    int cost = MaterialCastingLookup.getItemCost(inv.getItem().getItem());
     return IMeltingRecipe.calcTimeForAmount(temperature, result.getAmount() * cost);
   }
 
   @Override
   public FluidStack getOutput(IMeltingContainer inv) {
-    int cost = MaterialCastingLookup.getItemCost(inv.getStack().getItem());
+    int cost = MaterialCastingLookup.getItemCost(inv.getItem().getItem());
     return result.get().copyWithAmount(result.getAmount() * cost);
   }
 
   @Override
   public void handleByproducts(IMeltingContainer inv, IFluidHandler handler) {
     if (!byproducts.isEmpty()) {
-      int cost = MaterialCastingLookup.getItemCost(inv.getStack().getItem());
+      int cost = MaterialCastingLookup.getItemCost(inv.getItem().getItem());
       for (FluidOutput byproduct : byproducts) {
         handler.fill(byproduct.get().copyWithAmount(byproduct.getAmount() * cost), FluidAction.EXECUTE);
       }

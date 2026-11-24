@@ -1,11 +1,12 @@
 package slimeknights.tconstruct.library.recipe.casting.material;
 
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
@@ -15,7 +16,6 @@ import slimeknights.mantle.registration.object.FluidObject;
 import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 import static slimeknights.tconstruct.library.recipe.melting.IMeltingRecipe.getTemperature;
 
@@ -78,19 +78,19 @@ public class MaterialFluidRecipeBuilder extends AbstractRecipeBuilder<MaterialFl
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer) {
+  public void save(RecipeOutput consumer) {
     save(consumer, outputId.getId());
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void save(RecipeOutput consumer, ResourceLocation id) {
     if (this.fluid == FluidIngredients.EMPTY) {
       throw new IllegalStateException("Material fluid recipes require a fluid input");
     }
     if (this.temperature < 0) {
       throw new IllegalStateException("Temperature is too low, must be at least 0");
     }
-    ResourceLocation advancementId = this.buildOptionalAdvancement(id, "materials");
-    consumer.accept(new LoadableFinishedRecipe<>(new MaterialFluidRecipe(id, fluid, temperature, inputId, outputId, hideInBook), MaterialFluidRecipe.LOADER, advancementId));
+    AdvancementHolder advancementId = this.buildOptionalAdvancement(consumer, id, "materials");
+    consumer.accept(id, new MaterialFluidRecipe(fluid, temperature, inputId, outputId, hideInBook), advancementId);
   }
 }

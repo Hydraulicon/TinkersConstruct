@@ -1,11 +1,14 @@
 package slimeknights.tconstruct.library.recipe.casting;
 
+import slimeknights.tconstruct.library.recipe.TinkerRecipeTypes;
+import slimeknights.tconstruct.library.recipe.TypedSerializer;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.data.recipes.RecipeOutput;
 import slimeknights.tconstruct.library.recipe.ingredient.FluidIngredients;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-// TODO 1.21 import: net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -16,11 +19,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.recipe.data.AbstractRecipeBuilder;
 import slimeknights.mantle.recipe.helper.ItemOutput;
-// TODO 1.21 import: slimeknights.mantle.recipe.helper.TypeAwareRecipeSerializer;
 import slimeknights.mantle.registration.object.FluidObject;
 import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
-import java.util.function.Consumer;
 
 import static slimeknights.tconstruct.library.recipe.melting.IMeltingRecipe.getTemperature;
 
@@ -31,7 +32,7 @@ import static slimeknights.tconstruct.library.recipe.melting.IMeltingRecipe.getT
 @RequiredArgsConstructor(staticName = "castingRecipe")
 public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingRecipeBuilder> {
   private final ItemOutput result;
-  private final TypeAwareRecipeSerializer<? extends ItemCastingRecipe> recipeSerializer;
+  private final TypedSerializer<? extends ItemCastingRecipe> recipeSerializer;
   private Ingredient cast = Ingredient.EMPTY;
   private SizedFluidIngredient fluid = FluidIngredients.EMPTY;
   @Setter @Accessors(chain = true)
@@ -45,7 +46,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public static ItemCastingRecipeBuilder basinRecipe(ItemOutput result) {
-    return castingRecipe(result, TinkerSmeltery.basinRecipeSerializer.get());
+    return castingRecipe(result, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.basinRecipeSerializer));
   }
 
   /**
@@ -54,7 +55,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public static ItemCastingRecipeBuilder retexturedBasinRecipe(ItemOutput result) {
-    return castingRecipe(result, TinkerSmeltery.retexturedBasinRecipeSerializer.get());
+    return castingRecipe(result, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.retexturedBasinRecipeSerializer));
   }
 
   /**
@@ -80,7 +81,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public static ItemCastingRecipeBuilder basinDuplication() {
-    return castingRecipe(ItemOutput.EMPTY, TinkerSmeltery.basinDuplicationRecipeSerializer.get());
+    return castingRecipe(ItemOutput.EMPTY, TypedSerializer.of(TinkerRecipeTypes.CASTING_BASIN, TinkerSmeltery.basinDuplicationRecipeSerializer));
   }
 
   /**
@@ -89,7 +90,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public static ItemCastingRecipeBuilder tableRecipe(ItemOutput resultIn) {
-    return castingRecipe(resultIn, TinkerSmeltery.tableRecipeSerializer.get());
+    return castingRecipe(resultIn, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.tableRecipeSerializer));
   }
 
   /**
@@ -98,7 +99,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public static ItemCastingRecipeBuilder retexturedTableRecipe(ItemOutput resultIn) {
-    return castingRecipe(resultIn, TinkerSmeltery.retexturedTableRecipeSerializer.get());
+    return castingRecipe(resultIn, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.retexturedTableRecipeSerializer));
   }
 
   /**
@@ -124,7 +125,7 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @return  Builder instance
    */
   public static ItemCastingRecipeBuilder tableDuplication() {
-    return castingRecipe(ItemOutput.EMPTY, TinkerSmeltery.tableDuplicationRecipeSerializer.get());
+    return castingRecipe(ItemOutput.EMPTY, TypedSerializer.of(TinkerRecipeTypes.CASTING_TABLE, TinkerSmeltery.tableDuplicationRecipeSerializer));
   }
 
 
@@ -242,29 +243,29 @@ public class ItemCastingRecipeBuilder extends AbstractRecipeBuilder<ItemCastingR
    * @param consumerIn  Recipe consumer
    */
   @Override
-  public void save(Consumer<FinishedRecipe> consumerIn) {
+  public void save(RecipeOutput consumerIn) {
     this.save(consumerIn, Loadables.ITEM.getKey(this.result.get().getItem()));
   }
 
   @Override
-  public void save(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
+  public void save(RecipeOutput consumer, ResourceLocation id) {
     if (this.fluid == FluidIngredients.EMPTY) {
       throw new IllegalStateException("Casting recipes require a fluid input");
     }
     if (this.coolingTime < 0) {
       throw new IllegalStateException("Cooling time is too low, must be at least 0");
     }
-    ResourceLocation advancementId = this.buildOptionalAdvancement(id, "casting");
+    AdvancementHolder advancementId = this.buildOptionalAdvancement(consumer, id, "casting");
     // empty result is useless normally, so assume its the duplication recipe
     if (result == ItemOutput.EMPTY) {
       if (consumed) {
         throw new IllegalStateException("Cannot consume cast on a duplication recipe");
       }
-      consumer.accept(new LoadableFinishedRecipe<>(new CastDuplicationRecipe(recipeSerializer, id, group, cast, fluid, coolingTime), CastDuplicationRecipe.LOADER, advancementId));
+      consumer.accept(id, new CastDuplicationRecipe(recipeSerializer.type(), recipeSerializer.serializer(), group, cast, fluid, coolingTime), advancementId);
     } else {
       // yeah, retextured recipes have their own constructor, does not matter as long as we pass the right serializer in
       // you can use this for your custom recipe extensions too if you don't change the JSON :)
-      consumer.accept(new LoadableFinishedRecipe<>(new ItemCastingRecipe(recipeSerializer, id, group, cast, fluid, result, coolingTime, consumed && cast != Ingredient.EMPTY, switchSlots), ItemCastingRecipe.LOADER, advancementId));
+      consumer.accept(id, new ItemCastingRecipe(recipeSerializer.type(), recipeSerializer.serializer(), group, cast, fluid, result, coolingTime, consumed && cast != Ingredient.EMPTY, switchSlots), advancementId);
     }
   }
 }

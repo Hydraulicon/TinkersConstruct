@@ -1,12 +1,13 @@
 package slimeknights.tconstruct.library.recipe.molding;
 
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.ItemStack;
-// TODO 1.21 import: slimeknights.mantle.recipe.container.IRecipeContainer;
+// TODO 1.21 import: slimeknights.mantle.recipe.container.RecipeInput;
 
 /**
  * Inventory for molding recipes
  */
-public interface IMoldingContainer extends IRecipeContainer {
+public interface IMoldingContainer extends RecipeInput {
   /**
    * Gets the material being molded, typically sand
    * @return  Material item
@@ -34,7 +35,7 @@ public interface IMoldingContainer extends IRecipeContainer {
   }
 
   @Override
-  default int getContainerSize() {
+  default int size() {
     return 2;
   }
 

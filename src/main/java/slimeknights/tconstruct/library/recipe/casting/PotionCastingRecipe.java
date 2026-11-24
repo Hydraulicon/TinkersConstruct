@@ -75,7 +75,7 @@ public class PotionCastingRecipe implements ICastingRecipe, IMultiRecipe<IDispla
 
   @Override
   public boolean matches(ICastingContainer inv, Level level) {
-    return bottle.test(inv.getStack()) && fluid.test(inv.getFluid());
+    return bottle.test(inv.getItem()) && fluid.test(inv.getFluid());
   }
 
   @Override
