@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.part.block;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -57,16 +58,16 @@ public class MaterialBlockEntity extends MantleBlockEntity {
   }
 
   @Override
-  protected void saveSynced(CompoundTag tags) {
-    super.saveSynced(tags);
+  protected void saveSynced(CompoundTag tags, HolderLookup.Provider registries) {
+    super.saveSynced(tags, registries);
     if (material != MaterialId.UNKNOWN) {
       tags.putString(MATERIAL_TAG, material.toString());
     }
   }
 
   @Override
-  public void load(CompoundTag tags) {
-    super.load(tags);
+  protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
+    super.loadAdditional(tags, registries);
     if (tags.contains(MATERIAL_TAG, Tag.TAG_STRING)) {
       material = Objects.requireNonNullElse(MaterialVariantId.tryParse(tags.getString(MATERIAL_TAG)), MaterialId.UNKNOWN);
       RetexturedHelper.onTextureUpdated(this);

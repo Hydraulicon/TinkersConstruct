@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -287,16 +288,16 @@ public class CastingTankBlockEntity extends TableBlockEntity implements ITankBlo
   }
 
   @Override
-  public void load(CompoundTag tag) {
+  protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
     tank.setCapacity(getCapacity(getBlockState().getBlock()));
     updateTank(tag.getCompound(NBTTags.TANK));
     lastRedstone = tag.getBoolean(TAG_REDSTONE);
-    super.load(tag);
+    super.loadAdditional(tag, registries);
   }
 
   @Override
-  public void saveAdditional(CompoundTag tags) {
-    super.saveAdditional(tags);
+  public void saveAdditional(CompoundTag tags, HolderLookup.Provider registries) {
+    super.saveAdditional(tags, registries);
     tags.putBoolean(TAG_REDSTONE, lastRedstone);
   }
 

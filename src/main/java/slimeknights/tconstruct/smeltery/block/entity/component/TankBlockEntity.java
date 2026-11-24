@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.component;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -172,10 +173,10 @@ public class TankBlockEntity extends SmelteryComponentBlockEntity implements ITa
   }
 
   @Override
-  public void load(CompoundTag tag) {
+  protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
     tank.setCapacity(getCapacity(getBlockState().getBlock()));
     updateTank(tag.getCompound(NBTTags.TANK));
-    super.load(tag);
+    super.loadAdditional(tag, registries);
   }
 
   @Override

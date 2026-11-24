@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.shared;
 
+import slimeknights.tconstruct.library.materials.definition.MaterialVariantId;
 import slimeknights.tconstruct.library.tools.nbt.ToolNBT;
 import slimeknights.mantle.registration.holder.DeferredDataComponent;
 import net.neoforged.neoforge.common.conditions.ICondition;
@@ -163,6 +164,8 @@ public final class TinkerCommons extends TinkerModule {
   /* Data components */
   /** Tool NBT for all modifiable items, see {@link ToolNBT} */
   public static final DeferredDataComponent<ToolNBT> toolData = DATA_COMPONENTS.registerPersistent("tool_data", ToolNBT.CODEC, ToolNBT.STREAM_CODEC);
+  /** Material for tool parts and other material items, see {@link slimeknights.tconstruct.library.tools.part.IMaterialItem} */
+  public static final DeferredDataComponent<MaterialVariantId> material = DATA_COMPONENTS.registerPersistent("material", MaterialVariantId.CODEC, MaterialVariantId.STREAM_CODEC);
 
   public static final DeferredHolder<ParticleType<?>, ParticleType<FluidParticleData>> fluidParticle = PARTICLE_TYPES.register("fluid", FluidParticleData.Type::new);
 

@@ -25,7 +25,7 @@ public class MaterialBlockItem extends BlockItem implements IMaterialItem {
 
   @Override
   public MaterialVariantId getMaterial(ItemStack stack) {
-    return MaterialItem.getMaterialId(stack.getTag());
+    return MaterialItem.getMaterialId(stack);
   }
 
   @Override
@@ -56,7 +56,7 @@ public class MaterialBlockItem extends BlockItem implements IMaterialItem {
   }
 
   @Override
-  public void verifyTagAfterLoad(CompoundTag tag) {
-    MaterialItem.verifyTag(tag);
+  public void verifyComponentsAfterLoad(ItemStack stack) {
+    MaterialItem.verifyStack(stack);
   }
 }

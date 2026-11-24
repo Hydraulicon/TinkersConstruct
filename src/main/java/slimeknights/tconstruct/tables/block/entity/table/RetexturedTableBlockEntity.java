@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.block.entity.table;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -76,8 +77,8 @@ public abstract class RetexturedTableBlockEntity extends TableBlockEntity implem
   }
 
   @Override
-  public void load(CompoundTag tags) {
-    super.load(tags);
+  protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
+    super.loadAdditional(tags, registries);
     if (tags.contains(TAG_TEXTURE, Tag.TAG_STRING)) {
       texture = RetexturedHelper.getBlock(tags.getString(TAG_TEXTURE));
       textureUpdated();

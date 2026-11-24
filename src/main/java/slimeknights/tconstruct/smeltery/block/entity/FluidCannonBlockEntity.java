@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -182,8 +183,8 @@ public class FluidCannonBlockEntity extends TankBlockEntity implements ITankInve
   }
 
   @Override
-  public void load(CompoundTag tag) {
-    super.load(tag);
+  protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    super.loadAdditional(tag, registries);
     tank.readFromNBT(tag.getCompound(NBTTags.TANK));
     if (tag.contains(TAG_ITEM, Tag.TAG_COMPOUND)) {
       itemHandler.readFromNBT(tag.getCompound(TAG_ITEM));

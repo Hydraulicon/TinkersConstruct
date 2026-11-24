@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.controller;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -184,14 +185,14 @@ public class AlloyerBlockEntity extends NameableBlockEntity implements ITankBloc
   }
 
   @Override
-  public void saveAdditional(CompoundTag tag) {
-    super.saveAdditional(tag);
+  public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    super.saveAdditional(tag, registries);
     fuelModule.writeToTag(tag);
   }
 
   @Override
-  public void load(CompoundTag nbt) {
-    super.load(nbt);
+  protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+    super.loadAdditional(nbt, registries);
     tank.readFromNBT(nbt.getCompound(NBTTags.TANK));
     fuelModule.readFromTag(nbt);
   }

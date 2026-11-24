@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.part;
 
+import slimeknights.tconstruct.shared.TinkerCommons;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +36,12 @@ public class MaterialItem extends Item implements IMaterialItem {
     super(properties);
   }
 
-  /** Gets the material ID for the given NBT compound */
+  /** Gets the material ID for the given stack */
+  public static MaterialVariantId getMaterialId(ItemStack stack) {
+    return stack.getOrDefault(TinkerCommons.material, MaterialId.UNKNOWN);
+  }
+
+  /** Gets the material ID for the given NBT compound, used by block entities */
   public static MaterialVariantId getMaterialId(@Nullable CompoundTag nbt) {
     if (nbt != null) {
       String str = nbt.getString(MATERIAL_TAG);
@@ -51,7 +57,7 @@ public class MaterialItem extends Item implements IMaterialItem {
 
   @Override
   public MaterialVariantId getMaterial(ItemStack stack) {
-    return getMaterialId(stack.getTag());
+    return getMaterialId(stack);
   }
 
   @Nullable
@@ -163,6 +169,20 @@ public class MaterialItem extends Item implements IMaterialItem {
     }
   }
 
+  /** Resolves material redirects on the given stack */
+  public static void verifyStack(ItemStack stack) {
+    // if the material exists and was changed, update it
+    MaterialVariantId id = getMaterialId(stack);
+    if (!id.equals(MaterialId.UNKNOWN)) {
+      MaterialId original = id.getId();
+      MaterialId resolved = MaterialRegistry.getInstance().resolve(original);
+      if (original != resolved) {
+        stack.set(TinkerCommons.material, MaterialVariantId.create(resolved, id.getVariant()));
+      }
+    }
+  }
+
+  /** Resolves material redirects on the given block entity NBT */
   public static void verifyTag(CompoundTag nbt) {
     // if the material exists and was changed, update it
     MaterialVariantId id = getMaterialId(nbt);
@@ -176,7 +196,7 @@ public class MaterialItem extends Item implements IMaterialItem {
   }
 
   @Override
-  public void verifyTagAfterLoad(CompoundTag nbt) {
-    verifyTag(nbt);
+  public void verifyComponentsAfterLoad(ItemStack stack) {
+    verifyStack(stack);
   }
 }

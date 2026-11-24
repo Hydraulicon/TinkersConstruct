@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tables.block.entity.chest;
 
+import net.minecraft.core.HolderLookup;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -59,8 +60,8 @@ public class TinkersChestBlockEntity extends AbstractChestBlockEntity {
   }
 
   @Override
-  public void load(CompoundTag tags) {
-    super.load(tags);
+  protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
+    super.loadAdditional(tags, registries);
     if (tags.contains(TAG_CHEST_COLOR, Tag.TAG_ANY_NUMERIC)) {
       setColor(tags.getInt(TAG_CHEST_COLOR));
     }

@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.smeltery.block.entity.controller;
 
+import net.minecraft.core.HolderLookup;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -613,8 +614,8 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
   }
 
   @Override
-  public void load(CompoundTag nbt) {
-    super.load(nbt);
+  protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+    super.loadAdditional(nbt, registries);
     if (nbt.contains(TAG_TANK, Tag.TAG_COMPOUND)) {
       tank.read(nbt.getCompound(TAG_TANK));
       FluidStack first = tank.getFluidInTank(0);
@@ -644,9 +645,9 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
   }
 
   @Override
-  public void saveAdditional(CompoundTag compound) {
+  public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
     // Tag that just writes to disk
-    super.saveAdditional(compound);
+    super.saveAdditional(compound, registries);
     if (structure != null) {
       compound.put(TAG_STRUCTURE, structure.writeToTag(this.worldPosition));
     }
@@ -665,9 +666,9 @@ public abstract class HeatingStructureBlockEntity extends NameableBlockEntity im
   }
 
   @Override
-  public CompoundTag getUpdateTag() {
+  public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
     // Tag that just syncs to client
-    CompoundTag nbt = super.getUpdateTag();
+    CompoundTag nbt = super.getUpdateTag(registries);
     if (structure != null) {
       nbt.put(TAG_STRUCTURE, structure.writeClientTag(this.worldPosition));
     }
