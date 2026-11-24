@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.modules.interaction;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -262,7 +263,7 @@ public enum HarvestModule implements ModifierModule, BlockInteractionModifierHoo
             player.sweepAttack();
           }
           if (broken) {
-            player.broadcastBreakEvent(context.getHand());
+            player.onEquippedItemBroken(player.getItemInHand(context.getHand()).getItem(), LivingEntity.getSlotForHand(context.getHand()));
           }
         }
       }

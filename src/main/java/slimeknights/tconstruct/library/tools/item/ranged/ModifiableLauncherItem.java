@@ -347,14 +347,10 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+  public void appendHoverText(ItemStack stack, TooltipContext level, List<Component> tooltip, TooltipFlag flag) {
     TooltipUtil.addInformation(this, stack, level, tooltip, SafeClientAccess.getTooltipKey(), flag);
   }
 
-  @Override
-  public int getDefaultTooltipHideFlags(ItemStack stack) {
-    return TooltipUtil.getModifierHideFlags(getToolDefinition());
-  }
 
 
   /* Display */
@@ -401,11 +397,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   @Override
   public float getDestroySpeed(ItemStack stack, BlockState state) {
     return MiningSpeedToolHook.getDestroySpeed(stack, state);
-  }
-
-  @Override
-  public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
-    return ToolHarvestLogic.handleBlockBreak(stack, pos, player);
   }
 
 

@@ -12,6 +12,11 @@ import slimeknights.tconstruct.library.tools.nbt.ModDataNBT;
 
 /** Base interface for all tools that can receive modifiers */
 public interface IModifiable extends ItemLike {
+  /** If false, this tool never takes damage. Replaces the vanilla method removed in 1.21, where durability is based on components */
+  default boolean canBeDepleted() {
+    return true;
+  }
+
   /** @deprecated use {@link IndestructibleItemEntity#INDESTRUCTIBLE_ENTITY} */
   @Deprecated(forRemoval = true)
   ResourceLocation INDESTRUCTIBLE_ENTITY = IndestructibleItemEntity.INDESTRUCTIBLE_ENTITY;

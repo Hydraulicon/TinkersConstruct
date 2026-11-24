@@ -214,7 +214,7 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
     return false;
   }
 
-  /** If false, this tool never takes damage. Previously a vanilla method, durability is now based on components */
+  @Override
   public boolean canBeDepleted() {
     return true;
   }
@@ -503,7 +503,6 @@ public class ModifiableItem extends TieredItem implements IModifiableDisplay {
 
   @Override
   public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    // TODO 1.21: vanilla enchantment lines are no longer hidden, as tooltip hide flags were replaced by per-component settings
     TooltipUtil.addInformation(this, stack, context, tooltip, SafeClientAccess.getTooltipKey(), flag);
   }
   

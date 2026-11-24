@@ -1,5 +1,9 @@
 package slimeknights.tconstruct.library.tools.helper;
 
+import slimeknights.tconstruct.library.tools.item.IModifiable;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.component.DataComponents;
+import slimeknights.tconstruct.library.tools.nbt.ToolNBT;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,7 +33,7 @@ public class ToolDamageUtil {
    * @param stack  Tool stack
    */
   public static void breakTool(ItemStack stack) {
-    stack.getOrCreateTag().putBoolean(ToolStack.TAG_BROKEN, true);
+    ToolNBT.update(stack, tag -> tag.putBoolean(ToolStack.TAG_BROKEN, true));
   }
 
   /**
@@ -38,8 +42,19 @@ public class ToolDamageUtil {
    * @return  True if broken
    */
   public static boolean isBroken(ItemStack stack) {
-    CompoundTag nbt = stack.getTag();
-    return nbt != null && nbt.getBoolean(ToolStack.TAG_BROKEN);
+    return ToolNBT.read(stack).getBoolean(ToolStack.TAG_BROKEN);
+  }
+
+  /**
+   * Checks if the given item can take damage. Replaces the vanilla method removed in 1.21
+   * @param item  Item to check
+   * @return  True if the item takes damage
+   */
+  public static boolean canBeDepleted(Item item) {
+    if (item instanceof IModifiable modifiable) {
+      return modifiable.canBeDepleted();
+    }
+    return item.components().has(DataComponents.MAX_DAMAGE);
   }
 
   /**
@@ -48,7 +63,7 @@ public class ToolDamageUtil {
    * For normal tool usages, see {@link ToolStack#getStats()} with {@link ToolStats#DURABILITY}.
    */
   public static int getFakeMaxDamage(ItemStack stack) {
-    if (!stack.getItem().canBeDepleted()) {
+    if (!ToolDamageUtil.canBeDepleted(stack.getItem())) {
       return 0;
     }
     ToolStack tool = ToolStack.from(stack);
@@ -157,7 +172,7 @@ public class ToolDamageUtil {
    */
   public static boolean damageAnimated(IToolStackView tool, int amount, LivingEntity entity, EquipmentSlot slot, ModifierId cause) {
     if (damage(tool, amount, entity, entity.getItemBySlot(slot), cause)) {
-      entity.broadcastBreakEvent(slot);
+      entity.onEquippedItemBroken(tool.getItem(), slot);
       return true;
     }
     return false;
@@ -187,7 +202,7 @@ public class ToolDamageUtil {
    */
   public static boolean damageAnimated(IToolStackView tool, int amount, LivingEntity entity, InteractionHand hand, ModifierId cause) {
     if (damage(tool, amount, entity, entity.getItemInHand(hand), cause)) {
-      entity.broadcastBreakEvent(hand);
+      entity.onEquippedItemBroken(tool.getItem(), LivingEntity.getSlotForHand(hand));
       // TODO: why don't we fire ForgeEventFactory.onPlayerDestroyItem here?
       return true;
     }
@@ -221,7 +236,7 @@ public class ToolDamageUtil {
         ItemStack stack = entity.getItemBySlot(slot);
         if (!stack.isEmpty() && tool.isSameStack(stack)) {
           if (damage(tool, amount, entity, stack, cause)) {
-            entity.broadcastBreakEvent(slot);
+            entity.onEquippedItemBroken(tool.getItem(), slot);
             return true;
           }
           return false;
@@ -261,11 +276,11 @@ public class ToolDamageUtil {
   }
 
   /** Implements {@link net.minecraft.world.item.Item#damageItem(ItemStack, int, LivingEntity, Consumer)} for a modifiable item */
-  public static <T extends LivingEntity> void handleDamageItem(ItemStack stack, int amount, T damager, Consumer<T> onBroken) {
+  public static <T extends LivingEntity> void handleDamageItem(ItemStack stack, int amount, @Nullable T damager, Consumer<Item> onBroken) {
     // We basically emulate Itemstack.damageItem here. We always return 0 to skip the handling in ItemStack.
     // If we don't tools ignore our damage logic
-    if (stack.getItem().canBeDepleted() && ToolDamageUtil.damage(ToolStack.from(stack), amount, damager, stack)) {
-      onBroken.accept(damager);
+    if (ToolDamageUtil.canBeDepleted(stack.getItem()) && ToolDamageUtil.damage(ToolStack.from(stack), amount, damager, stack)) {
+      onBroken.accept(stack.getItem());
     }
   }
 

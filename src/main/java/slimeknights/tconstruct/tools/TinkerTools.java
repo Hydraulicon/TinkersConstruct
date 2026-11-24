@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools;
 
+import slimeknights.tconstruct.library.tools.helper.ToolHarvestLogic;
 import slimeknights.tconstruct.library.tools.capability.BlockItemProviderCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -176,6 +177,7 @@ public final class TinkerTools extends TinkerModule {
     ToolCapabilityProvider.register(Capabilities.EnergyStorage.ITEM, ToolEnergyCapability.PROVIDER);
     ToolCapabilityProvider.register(BlockItemProviderCapability.CAPABILITY, BlockItemProviderModifierHook.PROVIDER);
     BlockSideHitListener.init();
+    ToolHarvestLogic.init();
     ModifierLootingHandler.init();
     RandomMaterial.init();
   }

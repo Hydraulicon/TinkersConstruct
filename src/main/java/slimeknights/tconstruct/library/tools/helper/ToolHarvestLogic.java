@@ -1,5 +1,11 @@
 package slimeknights.tconstruct.library.tools.helper;
 
+import slimeknights.tconstruct.library.tools.item.ranged.ModifiableLauncherItem;
+import slimeknights.tconstruct.library.tools.item.ModifiableItem;
+import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
@@ -120,17 +126,17 @@ public class ToolHarvestLogic {
    * @param tool      Tool instance
    * @param stack     Stack instance for vanilla functions
    * @param context   Harvest context
-   * @param useLastXP If true, fetches the XP from {@link BlockSideHitListener} instead of firing the event. Prevents firing {@link net.neoforged.neoforge.event.level.BlockEvent.BreakEvent} twice.
+   * @param useLastXP If true, the {@link BlockEvent.BreakEvent} was already fired for this block, so it is not fired again.
+   *                  As of 1.21, experience is dropped by the block when harvesting rather than by this method.
    * @return  True if broken
    */
   protected static boolean breakBlock(IToolStackView tool, ItemStack stack, ToolHarvestContext context, boolean useLastXP) {
-    // have to rerun the event to get the EXP, also ensures extra blocks broken get EXP properly
+    // fire the break event for extra blocks, the main block already fired it before we started breaking
     ServerPlayer player = Objects.requireNonNull(context.getPlayer());
     ServerLevel world = context.getWorld();
     BlockPos pos = context.getPos();
     GameType type = player.gameMode.getGameModeForPlayer();
-    int exp = useLastXP ? BlockSideHitListener.getLastXP(player) : CommonHooks.onBlockBreakEvent(world, type, player, pos);
-    if (exp == -1) {
+    if (!useLastXP && CommonHooks.fireBlockBreak(world, type, player, pos, context.getState()).isCanceled()) {
       return false;
     }
     // checked after the Forge hook, so we have to recheck
@@ -158,11 +164,6 @@ public class ToolHarvestLogic {
     Block block = state.getBlock();
     if (removed && canHarvest) {
       block.playerDestroy(world, player, pos, state, te, stack);
-    }
-
-    // drop XP
-    if (removed && exp > 0) {
-      block.popExperience(world, pos, exp);
     }
 
     // handle modifiers if not broken
@@ -212,9 +213,44 @@ public class ToolHarvestLogic {
     return false;
   }
 
+  /** Set while we break blocks, as we fire break events for extra blocks which should not be handled again */
+  private static boolean breakingBlocks = false;
+
+  /** Registers event listeners */
+  public static void init() {
+    // lowest priority runs after other mods had a chance to cancel the break, matching when the removed item hook ran
+    NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, ToolHarvestLogic::onBreakEvent);
+  }
+
+  /**
+   * Replaces the item hook removed in 1.21 which let the tool take over breaking the block.
+   * Runs our harvest logic for the held tool, and cancels the event if we handled the break.
+   */
+  private static void onBreakEvent(BlockEvent.BreakEvent event) {
+    if (breakingBlocks) {
+      return;
+    }
+    Player player = event.getPlayer();
+    ItemStack stack = player.getMainHandItem();
+    Item item = stack.getItem();
+    if (item instanceof ModifiableItem || item instanceof ModifiableLauncherItem) {
+      boolean handled;
+      breakingBlocks = true;
+      try {
+        // stacked tools cannot break blocks
+        handled = (item instanceof ModifiableItem && stack.getCount() > 1) || handleBlockBreak(stack, event.getPos(), player);
+      } finally {
+        breakingBlocks = false;
+      }
+      if (handled) {
+        event.setCanceled(true);
+      }
+    }
+  }
+
   /**
    * Call on block break to break a block.
-   * Used in {@link net.minecraftforge.common.extensions.IForgeItem#onBlockStartBreak(ItemStack, BlockPos, Player)}.
+   * Used in {@link #onBreakEvent(BlockEvent.BreakEvent)}.
    * See also {@link net.minecraft.client.multiplayer.MultiPlayerGameMode#destroyBlock(BlockPos)} (client)
    * and {@link net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)} (server)
    * @param stack   Stack instance
