@@ -1,5 +1,10 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import net.minecraft.world.item.Item;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Holder;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -113,8 +118,14 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-    return enchantment.isCurse() && super.canApplyAtEnchantingTable(stack, enchantment);
+  public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+    // only curses can be applied directly, everything else is a modifier
+    return enchantment.is(EnchantmentTags.CURSE) && super.supportsEnchantment(stack, enchantment);
+  }
+
+  @Override
+  public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
+    return enchantment.is(EnchantmentTags.CURSE) && super.isPrimaryItemFor(stack, enchantment);
   }
 
   @Override
@@ -123,13 +134,13 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public int getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
+  public int getEnchantmentLevel(ItemStack stack, Holder<Enchantment> enchantment) {
     return EnchantmentModifierHook.getEnchantmentLevel(stack, enchantment);
   }
 
   @Override
-  public Map<Enchantment,Integer> getAllEnchantments(ItemStack stack) {
-    return EnchantmentModifierHook.getAllEnchantments(stack);
+  public ItemEnchantments getAllEnchantments(ItemStack stack, HolderLookup.RegistryLookup<Enchantment> lookup) {
+    return EnchantmentModifierHook.getAllEnchantments(stack, lookup);
   }
 
 
@@ -137,8 +148,8 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
 
 
   @Override
-  public void verifyTagAfterLoad(CompoundTag nbt) {
-    ToolStack.verifyTag(this, nbt, getToolDefinition());
+  public void verifyComponentsAfterLoad(ItemStack stack) {
+    ToolStack.verifyStack(stack, getToolDefinition());
   }
 
   @Override
@@ -156,10 +167,6 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
     return ModifierUtil.checkVolatileFlag(stack, SHINY);
   }
 
-  @Override
-  public Rarity getRarity(ItemStack stack) {
-    return RarityModule.getRarity(stack);
-  }
 
 
   /* Item entity */
@@ -175,9 +182,8 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
     return IndestructibleItemEntity.createFrom(world, original, stack);
   }
 
-  @Deprecated
   @Override
-  public void onDestroyed(ItemEntity entity) {
+  public void onDestroyed(ItemEntity entity, DamageSource damageSource) {
     ToolInventoryCapability.onDestroyed(entity);
   }
 
@@ -216,7 +222,7 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T damager, Consumer<T> onBroken) {
+  public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T damager, Consumer<Item> onBroken) {
     ToolDamageUtil.handleDamageItem(stack, amount, damager, onBroken);
     return 0;
   }
@@ -293,7 +299,7 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   /* Arrow logic */
 
   @Override
-  public int getUseDuration(ItemStack pStack) {
+  public int getUseDuration(ItemStack pStack, LivingEntity entity) {
     return 72000;
   }
 

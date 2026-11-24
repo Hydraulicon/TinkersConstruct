@@ -66,8 +66,8 @@ public final class TinkerGadgets extends TinkerModule {
    * Items
    */
   public static final DeferredItem<PiggyBackPackItem> piggyBackpack = ITEMS.register("piggy_backpack", () -> new PiggyBackPackItem(new Properties().stacksTo(16)));
-  public static final EnumObject<FrameType,FancyItemFrameItem> itemFrame = ITEMS.registerEnum(FrameType.values(), "item_frame", (type) -> new FancyItemFrameItem(ITEM_PROPS, (world, pos, dir) -> new FancyItemFrameEntity(world, pos, dir, type)));
-  public static final EnumObject<StandType,FancyArmorStandItem> armorStand = ITEMS.registerEnum(StandType.values(), "armor_stand", type -> new FancyArmorStandItem(new Item.Properties().stacksTo(16), type));
+  public static final EnumObject<FrameType,Item> itemFrame = ITEMS.registerEnum(FrameType.values(), "item_frame", (type) -> new FancyItemFrameItem(ITEM_PROPS, (world, pos, dir) -> new FancyItemFrameEntity(world, pos, dir, type)));
+  public static final EnumObject<StandType,Item> armorStand = ITEMS.registerEnum(StandType.values(), "armor_stand", type -> new FancyArmorStandItem(new Item.Properties().stacksTo(16), type));
 
   // throwballs
   @Deprecated
@@ -85,7 +85,7 @@ public final class TinkerGadgets extends TinkerModule {
   }
 
   // foods
-  public static final EnumObject<FoliageType,FoodCakeBlock> cake;
+  public static final EnumObject<FoliageType,Block> cake;
   public static final ItemObject<Block, FoodCakeBlock> magmaCake;
   static {
     BlockBehaviour.Properties CAKE = builder(SoundType.WOOL).forceSolidOn().strength(0.5F).sound(SoundType.WOOL).pushReaction(PushReaction.DESTROY);

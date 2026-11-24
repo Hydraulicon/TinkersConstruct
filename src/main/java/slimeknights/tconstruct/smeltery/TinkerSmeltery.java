@@ -262,7 +262,7 @@ public final class TinkerSmeltery extends TinkerModule {
   }
 
   // tank
-  public static final EnumObject<TankType,SearedTankBlock> searedTank, scorchedTank;
+  public static final EnumObject<TankType,Block> searedTank, scorchedTank;
   public static final ItemObject<Block, CastingTankBlock> searedCastingTank;
   public static final ItemObject<Block, FluidCannonBlock> searedFluidCannon, scorchedFluidCannon, endFluidCannon;
   public static final ItemObject<Block, SearedLanternBlock> searedLantern, scorchedLantern;
@@ -400,7 +400,7 @@ public final class TinkerSmeltery extends TinkerModule {
   public static final CastItemObject bootsPlatingCast = ITEMS.registerCast("boots_plating", () -> new PartCastItem(ITEM_PROPS, () -> TinkerToolParts.plating.get(ArmorItem.Type.BOOTS)));
   public static final CastItemObject mailleCast = ITEMS.registerCast(TinkerToolParts.maille, ITEM_PROPS);
   // dummy cast creation items
-  public static final EnumObject<ArmorItem.Type,DummyMaterialItem> dummyPlating = ITEMS.registerEnum(ArmorItem.Type.values(), "plating_dummy", type -> new DummyMaterialItem(ITEM_PROPS));
+  public static final EnumObject<ArmorItem.Type,Item> dummyPlating = ITEMS.registerEnum(ArmorItem.Type.values(), "plating_dummy", type -> new DummyMaterialItem(ITEM_PROPS));
 
 
   /*

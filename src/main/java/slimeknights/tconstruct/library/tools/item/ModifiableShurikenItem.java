@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.library.tools.item;
 
+import net.minecraft.core.Holder;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -80,8 +81,8 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
 
 
   @Override
-  public void verifyTagAfterLoad(CompoundTag nbt) {
-    ToolStack.verifyTag(this, nbt, getToolDefinition());
+  public void verifyComponentsAfterLoad(ItemStack stack) {
+    ToolStack.verifyStack(stack, getToolDefinition());
   }
 
   @Override
@@ -99,10 +100,6 @@ public class ModifiableShurikenItem extends Item implements IModifiableDisplay {
     return ModifierUtil.checkVolatileFlag(stack, SHINY);
   }
 
-  @Override
-  public Rarity getRarity(ItemStack stack) {
-    return RarityModule.getRarity(stack);
-  }
 
 
   /* Indestructible items */

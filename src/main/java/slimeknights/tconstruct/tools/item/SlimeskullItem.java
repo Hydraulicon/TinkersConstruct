@@ -1,5 +1,6 @@
 package slimeknights.tconstruct.tools.item;
 
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +39,7 @@ public class SlimeskullItem extends ModifiableArmorItem {
 
   @Nullable
   @Override
-  public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
+  public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
     return ArmorUtil.getDummyArmorTexture(slot);
   }
 
