@@ -59,14 +59,15 @@ public class ModifiableArrowItem extends ArrowItem implements IModifiableDisplay
   /* Arrowing */
 
   @Override
-  public AbstractArrow createArrow(Level level, ItemStack stack, LivingEntity shooter) {
+  public AbstractArrow createArrow(Level level, ItemStack stack, LivingEntity shooter, @Nullable ItemStack weapon) {
+    // TODO 1.21: pass the weapon to the arrow once ModifiableArrow is ported, vanilla uses it for enchantment effects and crossbow behavior
     ModifiableArrow arrow = new ModifiableArrow(level, shooter);
     arrow.onCreate(stack, shooter);
     return arrow;
   }
 
   @Override
-  public boolean isInfinite(ItemStack stack, ItemStack bow, Player player) {
+  public boolean isInfinite(ItemStack stack, ItemStack bow, LivingEntity living) {
     return false;
   }
 

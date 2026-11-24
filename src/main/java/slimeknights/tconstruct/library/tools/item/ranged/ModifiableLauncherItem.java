@@ -1,5 +1,8 @@
 package slimeknights.tconstruct.library.tools.item.ranged;
 
+import net.minecraft.world.entity.projectile.Projectile;
+import slimeknights.tconstruct.shared.TinkerCommons;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -282,12 +285,12 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   }
 
   @Override
-  public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-    CompoundTag nbt = stack.getTag();
-    if (nbt == null || slot.getType() != Type.HAND) {
-      return ImmutableMultimap.of();
+  public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
+    if (!stack.has(TinkerCommons.toolData)) {
+      return ItemAttributeModifiers.EMPTY;
     }
-    return getAttributeModifiers(ToolStack.from(stack), slot);
+    ToolStack tool = ToolStack.from(stack);
+    return AttributesModifierHook.toItemAttributes(slot -> getAttributeModifiers(tool, slot), TooltipUtil.showAttributes(getToolDefinition()), EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND);
   }
 
   @Override
@@ -307,9 +310,15 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   public abstract UseAnim getUseAnimation(ItemStack pStack);
 
   @Override
+  protected void shootProjectile(LivingEntity shooter, Projectile projectile, int index, float velocity, float inaccuracy, float angle, @Nullable LivingEntity target) {
+    // we fire projectiles using our own logic, this matches vanilla bows in case anything calls the vanilla logic
+    projectile.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + angle, 0.0F, velocity, inaccuracy);
+  }
+
+  @Override
   public ItemStack finishUsingItem(ItemStack stack, Level pLevel, LivingEntity living) {
     ToolStack tool = ToolStack.from(stack);
-    int duration = getUseDuration(stack);
+    int duration = getUseDuration(stack, living);
     for (ModifierEntry entry : tool.getModifiers()) {
       entry.getHook(ModifierHooks.TOOL_USING).beforeReleaseUsing(tool, entry, living, duration, 0, ModifierEntry.EMPTY);
     }
@@ -332,7 +341,7 @@ public abstract class ModifiableLauncherItem extends ProjectileWeaponItem implem
   @Override
   public void onUseTick(Level level, LivingEntity living, ItemStack bow, int chargeRemaining) {
     // play the sound at the end of loading as an indicator its loaded, texture is another indicator
-    int duration = getUseDuration(bow);
+    int duration = getUseDuration(bow, living);
     if (!level.isClientSide) {
       if (duration - chargeRemaining == ModifierUtil.getPersistentInt(bow, KEY_DRAWTIME, -1)) {
         level.playSound(null, living.getX(), living.getY(), living.getZ(), SoundEvents.CROSSBOW_LOADING_MIDDLE, SoundSource.PLAYERS, 0.75F, 1.0F);
